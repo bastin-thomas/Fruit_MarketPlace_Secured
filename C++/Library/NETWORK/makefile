@@ -4,17 +4,17 @@
 bin = ./.obj/
 LibTCP = ./TCP/
 
-ALL: $(*.o) test.app test1.app 
+ALL: $(*.o) Serveur Client 
 
-test.app: ./test.cpp $(*.o)
-				echo test.app
+Serveur: ./Serveur.cpp $(*.o)
+				echo Serveur
 				@mkdir -p $(bin)
-				g++ ./test.cpp $(*.o) -o test.app -std=gnu++2a -lpthread
+				g++ ./Serveur.cpp $(*.o) -o Serveur -std=gnu++2a -lpthread
 
-test1.app: ./test1.cpp $(*.o)
-				echo test1.app
+Client: ./Client.cpp $(*.o)
+				echo Client
 				@mkdir -p $(bin)
-				g++ ./test1.cpp $(*.o) -o test1.app -std=gnu++2a -lpthread
+				g++ ./Client.cpp $(*.o) -o Client -std=gnu++2a -lpthread
 
 $(bin)TCP.o:	$(LibTCP)TCP.cpp $(LibTCP)TCP.hpp
 						echo TCP.o
@@ -25,12 +25,12 @@ $(bin)TCP.o:	$(LibTCP)TCP.cpp $(LibTCP)TCP.hpp
 #Clean/Clear des .o et de l'application
 clean:	
 		rm $(*.o)
-		rm test.app
-		rm test1.app
+		rm Serveur
+		rm Client
 		clear
 
 clear:	
 		rm $(*.o)
-		rm test.app
-		rm test1.app
+		rm Serveur
+		rm Client
 		clear

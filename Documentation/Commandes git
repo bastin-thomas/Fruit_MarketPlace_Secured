@@ -1,0 +1,10 @@
+git clone
+
+git add nom-du-fichier
+
+git commit -m "Message de commit"
+
+git push origin main
+
+git pull origin main
+

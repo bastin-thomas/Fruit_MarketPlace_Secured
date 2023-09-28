@@ -17,12 +17,12 @@ all: $(PROGRAM)
 
 # Objets
 
-Serveur:	Serveur.c $(Lib_Classes)/Reseaux.o
+Serveur.app:	Serveur.c $(Lib_Classes)/Reseaux.o
 			echo Creation de Serveur
 			$(COMP) -o Serveur Serveur.c $(Lib_Classes)/Reseaux.o 
 			echo Creation de Serveur réussie
 
-Client:		Client.c $(Lib_Classes)/Reseaux.o
+Client.app:		Client.c $(Lib_Classes)/Reseaux.o
 			echo Creation de Client
 			$(COMP) -o Client Client.c $(Lib_Classes)/Reseaux.o 
 			echo Creation de Client réussie

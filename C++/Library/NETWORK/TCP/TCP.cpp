@@ -74,9 +74,12 @@ int Accept(int sEcoute,char *ipClient){
     cout<<"listen() réussi !"<<endl;
 
     // fait appel à accept()
-
+    struct sockaddr_in adrClient;
+    socklen_t adrClientLen;
+    
     int sService;
-    if ((sService = accept(sEcoute,NULL,NULL)) == -1)
+    
+    if ((sService = accept(sEcoute,(sockaddr*) &adrClient, &adrClientLen)) == -1)
     {
         perror("Erreur de accept()");
         exit(1);
@@ -87,16 +90,14 @@ int Accept(int sEcoute,char *ipClient){
     // récupère éventuellement l’adresse IP distante du client 
     // qui vient de se connecter.
 
-    struct sockaddr_in adrClient;
-    socklen_t adrClientLen;
+    
     char bindhost[NI_MAXHOST];
     char bindport[NI_MAXSERV];
     
-    getpeername(sService,(struct sockaddr*)&adrClient,&adrClientLen);
+    getpeername(sService,(struct sockaddr*)&adrClient, &adrClientLen);
     
-    getnameinfo((struct sockaddr*) &adrClient,
-    adrClientLen,bindhost,NI_MAXHOST,bindport,
-    NI_MAXSERV,NI_NUMERICSERV | NI_NUMERICHOST);
+    getnameinfo((struct sockaddr*) &adrClient, adrClientLen, 
+    bindhost, NI_MAXHOST, bindport, NI_MAXSERV, NI_NUMERICSERV | NI_NUMERICHOST);
     
     ipClient = bindhost;
     printf("Client connecte --> Adresse IP: %s -- Port: %s\n",bindhost, bindport);
@@ -111,10 +112,9 @@ int Listen(int sEcoute){
 
 
 
-int ClientSocket(char* ipServeur,int port){
+int ClientSocket(char* ipServeur, int port){
     int sClient;
     struct addrinfo *result;
-
     memset(&result, 0, sizeof(struct addrinfo));
 
     // Creation de la socket
@@ -128,7 +128,7 @@ int ClientSocket(char* ipServeur,int port){
 
     // Construction de l'adresse du serveur
     try{
-        result = Getaddrinfo("0.0.0.0", to_string(port));
+        result = Getaddrinfo(ipServeur, to_string(port));
     }
     catch(const char* errorMessage){
         cout << "ERROR: " << errorMessage << endl;
@@ -136,7 +136,7 @@ int ClientSocket(char* ipServeur,int port){
     
 
     // Demande de connexion
-    if (connect(sClient,result->ai_addr,result->ai_addrlen) == -1)
+    if (connect(sClient,result->ai_addr, result->ai_addrlen) == -1)
     {
         perror("Erreur de connect()");
         exit(1);

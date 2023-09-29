@@ -25,6 +25,9 @@ int ClientSocket(char* ipServeur, int port);
 int Send(int sSocket,char* data,int taille);
 int Receive(int sSocket,char* data);
 
+int Send(int sSocket, string data);
+string Receive(int sSocket);
+
 struct addrinfo* Getaddrinfo(string ip, string port);
 
 int ListenOnly(int sEcoute);

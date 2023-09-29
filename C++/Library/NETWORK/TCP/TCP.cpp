@@ -157,6 +157,15 @@ int ClientSocket(char* ipServeur, int port){
     return sClient;
 }
 
+int Send(int sSocket, string data){
+
+    //Mise en mémoire dans un buffer de char.
+    char buffer[TAILLE_MAX_DATA];
+    strcpy(buffer, data.c_str());
+
+    return Send(sSocket, buffer, data.length());
+}
+
 
 //Permet d'envoyée des bytes sur un socket
 int Send(int sSocket,char* data,int taille){
@@ -178,6 +187,22 @@ int Send(int sSocket,char* data,int taille){
 }
 
 
+string Receive(int sSocket){
+    //Mise en mémoire dans un buffer de char.
+    char buffer[TAILLE_MAX_DATA];
+    string data;
+    int size = Receive(sSocket, buffer);
+
+    //Si 0 ou -1 on sort car pas de message dans le string
+    if(size == 0 || size == -1){
+        perror("TCP Lib Error: ");
+        return "CRITICAL";
+    }
+    buffer[size] = '\0';
+
+    return buffer;
+}
+
 //Permet de recevoir des bytes sur la socket
 int Receive(int sSocket,char* data){
     bool fini = false;
@@ -189,7 +214,6 @@ int Receive(int sSocket,char* data){
         //Lecture des données sur le pipe
         if ((nbLus = read(sSocket,&lu1,1)) == -1)       
             return -1;
-
         //If can't read anymore, go out of the function
         if (nbLus == 0) 
             return i;
@@ -201,7 +225,6 @@ int Receive(int sSocket,char* data){
             //Read next char
             if ((nbLus = read(sSocket,&lu2,1)) == -1)
             return -1;
-            
             if (nbLus == 0) return i;
         
             //If 2nd is the end char, end loop
@@ -221,8 +244,6 @@ int Receive(int sSocket,char* data){
             data[i] = lu1;
             i++;
         }
-
-        
     }
 
     return i;

@@ -10,22 +10,11 @@ int main(){
 
     cout << "Log succes" << endl;
 
-    cout << "Wait message" << endl;
-
-    char message[TAILLE_MAX_DATA-10];
-    string mymessagestring = "Hello from Server";
-
-    int retval;
-    if((retval = Receive(sService, message)) == -1){
-        perror("Erreur lors de la réception du message");
-        cout << retval << endl;
-    }
+    string message = Receive(sService);
 
     cout << "Message received: " << message << endl;
 
-    strcpy(message, mymessagestring.c_str());
-
-    Send(sService, message, mymessagestring.length());
+    Send(sService, "Hello From Server");
     
 
 

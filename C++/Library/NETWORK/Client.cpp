@@ -3,19 +3,12 @@
 int sClient;
 
 int main(){
-    sClient = ClientSocket("10.59.22.30", 50001);
+    sClient = ClientSocket("127.0.0.1", 50001);
     cout << "Log success" << endl;
-
-    char message[TAILLE_MAX_DATA-10];
-    string mystringmessage = "Hello from client";
-
-    strcpy(message, mystringmessage.c_str());
     
-    Send(sClient, message, mystringmessage.length());
+    Send(sClient, "Hello from client");
 
-    if(Receive(sClient, message) == -1){
-        perror("Erreur lors de la réception du message");
-    }
+    string message = Receive(sClient);
 
     cout << "Message received: " << message <<  endl;
 

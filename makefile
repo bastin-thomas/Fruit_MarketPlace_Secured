@@ -2,7 +2,7 @@
 OBJS = Client.o Serveur.o $(Lib_Classes)/Reseaux.o
 
 PROGRAM = Client Serveur
-
+Extension
 Lib_Classes = ./Library
 
 # PROGRAM= 

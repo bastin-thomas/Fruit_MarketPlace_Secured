@@ -66,7 +66,7 @@ struct addrinfo* Getaddrinfo(std::string ip, std::string port){
 
 int Accept(int sEcoute,char *ipClient){
     // fait appel à listen()
-    if(Listen(sEcoute) == -1){
+    if(ListenOnly(sEcoute) == -1){
         perror("Erreur de Listen();");
         exit(1);
     }
@@ -74,6 +74,17 @@ int Accept(int sEcoute,char *ipClient){
     cout<<"listen() réussi !"<<endl;
 
     // fait appel à accept()
+    
+    int sService;
+    sService = AcceptOnly(sEcoute, ipClient);
+    return sService;
+}
+
+int ListenOnly(int sEcoute){
+    return listen(sEcoute,SOMAXCON);
+}
+
+int AcceptOnly(int sEcoute, char *ipClient){
     struct sockaddr_in adrClient;
     socklen_t adrClientLen;
     
@@ -98,16 +109,15 @@ int Accept(int sEcoute,char *ipClient){
     
     getnameinfo((struct sockaddr*) &adrClient, adrClientLen, 
     bindhost, NI_MAXHOST, bindport, NI_MAXSERV, NI_NUMERICSERV | NI_NUMERICHOST);
-    
-    ipClient = bindhost;
+
     printf("Client connecte --> Adresse IP: %s -- Port: %s\n",bindhost, bindport);
 
+    ipClient = bindhost;
     return sService;
 }
 
-int Listen(int sEcoute){
-    return listen(sEcoute,SOMAXCON);
-}
+
+
 
 
 
@@ -148,14 +158,74 @@ int ClientSocket(char* ipServeur, int port){
 }
 
 
-
+//Permet d'envoyée des bytes sur un socket
 int Send(int sSocket,char* data,int taille){
-    return -1;
+    if (taille > TAILLE_MAX_DATA)
+        return -1;
+    
+    // Preparation de la charge utile
+    char trame[TAILLE_MAX_DATA+2];
+    memcpy(trame,data,taille);
+
+    //Ajout des caractères de fin de chaines
+    trame[taille] = '#';
+    trame[taille+1] = ')';
+    
+    // Ecriture sur la socket
+    int retval = write(sSocket,trame,taille+2)-2;
+
+    return retval;
 }
 
 
+//Permet de recevoir des bytes sur la socket
 int Receive(int sSocket,char* data){
-    return -1;
+    bool fini = false;
+    int nbLus, i = 0;
+    char lu1,lu2;
+
+    while(!fini)
+    {
+        //Lecture des données sur le pipe
+        if ((nbLus = read(sSocket,&lu1,1)) == -1)       
+            return -1;
+
+        //If can't read anymore, go out of the function
+        if (nbLus == 0) 
+            return i;
+    
+
+        //If 1st end char found, check if the other is also here
+        if (lu1 == '#')
+        {
+            //Read next char
+            if ((nbLus = read(sSocket,&lu2,1)) == -1)
+            return -1;
+            
+            if (nbLus == 0) return i;
+        
+            //If 2nd is the end char, end loop
+            if (lu2 == ')') 
+                fini = true;
+            //If not, add the lu1 and lu2 to the localstream
+            else
+            {
+                data[i] = lu1;
+                data[i+1] = lu2;
+                i += 2;
+            }
+        }
+        //If not a specific char, just add it to the localstream
+        else
+        {
+            data[i] = lu1;
+            i++;
+        }
+
+        
+    }
+
+    return i;
 }
 
 

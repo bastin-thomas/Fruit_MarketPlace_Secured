@@ -15,7 +15,18 @@
 using namespace std;
 
 #define TAILLE_MAX_DATA 10000
-#define SOMAXCON 50
+#define SOMAXCON 5
+
+#define FILENAME "./TCP/prop.config"
+
+struct properties {
+	int port;
+	int nbrServers;
+	int nbrMaxClients;
+	char* ip;
+};
+
+properties load_properties(const char* nomFichier);
 
 int ServerSocket(int port);
 int Accept(int sEcoute,char *ipClient);

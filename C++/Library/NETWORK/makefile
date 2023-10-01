@@ -3,7 +3,7 @@
 *.o = $(bin)TCP.o
 bin = ./.obj/
 LibTCP = ./TCP/
-Extension = .app
+# Extension = .app
 
 ALL: $(*.o) Client$(Extension) Serveur$(Extension)
 

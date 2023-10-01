@@ -3,8 +3,11 @@
 int sEcoute;
 int sService;
 
+// Chargement de la config
+properties prop = load_properties(FILENAME);
+
 int main(){
-    sEcoute = ServerSocket(50001);
+    sEcoute = ServerSocket(prop.port);
 
     sService = Accept(sEcoute, NULL);
 
@@ -14,9 +17,10 @@ int main(){
 
     cout << "Message received: " << message << endl;
 
-    Send(sService, "Hello From Server");
-    
+    Send(sService, "Hello From Server"); 
 
+    // Faire protocole, Menu, pôle Thread, mutex
+    
 
     close(sEcoute);
     close(sService);

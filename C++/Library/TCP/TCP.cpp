@@ -1,62 +1,6 @@
 #include "TCP.hpp"
 
 
-properties load_properties(const char* nomFichier)
-{
-    properties prop;
-    FILE *fp;
-    char * line = NULL;
-    size_t len = 0;
-    ssize_t read;
-
-    fp = fopen(nomFichier, "r");
-    if(fp == NULL)
-    {
-        puts("Config par défaut");
-        prop.port = 50001;
-        prop.nbrServers = 5;
-        prop.nbrMaxClients = 5;
-        prop.ip = "127.0.0.1";
-    }
-    else
-    {
-        puts("Config chargée");
-        int i = 0 ;
-        while ((read = getline(&line, &len, fp)) != -1) 
-        {
-            char * strToken = strtok ( line, "=" );
-            strToken = strtok ( NULL, "\n" );
-            // printf("-- %s -- \n", strToken);
-            if(i == 0)
-            {
-                prop.port = atoi(strToken);
-            }
-            if(i == 1)
-            {
-                prop.nbrServers = atoi(strToken);
-            }
-            if(i == 2)
-            {
-                prop.nbrMaxClients = atoi(strToken);
-            }
-            if(i == 3)
-            {
-                prop.ip = (char*)malloc(strlen(strToken));
-                strcpy(prop.ip,strToken);
-            }
-
-            i++;
-        }
-
-        if (line)
-            free(line);
-
-    }
-    fclose(fp);
-
-    return prop;
-}
-
 int ServerSocket(int port){
     int sEcoute = -1;
     struct addrinfo *result;

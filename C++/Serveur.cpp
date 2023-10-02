@@ -1,14 +1,14 @@
-#include "./TCP/TCP.hpp"
+#include "./Library/PROPERTIES/Properties.hpp"
+#include "./Library/TCP/TCP.hpp"
 
 int sEcoute;
 int sService;
 
 // Chargement de la config
-properties prop = load_properties(FILENAME);
+ServerProperties prop = getServerProperties();
 
 int main(){
     sEcoute = ServerSocket(prop.port);
-
     sService = Accept(sEcoute, NULL);
 
     cout << "Log succes" << endl;

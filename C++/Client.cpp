@@ -1,15 +1,8 @@
-#include "./TCP/TCP.hpp"
-
-// Menu
-#define LOGIN   1
-#define HMAT    2
-#define LISTCMD 3
-#define CHMAT   4 
-#define ASKMAT  5
-#define EXIT    6
+#include "../TCP/TCP.hpp"
+#include "../PROPERTIES/Properties.hpp"
 
 // Chargement de la config
-properties prop = load_properties(FILENAME);
+properties prop = load_properties("./Client.cfg");
 
 void handlerSIGINT(int sig);
 
@@ -25,8 +18,6 @@ int main(){
     string message = Receive(sClient);
 
     cout << "Message received: " << message <<  endl;
-
-    // Faire protocole, Menu, pôle Thread, mutex
 
     close(sClient);
     return 0;

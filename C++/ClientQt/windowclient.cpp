@@ -2,6 +2,8 @@
 #include "ui_windowclient.h"
 #include <QMessageBox>
 #include <string>
+
+
 using namespace std;
 
 extern WindowClient *w;
@@ -28,6 +30,25 @@ WindowClient::WindowClient(QWidget *parent) : QMainWindow(parent), ui(new Ui::Wi
 
     ui->pushButtonPayer->setText("Confirmer achat");
     setPublicite("!!! Bienvenue sur le Maraicher en ligne !!!");
+
+    //LoadConfigProperties:
+    ClientProperties properties = getClientProperties();
+
+    //Init Global Properties:
+    this->readCursor = 0;
+    this->writeCursor = 0;
+
+    char* tmp;
+    strcpy(tmp, properties.ip.c_str());
+
+    //Init TCP Connexion
+    this->Socket = ClientSocket(tmp, properties.port);
+    
+    
+    
+        
+
+
 
     // Exemples à supprimer
     setArticle("pommes",5.53,18,"pommes.jpg");

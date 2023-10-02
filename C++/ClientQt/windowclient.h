@@ -3,6 +3,10 @@
 
 #include <QMainWindow>
 
+#include "./Library/PROPERTIES/Properties.hpp"
+#include "./Library/TCP/TCP.hpp"
+
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class WindowClient; }
 QT_END_NAMESPACE
@@ -55,5 +59,13 @@ private:
 
     char motDePasse[20];
     char nom[20];
+
+    int port;
+    string ip;
+
+    int Socket;
+    int ServiceSocket[30];
+    int readCursor;
+    int writeCursor;
 };
 #endif // WINDOWCLIENT_H

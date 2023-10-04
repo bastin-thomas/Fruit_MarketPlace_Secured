@@ -2,6 +2,8 @@
 #include "ui_windowclient.h"
 #include <QMessageBox>
 #include <string>
+#include <iostream>
+#include <fstream>
 
 
 using namespace std;
@@ -42,7 +44,13 @@ WindowClient::WindowClient(QWidget *parent) : QMainWindow(parent), ui(new Ui::Wi
     strcpy(tmp, properties.ip.c_str());
 
     //Init TCP Connexion
-    this->Socket = ClientSocket(tmp, properties.port);
+    try{
+      this->Socket = ClientSocket(tmp, properties.port);
+    }
+    catch(const char* message){
+      cout << "ClientSocket: " << message << endl;
+    }
+    
     
     
     

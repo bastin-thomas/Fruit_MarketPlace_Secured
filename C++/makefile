@@ -7,8 +7,10 @@ bin = ./.obj/
 
 Lib = ./Library/
 
+
 LibTCP = $(Lib)TCP/
 LibProperties = $(Lib)PROPERTIES/
+LibThread = $(Lib)THREAD/
 ClientQt = ./ClientQt/
 
 QtLibParam = -Wno-unused-parameter -pipe -g -Wall -W -D_REENTRANT -fPIC -DQT_DEPRECATED_WARNINGS -DQT_QML_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -I../UNIX_DOSSIER_FINAL -I. -isystem /usr/include/qt5 -isystem /usr/include/qt5/QtWidgets -isystem /usr/include/qt5/QtGui -isystem /usr/include/qt5/QtCore -I. -I. -I/usr/lib64/qt5/mkspecs/linux-g++
@@ -40,10 +42,10 @@ Client$(Extension): $(bin)mainclient.o $(bin)windowclient.o $(bin)moc_windowclie
 					@mkdir -p $(bin)
 					g++ $(QtClientParam) $(*.o) $(bin)mainclient.o $(bin)windowclient.o $(bin)moc_windowclient.o -o Client$(Extension) -std=gnu++2a -lpthread 
 
-Serveur$(Extension): ./Serveur.cpp $(LibTCP)TCP.hpp $(LibProperties)Properties.hpp $(*.o)
+Serveur$(Extension): ./Serveur.cpp $(LibTCP)TCP.hpp $(LibProperties)Properties.hpp $(*.o) $(LibThread)mylibthread_POSIX.h
 				echo Serveur.app
 				@mkdir -p $(bin)
-				g++ ./Serveur.cpp $(*.o) -o Serveur$(Extension) -std=gnu++2a -lpthread
+				g++ ./Serveur.cpp $(*.o) $(bin)mylibthread_POSIX.o -o Serveur$(Extension) -std=gnu++2a -lpthread
 
 
 

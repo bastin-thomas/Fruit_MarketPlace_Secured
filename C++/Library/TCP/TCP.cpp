@@ -7,11 +7,11 @@ int ServerSocket(int port){
 
     //Call 'Socket()' to create the socket
     if((sEcoute = socket(AF_INET, SOCK_STREAM, 0)) == -1){
-        perror("TCP Error: Socket not bindable");
+        perror("Error: Socket not bindable");
         exit(1);
     }
 
-    cout << "A Server Socket has been created ( " << sEcoute << " )" << endl;
+    cerr << "A Server Socket has been created ( " << sEcoute << " )" << endl;
 
 
     // construit l’adresse réseau de la socket par appel à getaddrinfo()
@@ -19,29 +19,26 @@ int ServerSocket(int port){
         result = Getaddrinfo("0.0.0.0", to_string(port));
     }
     catch(const char* errorMessage){
-        cout << "ERROR: " << errorMessage << endl;
+        cerr << "ERROR: " << errorMessage << endl;
     }
     
     
     // fait appel à bind() pour lier la socket à l’adresse réseau
     char bindhost[NI_MAXHOST];
     char bindport[NI_MAXSERV];
-
     struct addrinfo* info;
 
-    getnameinfo(result->ai_addr, result->ai_addrlen, bindhost,
-    NI_MAXHOST, bindport, NI_MAXSERV, NI_NUMERICSERV | NI_NUMERICHOST);
+    getnameinfo(result->ai_addr, result->ai_addrlen, bindhost, NI_MAXHOST, bindport, NI_MAXSERV, NI_NUMERICSERV | NI_NUMERICHOST);
 
-    printf("Mon Adresse IP: %s -- Mon Port: %s\n",bindhost,bindport);
+    cout << "Mon Adresse IP: " << bindhost << " -- Mon Port: " << bindport << endl;
 
     // Liaison de la socket à l'adresse
     if (bind(sEcoute, result->ai_addr, result->ai_addrlen) < 0)
     {
-        perror("Erreur de bind()");
-        exit(1);
+        throw "Erreur de bind()";
     }
     freeaddrinfo(result);
-    printf("bind() reussi !\n");
+    cerr<< "bind() reussi !" << endl;
 
     return sEcoute;
 }
@@ -67,8 +64,7 @@ struct addrinfo* Getaddrinfo(std::string ip, std::string port){
 int Accept(int sEcoute,char *ipClient){
     // fait appel à listen()
     if(ListenOnly(sEcoute) == -1){
-        perror("Erreur de Listen();");
-        exit(1);
+        throw "Erreur de Listen();";
     }
 
     cout<<"listen() réussi !"<<endl;
@@ -92,11 +88,10 @@ int AcceptOnly(int sEcoute, char *ipClient){
     
     if ((sService = accept(sEcoute,(sockaddr*) &adrClient, &adrClientLen)) == -1)
     {
-        perror("Erreur de accept()");
-        exit(1);
+        throw("Erreur de accept()");
     }
-    printf("accept() reussi !\n");
-    printf("socket de service = %d\n",sService);
+    cerr << "accept() reussi !" << endl;
+    cerr << "socket de service = " << sService << endl;
 
     // récupère éventuellement l’adresse IP distante du client 
     // qui vient de se connecter.
@@ -110,7 +105,7 @@ int AcceptOnly(int sEcoute, char *ipClient){
     getnameinfo((struct sockaddr*) &adrClient, adrClientLen, 
     bindhost, NI_MAXHOST, bindport, NI_MAXSERV, NI_NUMERICSERV | NI_NUMERICHOST);
 
-    printf("Client connecte --> Adresse IP: %s -- Port: %s\n",bindhost, bindport);
+    cout << "Client connecte --> Adresse IP: " << bindhost << " -- Port: " << bindport << endl;
 
     ipClient = bindhost;
     return sService;
@@ -125,29 +120,27 @@ int ClientSocket(char* ipServeur, int port){
     // Creation de la socket
     if ((sClient = socket(AF_INET, SOCK_STREAM, 0)) == -1)
     {
-        perror("Erreur de socket()");
-        exit(1);
+        throw "Erreur de socket()";
     }
 
-    printf("socket creee = %d\n",sClient);
+    cerr << "socket creee = " << sClient << endl;
 
     // Construction de l'adresse du serveur
     try{
         result = Getaddrinfo(ipServeur, to_string(port));
     }
     catch(const char* errorMessage){
-        cout << "ERROR: " << errorMessage << endl;
+        throw errorMessage;
     }
     
 
     // Demande de connexion
     if (connect(sClient,result->ai_addr, result->ai_addrlen) == -1)
     {
-        perror("Erreur de connect()");
-        exit(1);
+        throw "Connexion au Server impossible";
     }
 
-    printf("connect() reussi !\n");
+    cout << "connection established with, IP: " << ipServeur << " -- Port: " << port << endl;
 
     return sClient;
 }
@@ -190,8 +183,7 @@ string Receive(int sSocket){
 
     //Si 0 ou -1 on sort car pas de message dans le string
     if(size == 0 || size == -1){
-        perror("TCP Lib Error: ");
-        return "CRITICAL";
+        return "CRITICAL@";
     }
     buffer[size] = '\0';
 

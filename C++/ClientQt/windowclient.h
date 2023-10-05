@@ -5,6 +5,7 @@
 
 #include "./Library/PROPERTIES/Properties.hpp"
 #include "./Library/TCP/TCP.hpp"
+#include "./Library/THREAD/mylibthread_POSIX.h"
 
 
 QT_BEGIN_NAMESPACE

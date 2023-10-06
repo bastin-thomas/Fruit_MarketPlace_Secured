@@ -1,5 +1,6 @@
 #include "db.hpp"
 
+
 db::db(string ip, string user, string password, string database)
 {
     connexion = mysql_init(NULL);

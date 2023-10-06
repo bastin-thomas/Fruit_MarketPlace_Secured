@@ -46,7 +46,7 @@ Client$(Extension): $(bin)mainclient.o $(bin)windowclient.o $(LibThread)mylibthr
 Serveur$(Extension): ./Serveur.cpp $(LibTCP)TCP.hpp $(bin)db.o $(LibDB)db.hpp $(LibProperties)Properties.hpp $(*.o) $(LibThread)mylibthread_POSIX.h
 				echo Serveur.app
 				@mkdir -p $(bin)
-				g++ ./Serveur.cpp $(*.o) $(bin)db.o -o Serveur$(Extension) -std=gnu++2a -lpthread
+				g++ ./Serveur.cpp $(MySQLParam) $(bin)db.o $(*.o) -o Serveur$(Extension) -std=gnu++2a -lpthread
 
 
 
@@ -54,7 +54,6 @@ $(bin)TCP.o:	$(LibTCP)TCP.cpp  $(LibTCP)TCP.hpp
 				echo TCP.o
 				@mkdir -p $(bin)
 				g++ $(LibTCP)TCP.cpp -c -o $(bin)TCP.o -std=gnu++2a -lpthread
-
 
 $(bin)Properties.o:		$(LibProperties)Properties.cpp  $(LibProperties)Properties.hpp
 						echo Properties.o
@@ -77,8 +76,8 @@ $(bin)Protocole.o:		$(LibProtocole)Protocole.cpp  $(LibProtocole)Protocole.hpp
 						g++ $(LibProtocole)Protocole.cpp -c -o $(bin)Protocole.o -std=gnu++2a -lpthread
 
 
-#Clean/Clear des .o et de l'application
 
+#Clean/Clear des .o et de l'application
 clean:	
 		rm -f $(.o)
 		rm -f $(rm.o)

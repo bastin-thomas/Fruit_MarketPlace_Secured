@@ -2,9 +2,7 @@
 
 bin = ./.obj/
 
-
 Lib = ./Library/
-
 
 LibTCP = $(Lib)TCP/
 LibProperties = $(Lib)PROPERTIES/
@@ -48,7 +46,7 @@ Client$(Extension): $(bin)mainclient.o $(bin)windowclient.o $(LibThread)mylibthr
 Serveur$(Extension): ./Serveur.cpp $(LibTCP)TCP.hpp $(bin)db.o $(LibDB)db.hpp $(LibProperties)Properties.hpp $(*.o) $(LibThread)mylibthread_POSIX.h
 				echo Serveur.app
 				@mkdir -p $(bin)
-				g++ ./Serveur.cpp $(*.o) -o Serveur$(Extension) -std=gnu++2a -lpthread
+				g++ ./Serveur.cpp $(*.o) $(bin)db.o -o Serveur$(Extension) -std=gnu++2a -lpthread
 
 
 

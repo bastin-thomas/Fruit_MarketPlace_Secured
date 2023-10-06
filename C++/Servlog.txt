@@ -1,24 +1,2 @@
 A Server Socket has been created ( 4 )
-bind() reussi !
-accept() reussi !
-socket de service = 5
-SocketQueue: [5] 
-WriteCurs: 0 -- ReadCurs: 0
-accept() reussi !
-socket de service = 6
-SocketQueue: [-1] [6] 
-WriteCurs: 1 -- ReadCurs: 1
-accept() reussi !
-socket de service = 7
-SocketQueue: [-1] [-1] [7] 
-WriteCurs: 2 -- ReadCurs: 2
-accept() reussi !
-socket de service = 8
-SocketQueue: [-1] [-1] [7] [8] 
-WriteCurs: 3 -- ReadCurs: 2
-accept() reussi !
-socket de service = 9
-SocketQueue: [-1] [-1] [7] [8] [9] 
-WriteCurs: 4 -- ReadCurs: 2
-
-SIGINT Received
+MAIN THREAD(error): Erreur de bind()

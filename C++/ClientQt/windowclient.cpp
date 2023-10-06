@@ -5,12 +5,13 @@
 #include <iostream>
 #include <fstream>
 
-
 using namespace std;
 
 extern WindowClient *w;
 
 #define REPERTOIRE_IMAGES "images/"
+
+
 
 WindowClient::WindowClient(QWidget *parent) : QMainWindow(parent), ui(new Ui::WindowClient)
 {
@@ -50,13 +51,9 @@ WindowClient::WindowClient(QWidget *parent) : QMainWindow(parent), ui(new Ui::Wi
     catch(const char* message){
       cout << "ClientSocket: " << message << endl;
     }
-    
-    
-    
-    
-        
 
-
+    //Request Login
+    // RequestLogin(sendId);
 
     // Exemples à supprimer
     setArticle("pommes",5.53,18,"pommes.jpg");
@@ -302,7 +299,23 @@ void WindowClient::closeEvent(QCloseEvent *event)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WindowClient::on_pushButtonLogin_clicked()
 {
+  string nom = getNom();
 
+  string mdp = getMotDePasse();
+
+  cout << "log : " << nom << " " << mdp << endl;
+
+  try{
+    if(isNouveauClientChecked()){
+      SendCreateLogin(this->Socket,nom, mdp);
+    }else{
+      SendLogin(this->Socket,nom, mdp);
+    }
+  }catch(const char * m){
+    cout << "Erreur : " << m << endl;
+  }
+
+  
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////

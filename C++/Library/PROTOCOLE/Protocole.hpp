@@ -56,14 +56,17 @@ void SendCreateLogin(int socket, string nom, string mdp);
 ///////////////////////////////
 /////// Server Response ///////
 ///////////////////////////////
+
+// Protocol Server Main Logic //
+void SMOP();
+
+
 void ResponseLogin(int socket, string protocolCommand);
 void ResponseCreateLogin(int socket, string protocolCommand);
 
 
 
 
-// Protocol Server Main Logic //
-void SMOP();
 
 ////////////////////////////////
 ////////// UTILS ///////////////

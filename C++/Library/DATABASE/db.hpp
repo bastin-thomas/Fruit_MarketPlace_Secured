@@ -7,6 +7,7 @@
 #include <string.h>
 #include <iostream>
 #include <string>
+#include <sstream>
 
 #include <mysql/mysql.h>
 #include <vector>
@@ -23,14 +24,18 @@ class db
 {
     private:
         MYSQL* connexion;
+
+        vector<MYSQL_ROW> select(string requete);
+        void insert(string requete);
+
     public:
         db();
         db(string ip, string user, string password, string database);
         ~db();
 
-        vector<MYSQL_ROW> select(string requete);
-        void insert(string requete);
 
+        void db::Login(string login, string passwd);
+        void db::CreateLogin(string login, string passwd);
 };
 
 #endif

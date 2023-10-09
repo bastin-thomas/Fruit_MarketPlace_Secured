@@ -1,5 +1,7 @@
 #include "db.hpp"
 
+#define SQLHEADER "SQLERROR_"
+
 db::db(string ip, string user, string password, string database)
 {
     connexion = mysql_init(NULL);
@@ -11,6 +13,66 @@ db::~db()
     mysql_close(connexion);
 }
 
+
+void db::Login(string login, string passwd){
+    vector<MYSQL_ROW> result;
+    stringstream request;
+    request << "SELECT password FROM accounts WHERE login=" << login << ";";
+
+    try{
+        result = this->select(request.str());
+    }
+    catch(const char * m){
+        stringstream newm;
+        newm << SQLHEADER << m;
+        throw newm.str().c_str();
+    }
+
+
+    if(result.size() == 0){
+        throw "NO_LOGIN";
+    }
+
+    string dbpasswd = result[0][0];
+
+    if(dbpasswd != passwd){
+        throw "BAD_LOGIN";
+    }
+}
+
+
+void db::CreateLogin(string login, string passwd){
+    vector<MYSQL_ROW> result;
+    
+    try{
+        stringstream request;
+        request << "SELECT password FROM accounts WHERE login=" << login << ";";
+
+        result = this->select(request.str());
+    }
+    catch(const char * m){
+        stringstream newm;
+        newm << SQLHEADER << m;
+        throw newm.str().c_str();
+    }
+
+
+    if(result.size() != 0){
+        throw "LOGIN_EXIST";
+    }
+
+    try{
+        stringstream request;
+        "insert into articles values (NULL,'%s',%f,%d,'%s');"
+        request << "INSERT INTO accounts VALUES (" << login << "," << passwd << ");";
+        this->insert();
+    }
+    catch(const char *){
+        stringstream newm;
+        newm << SQLHEADER << m;
+        throw newm.str().c_str();
+    }
+}
 
 
 /*************************************\
@@ -27,14 +89,14 @@ vector<MYSQL_ROW> db::select(string requete){
 
     //Select query execution
     if(mysql_query(connexion, requete.c_str()) != 0){
-        string message = "DB Access Error: MySqlQuery: ";
+        string message = "MySqlQuery: ";
         message += mysql_error(connexion);
         throw  message.c_str();
     }
 
     //catch request result
     if((result = mysql_store_result(connexion)) == NULL){
-        string message = "DB Access Error: MySqlStoreResult: ";
+        string message = "MySqlStoreResult: ";
         message += mysql_error(connexion);
         throw  message.c_str();
     }
@@ -58,7 +120,7 @@ vector<MYSQL_ROW> db::select(string requete){
 \*************************************/
 void db::insert(string requete){
     if(mysql_query(connexion,requete.c_str()) == -1){
-        string message = "DB Access Error: MySqlQuery: ";
+        string message = "MySqlQuery: ";
         message += mysql_error(connexion);
         throw  message.c_str();
     }

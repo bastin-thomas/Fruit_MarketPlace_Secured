@@ -111,15 +111,33 @@ void ServiceThread(void){
         
 
         // Thread logic
-        string message = Receive(sService);
-        cout << "Message received: " << message << endl;
-        Send(sService, "Hello From Server");
-
-        //TODO: Parse the command and execute the right function
-
-
-
-
+        bool endConnexion = false;
+        while(endConnexion){
+            string response;
+            string message = Receive(sService);
+            cerr << "Message received: " << message << endl;
+            
+            try{
+                response = SMOP(message);
+            }
+            catch(const char * m){
+                cout << "Cant send the message due: " << m << endl;
+            }
+            catch(bool finish){
+                endConnexion = finish;
+                continue;
+            }
+            
+            cerr << "Message send: " << response << endl;
+            
+            try{
+                Send(sService, response);
+            }
+            catch(const char * m){
+                cout << "Cant send the message due: " << m << endl;
+            }
+        }
+        
         close(sService);
         //End Client Connexion, return in a wait state (cond wait) 
     }

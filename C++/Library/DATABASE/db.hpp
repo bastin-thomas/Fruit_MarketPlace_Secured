@@ -12,10 +12,15 @@
 #include <mysql/mysql.h>
 #include <vector>
 
-#define IP      "localhost"
+#include "../PROTOCOLE/Protocole.hpp"
+
+#define IP      "192.168.1.19"
 #define USER    "Student"
 #define PASS    "PassStudent1_"
 #define DB_NAME "PourStudent"
+
+
+#define SQLHEADER "SQLERROR_"
 
 
 using namespace std;
@@ -27,6 +32,7 @@ class db
 
         vector<MYSQL_ROW> select(string requete);
         void insert(string requete);
+        void update(string requete);
 
     public:
         db();
@@ -36,6 +42,21 @@ class db
 
         void db::Login(string login, string passwd);
         void db::CreateLogin(string login, string passwd);
+
+        articles db::Consult(int idArticle);
+
+        void db::Achat(int idArticle, int quantitee);
+
+        //void db::Caddie();
+
+        void db::Cancel(int idArticle);
+
+        void db::CancelAll();
+
+        void db::Confirmer();
+
+        //void db::Logout();
+
 };
 
 #endif

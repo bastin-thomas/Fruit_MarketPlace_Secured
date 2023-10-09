@@ -1,0 +1,34 @@
+Client: LOGIN@login#password
+Server: LOGIN@OK
+        LOGIN@KO#Raison
+
+Client: CREATELOGIN@login#password
+Server: CREATELOGIN@OK
+        CREATELOGIN@KO#Raison
+
+
+Client: CONSULT@id_article
+Server: CONSULT@id_article#intitule#stock#prix#imagesrc
+        CONSULT@-1
+
+
+Client: ACHAT@id_article#quantitee
+Server: ACHAT@id_article#quantitee#prix
+        ACHAT@-1
+
+Client: CADDIE@
+Server: CADDIE@id_article#intitule#quantitee#prix~id_article#intitule#quantitee#prix~id_article#intitule#quantitee#prix~id_article#intitule#quantitee#prix
+
+Client: CANCEL@id_article
+Server: CANCEL@OK
+        CANCEL@KO
+
+
+Client: CANCEL_ALL@
+Server:
+
+Client: CONFIRMER@
+Server: CONFIRMER@numfacture
+
+Client: LOGOUT@
+Server:

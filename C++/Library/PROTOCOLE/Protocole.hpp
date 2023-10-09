@@ -15,30 +15,55 @@ using namespace std;
 
 struct Login{
 	string nom;
-
 	string mdp;
 };
 
-////////////////////////////////
-////////// REQUEST /////////////
-////////////////////////////////
+struct articles{
+	int idArticle;
+	string intitule;
+	float prix;
+	int stock;
+	string image;
+};
 
-// PARSING REQUEST //
-// string ParseRequest();
+struct achats{
+	int idArticle;
+	int quantitee;
+	float prix;
+};
+
+struct caddieRows{
+	int idArticle;
+	string intitule;
+	int quantitee;
+	float prix;
+};
+
+
+
+
+
+////////////////////////////////
+/////// Client Request /////////
+////////////////////////////////
 
 // LOGIN //
 void SendLogin(int socket, string nom, string mdp);
 void SendCreateLogin(int socket, string nom, string mdp);
 
-// OPERATION //
-string SendOperation(string sendOpe);
-
-// LOGOUT //
-string SendLogout(string sendOut);
 
 
+///////////////////////////////
+/////// Server Response ///////
+///////////////////////////////
+void ResponseLogin(int socket, string protocolCommand);
+void ResponseCreateLogin(int socket, string protocolCommand);
 
 
+
+
+// Protocol Server Main Logic //
+void SMOP();
 
 ////////////////////////////////
 ////////// UTILS ///////////////

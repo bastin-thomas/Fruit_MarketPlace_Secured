@@ -1,6 +1,6 @@
 #include "db.hpp"
 
-#define SQLHEADER "SQLERROR_"
+
 
 db::db(string ip, string user, string password, string database)
 {
@@ -13,7 +13,7 @@ db::~db()
     mysql_close(connexion);
 }
 
-
+//Do DataBase Login Job
 void db::Login(string login, string passwd){
     vector<MYSQL_ROW> result;
     stringstream request;
@@ -40,7 +40,7 @@ void db::Login(string login, string passwd){
     }
 }
 
-
+//Do DataBase CreateLogin Job
 void db::CreateLogin(string login, string passwd){
     vector<MYSQL_ROW> result;
     
@@ -63,9 +63,8 @@ void db::CreateLogin(string login, string passwd){
 
     try{
         stringstream request;
-        "insert into articles values (NULL,'%s',%f,%d,'%s');"
         request << "INSERT INTO accounts VALUES (" << login << "," << passwd << ");";
-        this->insert();
+        this->insert(request);
     }
     catch(const char *){
         stringstream newm;
@@ -73,6 +72,95 @@ void db::CreateLogin(string login, string passwd){
         throw newm.str().c_str();
     }
 }
+
+//Do DataBase Consult Job
+articles db::Consult(int idArticle){
+    vector<MYSQL_ROW> result;
+    articles article;
+    stringstream request;
+    request << "SELECT intitule, prix, stock, image FROM articles WHERE id=" << idArticle << ";";
+
+    try{
+        result = this->select(request.str());
+    }
+    catch(const char * m){
+        stringstream newm;
+        newm << SQLHEADER << m;
+        throw newm.str().c_str();
+    }
+
+    if(result.size() == 0){
+        throw "NO_ARTICLE";
+    }
+
+    //from parameters
+    article.idArticle = idArticle;
+
+    //from db
+    article.intitule = result[0][0];
+    article.prix = result[0][1];
+    article.stock = result[0][2];
+    article.image = result[0][3];
+
+    //return result
+    return article;
+}
+
+//Do DataBase Achat Job
+achats db::Achat(int idArticle, int quantitee){
+    stringstream request;
+    int newstock;
+    articles article = this->Consult(idArticle);
+    
+    if((newstock = (article.stock - quantitee)) < 0){
+        throw "STOCK_TOO_LOW";
+    }
+ 
+    request << "UPDATE SET stock = "<< newstock <<" WHERE id =" << idArticle << ";";
+
+    try{
+        this->update(request);
+    }
+    catch(const char * m){
+        stringstream newm;
+        newm << SQLHEADER << m;
+        throw newm.str().c_str();
+    }
+}
+
+//Do DataBase Cancel Job
+vector<caddieRows> db::Cancel(int idArticle, vector<caddieRows> caddie){
+    
+}
+
+//Do DataBase CancelAll Job
+vector<caddieRows> db::CancelAll(vector<caddieRows> caddie){
+
+}
+
+//Do DataBase Confirmer Job
+int db::Confirmer(string idClient, vector<caddieRows> caddie){
+    vector<MYSQL_ROW> result;
+    int montant = 0;
+    
+    for(caddieRows row : caddie){
+        montant+=row.prix*row.quantitee;
+    }
+
+    try{
+        stringstream request;
+        request << "INSERT INTO factures (idClient, montant) VALUES (" << idClient << "," << montant << ") RETURNING id;";
+        result = this->select(request);
+    }
+    catch(const char *){
+        stringstream newm;
+        newm << SQLHEADER << m;
+        throw newm.str().c_str();
+    }
+
+    return stoi(result[0][0]);
+}
+
 
 
 /*************************************\
@@ -124,6 +212,10 @@ void db::insert(string requete){
         message += mysql_error(connexion);
         throw  message.c_str();
     }
+}
+
+void db::update(string requete){
+    this->insert(requete);
 }
 
 //Delete

@@ -40,23 +40,18 @@ class db
         ~db();
 
 
-        void db::Login(string login, string passwd);
-        void db::CreateLogin(string login, string passwd);
+        void Login(string login, string passwd);
+        void CreateLogin(string login, string passwd);
 
-        articles db::Consult(int idArticle);
+        articles Consult(int idArticle);
 
-        void db::Achat(int idArticle, int quantitee);
+        achats Achat(int idArticle, int quantitee);
 
-        //void db::Caddie();
+        vector<caddieRows> Cancel(int idArticle, vector<caddieRows> caddie);
 
-        void db::Cancel(int idArticle);
+        vector<caddieRows> CancelAll(vector<caddieRows> caddie);
 
-        void db::CancelAll();
-
-        void db::Confirmer();
-
-        //void db::Logout();
-
+        int Confirmer(string idClient, vector<caddieRows> caddie);
 };
 
 #endif

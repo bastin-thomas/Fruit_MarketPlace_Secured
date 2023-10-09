@@ -63,8 +63,10 @@ void SendCreateLogin(int socket, string nom, string mdp){
 ///////////////////////////////
 
 // Protocol Server Main Logic //
-void SMOP(){
+string SMOP(string message){
 
+    //TODO: PARSE DATA
+    return message;
 }
 
 void ResponseLogin(int socket, string protocolCommand){

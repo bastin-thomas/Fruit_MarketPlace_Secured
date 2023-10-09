@@ -40,13 +40,10 @@ WindowClient::WindowClient(QWidget *parent) : QMainWindow(parent), ui(new Ui::Wi
     //Init Global Properties:
     this->readCursor = 0;
     this->writeCursor = 0;
-
-    char* tmp;
-    strcpy(tmp, properties.ip.c_str());
-
+    
     //Init TCP Connexion
     try{
-      this->Socket = ClientSocket(tmp, properties.port);
+      this->Socket = ClientSocket(properties.ip, properties.port);
     }
     catch(const char* message){
       cout << "ClientSocket: " << message << endl;

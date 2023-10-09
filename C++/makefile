@@ -38,12 +38,12 @@ $(bin)moc_windowclient.o:	$(ClientQt)moc_windowclient.cpp  $(ClientQt)windowclie
 							g++ $(QtLibParam) $(ClientQt)moc_windowclient.cpp -c -o $(bin)moc_windowclient.o -std=gnu++2a -lpthread 
 
 
-Client$(Extension): $(bin)mainclient.o $(bin)windowclient.o $(LibThread)mylibthread_POSIX.h $(bin)moc_windowclient.o $(LibProperties)Properties.hpp  $(LibTCP)TCP.hpp $(*.o)
+Client$(Extension): $(bin)mainclient.o $(bin)windowclient.o $(bin)Protocole.o $(bin)Properties.o $(LibThread)mylibthread_POSIX.h $(bin)moc_windowclient.o $(LibProperties)Properties.hpp  $(LibTCP)TCP.hpp $(*.o)
 					echo Client$(Extension)
 					@mkdir -p $(bin)
 					g++ $(QtClientParam) $(*.o) $(bin)mainclient.o $(bin)windowclient.o $(bin)moc_windowclient.o -o Client$(Extension) -std=gnu++2a -lpthread 
 
-Serveur$(Extension): ./Serveur.cpp $(LibTCP)TCP.hpp $(bin)db.o $(LibDB)db.hpp $(LibProperties)Properties.hpp $(*.o) $(LibThread)mylibthread_POSIX.h
+Serveur$(Extension): ./Serveur.cpp $(LibTCP)TCP.hpp $(bin)db.o $(LibDB)db.hpp $(bin)Properties.o $(bin)Protocole.o $(LibProperties)Properties.hpp $(LibProtocole)Protocole.hpp $(*.o) $(LibThread)mylibthread_POSIX.h
 				echo Serveur.app
 				@mkdir -p $(bin)
 				g++ ./Serveur.cpp $(MySQLParam) $(bin)db.o $(*.o) -o Serveur$(Extension) -std=gnu++2a -lpthread
@@ -77,9 +77,12 @@ $(bin)Protocole.o:		$(LibProtocole)Protocole.cpp  $(LibProtocole)Protocole.hpp
 
 
 
+
+
+rm.o = $(bin)TCP.o $(bin)Properties.o $(bin)mylibthreadPOSIX.o $(bin)Protocole.o $(bin)db.o $(bin)moc_windowclient.o $(bin)windowclient.o $(bin)mainclient.o
+
 #Clean/Clear des .o et de l'application
 clean:	
-		rm -f $(.o)
 		rm -f $(rm.o)
 		rm -f Serveur$(Extension)
 		rm -f Client$(Extension)

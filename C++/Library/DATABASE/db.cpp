@@ -64,9 +64,9 @@ void db::CreateLogin(string login, string passwd){
     try{
         stringstream request;
         request << "INSERT INTO accounts VALUES (" << login << "," << passwd << ");";
-        this->insert(request);
+        this->insert(request.str());
     }
-    catch(const char *){
+    catch(const char * m){
         stringstream newm;
         newm << SQLHEADER << m;
         throw newm.str().c_str();
@@ -98,8 +98,8 @@ articles db::Consult(int idArticle){
 
     //from db
     article.intitule = result[0][0];
-    article.prix = result[0][1];
-    article.stock = result[0][2];
+    article.prix = stof(result[0][1]);
+    article.stock = stoi(result[0][2]);
     article.image = result[0][3];
 
     //return result
@@ -108,34 +108,88 @@ articles db::Consult(int idArticle){
 
 //Do DataBase Achat Job
 achats db::Achat(int idArticle, int quantitee){
-    stringstream request;
     int newstock;
-    articles article = this->Consult(idArticle);
-    
-    if((newstock = (article.stock - quantitee)) < 0){
-        throw "STOCK_TOO_LOW";
-    }
- 
-    request << "UPDATE SET stock = "<< newstock <<" WHERE id =" << idArticle << ";";
+    stringstream request;
+    achats achat;
 
+    articles article;
     try{
-        this->update(request);
+        article = this->Consult(idArticle);
     }
     catch(const char * m){
-        stringstream newm;
-        newm << SQLHEADER << m;
-        throw newm.str().c_str();
+        //If doesnot exist: return -1
+        cerr << m << endl;
+        achat.idArticle = idArticle;
+        achat.prix = article.prix;
+        achat.quantitee = -1;
+
+        return achat;
     }
+    
+    
+    if((newstock = (article.stock - quantitee)) < 0){
+        //If no stock return 0;
+        achat.quantitee = 0;
+    }
+    else{
+        try{
+            //If stock and exist, remove stock from db and return achat; (be added to the caddie)
+            request << "UPDATE SET stock = "<< newstock <<" WHERE id =" << idArticle << ";";
+            this->update(request.str());
+        }
+        catch(const char * m){
+            stringstream newm;
+            newm << SQLHEADER << m;
+            throw newm.str().c_str();
+        }
+    }
+    
+    achat.idArticle = idArticle;
+    achat.prix = article.prix;
+    achat.quantitee = quantitee;
+
+    return achat;
 }
 
 //Do DataBase Cancel Job
 vector<caddieRows> db::Cancel(int idArticle, vector<caddieRows> caddie){
+    int newstock;
+    stringstream request;
+    caddieRows deletedrow;
+
+    articles article = this->Consult(idArticle);
     
+    for(int i = 0; i<caddie.size(); i++){
+        if(caddie[i].idArticle == idArticle){
+            //Remove cadie from the vector
+            deletedrow = caddie[i];
+            caddie.erase(caddie.begin() + i);
+            break;
+        }
+    }
+
+    newstock = article.stock + deletedrow.quantitee;
+
+    try{
+        request << "UPDATE SET stock = "<< newstock <<" WHERE id =" << idArticle << ";";
+        this->update(request.str());
+    }
+    catch(const char * m){
+        cerr << m << endl;
+        throw "CANT_CANCEL";
+    }
+
+    return caddie;
 }
 
 //Do DataBase CancelAll Job
 vector<caddieRows> db::CancelAll(vector<caddieRows> caddie){
 
+    for(caddieRows row : caddie){
+        this->Cancel(row.idArticle, caddie);
+    }
+
+    return caddie;
 }
 
 //Do DataBase Confirmer Job
@@ -150,9 +204,9 @@ int db::Confirmer(string idClient, vector<caddieRows> caddie){
     try{
         stringstream request;
         request << "INSERT INTO factures (idClient, montant) VALUES (" << idClient << "," << montant << ") RETURNING id;";
-        result = this->select(request);
+        result = this->select(request.str());
     }
-    catch(const char *){
+    catch(const char * m){
         stringstream newm;
         newm << SQLHEADER << m;
         throw newm.str().c_str();

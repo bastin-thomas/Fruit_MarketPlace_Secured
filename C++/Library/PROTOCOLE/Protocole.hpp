@@ -58,7 +58,7 @@ void SendCreateLogin(int socket, string nom, string mdp);
 ///////////////////////////////
 
 // Protocol Server Main Logic //
-void SMOP();
+string SMOP(string message);
 
 
 void ResponseLogin(int socket, string protocolCommand);

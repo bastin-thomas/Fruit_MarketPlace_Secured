@@ -4,6 +4,8 @@
         "functional": "cpp",
         "istream": "cpp",
         "ostream": "cpp",
-        "utility": "cpp"
-    }
+        "utility": "cpp",
+        "cmath": "cpp"
+    },
+    "C_Cpp.errorSquiggles": "Disabled"
 }

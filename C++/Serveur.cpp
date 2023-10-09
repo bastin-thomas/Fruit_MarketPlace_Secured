@@ -3,7 +3,6 @@
 #include "./Library/TCP/TCP.hpp"
 #include "./Library/THREAD/mylibthread_POSIX.h"
 
-
 //Utility Functions
 void initSig(void);
 void SIG_INT(int sig_num);

@@ -5,6 +5,8 @@
 #include "./Library/THREAD/mylibthread_POSIX.h"
 
 //Utility Functions
+void test(void);
+
 void initSig(void);
 void SIG_INT(int sig_num);
 
@@ -43,7 +45,9 @@ int main(){
     // Redirect cerr to file
     cerr.rdbuf(mylog.rdbuf());
 
+    test();
 
+    
     //Do some initialization thing
     initSig();
     initMut();   
@@ -83,6 +87,8 @@ int main(){
 
     cout << "ListenThread has crashed" << endl;
     return 50;
+    
+   return 0;
 }
 
 
@@ -222,6 +228,32 @@ void showQueue(void){
     cerr << " -- ReadCurs: " << ReadCurs << endl;
 }
 
+
+void test(void){
+    vector<caddieRows> caddie;
+    try{
+        db DataBase = db();
+        achats achat;
+
+        cout << DataBase.Login("Thomas", "123") << endl;
+
+
+        cout << DataBase.CreateLogin("tho", "th") << endl;
+
+        articles article =  DataBase.Consult(1);
+        cout << "ARTICLE: " << article.idArticle << ", " << article.image << ", " << article.intitule << ", " << article.prix << ", " << article.stock << endl;
+
+        achat =  DataBase.Achat(1,1);
+
+        caddie = DataBase.Cancel(1, caddie);
+        
+        DataBase.Achat(1,1);
+
+    }
+    catch(const char * m){
+        cout << m <<endl;
+    }
+}
 
 
 

@@ -1,11 +1,16 @@
 #include "db.hpp"
 
 
+db::db()
+{
+    connexion = mysql_init(NULL);
+    mysql_real_connect(connexion, IP, USER, PASS, DB_NAME, 0, 0, 0);
+}
 
 db::db(string ip, string user, string password, string database)
 {
     connexion = mysql_init(NULL);
-    mysql_real_connect(connexion, IP, USER, PASS, DB_NAME, 0, 0, 0);
+    mysql_real_connect(connexion, ip.c_str(), user.c_str(), password.c_str(), database.c_str(), 0, 0, 0);
 }
 
 db::~db()
@@ -14,10 +19,10 @@ db::~db()
 }
 
 //Do DataBase Login Job
-void db::Login(string login, string passwd){
-    vector<MYSQL_ROW> result;
+bool db::Login(string login, string passwd){
+    vector<vector<string>> result;
     stringstream request;
-    request << "SELECT password FROM accounts WHERE login=" << login << ";";
+    request << "SELECT password FROM accounts WHERE login=\"" << login << "\";";
 
     try{
         result = this->select(request.str());
@@ -38,15 +43,17 @@ void db::Login(string login, string passwd){
     if(dbpasswd != passwd){
         throw "BAD_LOGIN";
     }
+
+    return true;
 }
 
 //Do DataBase CreateLogin Job
-void db::CreateLogin(string login, string passwd){
-    vector<MYSQL_ROW> result;
+bool db::CreateLogin(string login, string passwd){
+    vector<vector<string>> result;
     
     try{
         stringstream request;
-        request << "SELECT password FROM accounts WHERE login=" << login << ";";
+        request << "SELECT password FROM accounts WHERE login=\"" << login << "\";";
 
         result = this->select(request.str());
     }
@@ -63,7 +70,7 @@ void db::CreateLogin(string login, string passwd){
 
     try{
         stringstream request;
-        request << "INSERT INTO accounts VALUES (" << login << "," << passwd << ");";
+        request << "INSERT INTO accounts VALUES (\"" << login << "\",\"" << passwd << "\");";
         this->insert(request.str());
     }
     catch(const char * m){
@@ -71,14 +78,16 @@ void db::CreateLogin(string login, string passwd){
         newm << SQLHEADER << m;
         throw newm.str().c_str();
     }
+
+    return true;
 }
 
 //Do DataBase Consult Job
 articles db::Consult(int idArticle){
-    vector<MYSQL_ROW> result;
+    vector<vector<string>> result;
     articles article;
     stringstream request;
-    request << "SELECT intitule, prix, stock, image FROM articles WHERE id=" << idArticle << ";";
+    request << "SELECT intitule, prix, stock, image FROM articles WHERE id=\"" << idArticle << "\";";
 
     try{
         result = this->select(request.str());
@@ -134,7 +143,7 @@ achats db::Achat(int idArticle, int quantitee){
     else{
         try{
             //If stock and exist, remove stock from db and return achat; (be added to the caddie)
-            request << "UPDATE SET stock = "<< newstock <<" WHERE id =" << idArticle << ";";
+            request << "UPDATE SET stock = \""<< newstock <<"\" WHERE id =\"" << idArticle << "\";";
             this->update(request.str());
         }
         catch(const char * m){
@@ -171,7 +180,7 @@ vector<caddieRows> db::Cancel(int idArticle, vector<caddieRows> caddie){
     newstock = article.stock + deletedrow.quantitee;
 
     try{
-        request << "UPDATE SET stock = "<< newstock <<" WHERE id =" << idArticle << ";";
+        request << "UPDATE SET stock = \""<< newstock <<"\" WHERE id =\"" << idArticle << "\";";
         this->update(request.str());
     }
     catch(const char * m){
@@ -194,7 +203,7 @@ vector<caddieRows> db::CancelAll(vector<caddieRows> caddie){
 
 //Do DataBase Confirmer Job
 int db::Confirmer(string idClient, vector<caddieRows> caddie){
-    vector<MYSQL_ROW> result;
+    vector<vector<string>> result;
     int montant = 0;
     
     for(caddieRows row : caddie){
@@ -203,7 +212,7 @@ int db::Confirmer(string idClient, vector<caddieRows> caddie){
 
     try{
         stringstream request;
-        request << "INSERT INTO factures (idClient, montant) VALUES (" << idClient << "," << montant << ") RETURNING id;";
+        request << "INSERT INTO factures (idClient, montant) VALUES (\"" << idClient << "\",\"" << montant << "\") RETURNING id;";
         result = this->select(request.str());
     }
     catch(const char * m){
@@ -223,11 +232,11 @@ int db::Confirmer(string idClient, vector<caddieRows> caddie){
 *                                     *
 * return a vector of sql row or null  *
 \*************************************/
-vector<MYSQL_ROW> db::select(string requete){
+vector<vector<string>> db::select(string requete){
     MYSQL_RES* result;
     MYSQL_ROW row;
-
-    vector<MYSQL_ROW> rows;
+    
+    vector<vector<string>> rows;
 
     //Select query execution
     if(mysql_query(connexion, requete.c_str()) != 0){
@@ -244,9 +253,21 @@ vector<MYSQL_ROW> db::select(string requete){
     }
 
     //Put result in a vector of row
-    int i = 0;
+    unsigned int num_fields;
+    unsigned int i;
+
+    num_fields = mysql_num_fields(result);
+
     while((row = mysql_fetch_row(result)) != NULL){
-        rows.push_back(row);
+        vector<string> newrow;
+        unsigned long *lengths;
+
+        lengths = mysql_fetch_lengths(result);
+        for(int i =0 ; i<num_fields ; i++){
+            newrow.push_back(row[i]);
+        }
+        
+        rows.push_back(newrow);
         i++;
     }
 

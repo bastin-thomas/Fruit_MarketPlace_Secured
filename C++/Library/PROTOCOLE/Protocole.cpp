@@ -74,33 +74,35 @@ string SMOP(string message, vector<caddieRows>* Caddie){
 
     vector<string> CommandParam = mystrtok(CommandElems[1], '#');
 
-    switch(CommandElems[0]){
-        case "LOGIN":
-            return ResponseLogin(CommandParam, Caddie); 
-        
-        case "CREATELOGIN":
-            return ResponseCreateLogin(CommandParam, Caddie);
-        
-        case "CONSULT":
-            return ResponseConsult(CommandParam, Caddie);
-        
-        case "ACHAT":
-            return ResponseAchat(CommandParam, Caddie);
-        
-        case "CADDIE":
-            return ResponseCaddie(CommandParam, Caddie);
-        
-        case "CANCEL":
-            return ResponseCancel(CommandParam, Caddie);
-        
-        case "CANCELALL":
-            return ResponseCancelAll(CommandParam, Caddie);
-        
-        case "CONFIRMER":
-            return ResponseConfirmer(CommandParam, Caddie);
-
-        case "LOGOUT":
-            return ResponseLogout(CommandParam, Caddie);
+    if(CommandElems[0] == "LOGIN"){
+        return ResponseLogin(CommandParam, Caddie);
+    }
+    else if(CommandElems[0] == "CREATELOGIN"){
+        return ResponseCreateLogin(CommandParam, Caddie);
+    }
+    else if(CommandElems[0] == "CONSULT"){
+        return ResponseConsult(CommandParam, Caddie);
+    }
+    else if(CommandElems[0] == "ACHAT"){
+        return ResponseAchat(CommandParam, Caddie);
+    }
+    else if(CommandElems[0] == "CADDIE"){
+        return ResponseCaddie(CommandParam, Caddie);
+    }
+    else if(CommandElems[0] == "CANCEL"){
+        return ResponseCancel(CommandParam, Caddie);
+    }
+    else if(CommandElems[0] == "CANCELALL"){
+        return ResponseCancelAll(CommandParam, Caddie);
+    }
+    else if(CommandElems[0] == "CONFIRMER"){
+        return ResponseConfirmer(CommandParam, Caddie);
+    }
+    else if(CommandElems[0] == "LOGOUT"){
+        return ResponseLogout(CommandParam, Caddie);
+    }
+    else{
+        return "CRITICAL";
     }
 }
 
@@ -109,6 +111,10 @@ string SMOP(string message, vector<caddieRows>* Caddie){
 /// @return the server response to be send
 string ResponseLogin(vector<string> protocolCommand, vector<caddieRows>* Caddie)
 {
+    Login user;
+    user.nom = protocolCommand[0];
+    user.mdp = protocolCommand[1];
+
     
 }
 

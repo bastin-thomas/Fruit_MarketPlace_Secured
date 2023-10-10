@@ -61,15 +61,15 @@ void SendCreateLogin(int socket, string nom, string mdp);
 string SMOP(string message, vector<caddieRows>* Caddie);
 
 
-string ResponseLogin(string protocolCommand, vector<caddieRows>* Caddie);
-string ResponseCreateLogin(string protocolCommand, vector<caddieRows>* Caddie);
-string ResponseConsult(string protocolCommand, vector<caddieRows>* Caddie);
-string ResponseAchat(string protocolCommand, vector<caddieRows>* Caddie);
-string ResponseCaddie(string protocolCommand, vector<caddieRows>* Caddie);
-string ResponseCancel(string protocolCommand, vector<caddieRows>* Caddie);
-string ResponseCancelAll(string protocolCommand, vector<caddieRows>* Caddie);
-string ResponseConfirmer(string protocolCommand, vector<caddieRows>* Caddie);
-string ResponseLogout(string protocolCommand, vector<caddieRows>* Caddie);
+string ResponseLogin(vector<string> protocolCommand, vector<caddieRows>* Caddie);
+string ResponseCreateLogin(vector<string> protocolCommand, vector<caddieRows>* Caddie);
+string ResponseConsult(vector<string> protocolCommand, vector<caddieRows>* Caddie);
+string ResponseAchat(vector<string> protocolCommand, vector<caddieRows>* Caddie);
+string ResponseCaddie(vector<string> protocolCommand, vector<caddieRows>* Caddie);
+string ResponseCancel(vector<string> protocolCommand, vector<caddieRows>* Caddie);
+string ResponseCancelAll(vector<string> protocolCommand, vector<caddieRows>* Caddie);
+string ResponseConfirmer(vector<string> protocolCommand, vector<caddieRows>* Caddie);
+string ResponseLogout(vector<string> protocolCommand, vector<caddieRows>* Caddie);
 
 
 

@@ -85,6 +85,10 @@ ServerProperties getServerProperties(){
         write.open(path);
         write << "ServerPort=50001" << endl;
         write << "ServerMaxClient=5" << endl;
+        write << "DB_IP=192.168.1.19" << endl;
+        write << "DB_USER=Student" << endl;
+        write << "DB_PASS=PassStudent1_" << endl;
+        write << "DB_NAME=PourStudent" << endl;
         write.close();
 
         read.open(path);
@@ -105,6 +109,26 @@ ServerProperties getServerProperties(){
 
         if(hashmap[0].compare("ServerPort") == 0){
             prop.port = stoi(hashmap[1]);
+            continue;
+        }
+
+        if(hashmap[0].compare("DB_IP") == 0){
+            prop.db_ip = hashmap[1];
+            continue;
+        }
+
+        if(hashmap[0].compare("DB_USER") == 0){
+            prop.db_name = hashmap[1];
+            continue;
+        }
+
+        if(hashmap[0].compare("DB_PASS") == 0){
+            prop.db_pass = hashmap[1];
+            continue;
+        }
+
+        if(hashmap[0].compare("DB_NAME") == 0){
+            prop.db_name = hashmap[1];
             continue;
         }
     }

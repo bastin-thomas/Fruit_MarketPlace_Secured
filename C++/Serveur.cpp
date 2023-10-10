@@ -5,14 +5,10 @@
 #include "./Library/THREAD/mylibthread_POSIX.h"
 
 //Utility Functions
-void test(void);
-
 void initSig(void);
 void SIG_INT(int sig_num);
-
 void initMut(void);
 void initCond(void);
-
 void initServices(void);
 
 void showQueue(void);
@@ -30,6 +26,8 @@ int ReadCurs = 0;
 fstream mylog;
 
 
+db* DataBase;
+
 //Mutex and VarCond
 pthread_mutex_t mutexDB;
 pthread_mutex_t mutexService;
@@ -45,8 +43,7 @@ int main(){
     // Redirect cerr to file
     cerr.rdbuf(mylog.rdbuf());
 
-    test();
-
+    DataBase = new db(prop.db_ip, prop.db_name, prop.db_pass, prop.db_name);
     
     //Do some initialization thing
     initSig();
@@ -101,6 +98,8 @@ void ServiceThread(void){
     int sService = 0;
 
     while(true){
+        vector<caddieRows> Caddie;
+
         //Wait a condsignal from listen thread
         mLock(&mutexService);
         while( ReadCurs >= WriteCurs ){
@@ -124,7 +123,7 @@ void ServiceThread(void){
             cerr << "Message received: " << message << endl;
             
             try{
-                response = SMOP(message);
+                response = SMOP(message, &Caddie);
             }
             catch(const char * m){
                 cout << "Cant send the message due: " << m << endl;
@@ -227,36 +226,6 @@ void showQueue(void){
     cerr << "WriteCurs: " << WriteCurs;
     cerr << " -- ReadCurs: " << ReadCurs << endl;
 }
-
-
-void test(void){
-    vector<caddieRows> caddie;
-    try{
-        db DataBase = db();
-        achats achat;
-
-        cout << DataBase.Login("Thomas", "123") << endl;
-
-
-        cout << DataBase.CreateLogin("tho", "th") << endl;
-
-        articles article =  DataBase.Consult(1);
-        cout << "ARTICLE: " << article.idArticle << ", " << article.image << ", " << article.intitule << ", " << article.prix << ", " << article.stock << endl;
-
-        achat =  DataBase.Achat(1,1);
-
-        caddie = DataBase.Cancel(1, caddie);
-        
-        DataBase.Achat(1,1);
-
-    }
-    catch(const char * m){
-        cout << m <<endl;
-    }
-}
-
-
-
 
 
 /********************************************\

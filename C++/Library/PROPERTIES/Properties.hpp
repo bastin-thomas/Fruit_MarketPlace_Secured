@@ -26,6 +26,10 @@ struct ClientProperties {
 struct ServerProperties {
 	int port;
 	int nbrMaxClients;
+	string db_ip;
+	string db_user;
+	string db_pass;
+	string db_name;
 };
 
 ClientProperties getClientProperties();

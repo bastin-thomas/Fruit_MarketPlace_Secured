@@ -62,20 +62,127 @@ void SendCreateLogin(int socket, string nom, string mdp){
 /////// Server Response ///////
 ///////////////////////////////
 
-// Protocol Server Main Logic //
-string SMOP(string message){
+/// @brief Main logic of the protocol server
+/// @param message message send by client
+/// @param Caddie the current cadie of the thread
+/// @return the server response to be send
+string SMOP(string message, vector<caddieRows>* Caddie){
+    vector<string> CommandElems;
+    
+    //split string in two parts, one with command, other with parameters
+    CommandElems = mystrtok(message, '@');
 
-    //TODO: PARSE DATA
-    return message;
+    vector<string> CommandParam = mystrtok(CommandElems[1], '#');
+
+    switch(CommandElems[0]){
+        case "LOGIN":
+            return ResponseLogin(CommandParam, Caddie); 
+        
+        case "CREATELOGIN":
+            return ResponseCreateLogin(CommandParam, Caddie);
+        
+        case "CONSULT":
+            return ResponseConsult(CommandParam, Caddie);
+        
+        case "ACHAT":
+            return ResponseAchat(CommandParam, Caddie);
+        
+        case "CADDIE":
+            return ResponseCaddie(CommandParam, Caddie);
+        
+        case "CANCEL":
+            return ResponseCancel(CommandParam, Caddie);
+        
+        case "CANCELALL":
+            return ResponseCancelAll(CommandParam, Caddie);
+        
+        case "CONFIRMER":
+            return ResponseConfirmer(CommandParam, Caddie);
+
+        case "LOGOUT":
+            return ResponseLogout(CommandParam, Caddie);
+    }
 }
 
-void ResponseLogin(int socket, string protocolCommand){
-
+/// @brief Server Logic on LOGIN request
+/// @param protocolCommand parameters from the string command
+/// @return the server response to be send
+string ResponseLogin(vector<string> protocolCommand, vector<caddieRows>* Caddie)
+{
+    
 }
 
-void ResponseCreateLogin(int socket, string protocolCommand){
-
+/// @brief Server Logic on CREATELOGIN request
+/// @param protocolCommand parameters from the string command
+/// @return the server response to be send
+string ResponseCreateLogin(vector<string> protocolCommand, vector<caddieRows>* Caddie)
+{
+    return string();
 }
+
+/// @brief Server Logic on CONSULT request
+/// @param protocolCommand parameters from the string command
+/// @return the server response to be send
+string ResponseConsult(vector<string> protocolCommand, vector<caddieRows>* Caddie)
+{
+    return string();
+}
+
+/// @brief Server Logic on ACHAT request
+/// @param protocolCommand parameters from the string command
+/// @return the server response to be send
+string ResponseAchat(vector<string> protocolCommand, vector<caddieRows>* Caddie)
+{
+    return string();
+}
+
+/// @brief Server Logic on CADDIE request
+/// @param protocolCommand parameters from the string command
+/// @return the server response to be send
+string ResponseCaddie(vector<string> protocolCommand, vector<caddieRows>* Caddie)
+{
+    return string();
+}
+
+/// @brief Server Logic on CANCEL request
+/// @param protocolCommand parameters from the string command
+/// @return the server response to be send
+string ResponseCancel(vector<string> protocolCommand, vector<caddieRows>* Caddie)
+{
+    return string();
+}
+
+/// @brief Server Logic on CANCELALL request
+/// @param protocolCommand parameters from the string command
+/// @return the server response to be send
+string ResponseCancelAll(vector<string> protocolCommand, vector<caddieRows>* Caddie)
+{
+    return string();
+}
+
+/// @brief Server Logic on CONFIRMER request
+/// @param protocolCommand parameters from the string command
+/// @return the server response to be send
+string ResponseConfirmer(vector<string> protocolCommand, vector<caddieRows>* Caddie)
+{
+    return string();
+}
+
+/// @brief Server Logic on LOGOUT request
+/// @param protocolCommand parameters from the string command
+/// @return the server response to be send
+string ResponseLogout(vector<string> protocolCommand, vector<caddieRows>* Caddie)
+{
+    return string();
+}
+
+
+
+
+
+
+
+
 
 
 

@@ -24,7 +24,7 @@ Server: CANCEL@OK
         CANCEL@KO
 
 
-Client: CANCEL_ALL@
+Client: CANCELALL@
 Server:
 
 Client: CONFIRMER@

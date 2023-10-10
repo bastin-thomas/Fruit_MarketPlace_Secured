@@ -40,20 +40,20 @@ class db
         ~db();
 
 
-        void db::Login(string login, string passwd);
-        void db::CreateLogin(string login, string passwd);
+        void Login(string login, string passwd);
+        void CreateLogin(string login, string passwd);
 
-        articles db::Consult(int idArticle);
+        articles Consult(int idArticle);
 
-        void db::Achat(int idArticle, int quantitee);
+        void Achat(int idArticle, int quantitee);
 
         //void db::Caddie();
 
-        void db::Cancel(int idArticle);
+        void Cancel(int idArticle);
 
-        void db::CancelAll();
+        void CancelAll();
 
-        void db::Confirmer();
+        void Confirmer();
 
         //void db::Logout();
 

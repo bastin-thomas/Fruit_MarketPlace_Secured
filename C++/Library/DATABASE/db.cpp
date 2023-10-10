@@ -139,7 +139,7 @@ vector<caddieRows> db::CancelAll(vector<caddieRows> caddie){
 }
 
 //Do DataBase Confirmer Job
-int db::Confirmer(string idClient, vector<caddieRows> caddie){
+void db::Confirmer(string idClient, vector<caddieRows> caddie){
     vector<MYSQL_ROW> result;
     int montant = 0;
     

@@ -51,6 +51,24 @@ struct caddieRows{
 void SendLogin(int socket, string nom, string mdp);
 void SendCreateLogin(int socket, string nom, string mdp);
 
+// CONSULT //
+articles SendConsult(int socket, int idArticle);
+
+// ACHAT //
+achats SendAchat(int socket, int idArticle, int quantitee);
+
+// CADDIE //
+void SendCaddie(int socket);
+
+// CANCEL //
+void SendCancel(int socket, int idArticle);
+void SendCancelAll(int socket);
+
+// CONFIRMER //
+int SendConfirmer(int socket);
+
+// LOGOUT //
+void SendLogout(int socket);
 
 
 ///////////////////////////////

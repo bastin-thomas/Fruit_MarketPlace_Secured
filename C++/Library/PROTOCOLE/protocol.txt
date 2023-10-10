@@ -24,11 +24,13 @@ Server: CANCEL@OK
         CANCEL@KO
 
 
-Client: CANCEL_ALL@
-Server:
+Client: CANCELALL@
+Server: CANCELALL@OK
+        CANCELALL@KO
 
 Client: CONFIRMER@
 Server: CONFIRMER@numfacture
+        CONFIRMER@-1
 
 Client: LOGOUT@
 Server:

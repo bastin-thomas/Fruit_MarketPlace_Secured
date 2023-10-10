@@ -18,7 +18,7 @@ MySQLParam = -I/usr/include/mysql -m64 -L/usr/lib64/mysql -lmysqlclient -lpthrea
 Extension = .app
 
 
-*.o = $(bin)TCP.o $(bin)Properties.o $(bin)mylibthreadPOSIX.o $(bin)Protocole.o
+*.o = $(bin)TCP.o $(bin)Properties.o $(bin)mylibthreadPOSIX.o $(bin)Protocole.o $(bin)db.o
 
 ALL: Client$(Extension) Serveur$(Extension)
 
@@ -27,10 +27,10 @@ $(bin)mainclient.o:	$(ClientQt)mainclient.cpp
 					@mkdir -p $(bin)
 					g++ $(QtLibParam) $(ClientQt)mainclient.cpp -c -o $(bin)mainclient.o -std=gnu++2a -lpthread
 
-$(bin)windowclient.o:	$(ClientQt)windowclient.cpp  $(ClientQt)windowclient.h   $(ClientQt)ui_windowclient.h $(bin)Properties.o
+$(bin)windowclient.o:	$(ClientQt)windowclient.cpp $(bin)Protocole.o $(ClientQt)windowclient.h   $(ClientQt)ui_windowclient.h $(bin)Properties.o
 						echo windowclient.o
 						@mkdir -p $(bin)
-						g++ $(QtLibParam) $(bin)Properties.o $(ClientQt)windowclient.cpp -c -o $(bin)windowclient.o -std=gnu++2a -lpthread 
+						g++ $(QtLibParam) $(bin)Protocole.o $(bin)Properties.o $(ClientQt)windowclient.cpp -c -o $(bin)windowclient.o -std=gnu++2a -lpthread 
 
 $(bin)moc_windowclient.o:	$(ClientQt)moc_windowclient.cpp  $(ClientQt)windowclient.h
 							echo moc_windowclient.o
@@ -38,15 +38,15 @@ $(bin)moc_windowclient.o:	$(ClientQt)moc_windowclient.cpp  $(ClientQt)windowclie
 							g++ $(QtLibParam) $(ClientQt)moc_windowclient.cpp -c -o $(bin)moc_windowclient.o -std=gnu++2a -lpthread 
 
 
-Client$(Extension): $(bin)mainclient.o $(bin)windowclient.o $(bin)Protocole.o $(bin)Properties.o $(LibThread)mylibthread_POSIX.h $(bin)moc_windowclient.o $(LibProperties)Properties.hpp  $(LibTCP)TCP.hpp $(*.o)
+Client$(Extension): $(*.o) $(bin)mainclient.o $(bin)windowclient.o $(bin)moc_windowclient.o 
 					echo Client$(Extension)
 					@mkdir -p $(bin)
-					g++ $(QtClientParam) $(*.o) $(bin)mainclient.o $(bin)windowclient.o $(bin)moc_windowclient.o -o Client$(Extension) -std=gnu++2a -lpthread 
+					g++ $(QtClientParam) $(MySQLParam) $(*.o) $(bin)mainclient.o $(bin)windowclient.o $(bin)moc_windowclient.o -o Client$(Extension) -std=gnu++2a -lpthread 
 
 Serveur$(Extension): ./Serveur.cpp $(LibTCP)TCP.hpp $(bin)db.o $(LibDB)db.hpp $(bin)Properties.o $(bin)Protocole.o $(LibProperties)Properties.hpp $(LibProtocole)Protocole.hpp $(*.o) $(LibThread)mylibthread_POSIX.h
 				echo Serveur.app
 				@mkdir -p $(bin)
-				g++ ./Serveur.cpp $(MySQLParam) $(bin)db.o $(*.o) -o Serveur$(Extension) -std=gnu++2a -lpthread
+				g++ ./Serveur.cpp $(MySQLParam) $(*.o) -o Serveur$(Extension) -std=gnu++2a -lpthread
 
 
 
@@ -60,7 +60,7 @@ $(bin)Properties.o:		$(LibProperties)Properties.cpp  $(LibProperties)Properties.
 						@mkdir -p $(bin)
 						g++ $(LibProperties)Properties.cpp -c -o $(bin)Properties.o -std=gnu++2a -lpthread
 
-$(bin)db.o: $(LibDB)db.cpp $(LibDB)db.hpp
+$(bin)db.o: $(LibDB)db.cpp $(LibDB)db.hpp $(LibProtocole)Structure.hpp
 			echo db.o
 			@mkdir -p $(bin)
 			g++ $(MySQLParam) $(LibDB)db.cpp -c -o $(bin)db.o -std=gnu++2a 
@@ -70,10 +70,10 @@ $(bin)mylibthreadPOSIX.o: $(LibThread)mylibthread_POSIX.cpp $(LibThread)mylibthr
 						 @mkdir -p $(bin)
 						 g++ $(LibThread)mylibthread_POSIX.cpp -c -o $(bin)mylibthreadPOSIX.o -std=gnu++2a
 
-$(bin)Protocole.o:		$(LibProtocole)Protocole.cpp  $(LibProtocole)Protocole.hpp
+$(bin)Protocole.o:		$(LibProtocole)Protocole.cpp  $(LibProtocole)Protocole.hpp $(LibProtocole)Structure.hpp $(bin)db.o $(LibDB)db.hpp
 						echo Protocole.o
 						@mkdir -p $(bin)
-						g++ $(LibProtocole)Protocole.cpp -c -o $(bin)Protocole.o -std=gnu++2a -lpthread
+						g++ $(MySQLParam) $(LibProtocole)Protocole.cpp $(bin)db.o -c -o $(bin)Protocole.o -std=gnu++2a -lpthread
 
 
 

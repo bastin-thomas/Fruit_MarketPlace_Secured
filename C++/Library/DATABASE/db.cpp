@@ -18,7 +18,10 @@ db::~db()
     mysql_close(connexion);
 }
 
-//Do DataBase Login Job
+/// @brief Do DataBase Login Job
+/// @param login user login
+/// @param passwd user password
+/// @return true if good, throw constchar* if error
 bool db::Login(string login, string passwd){
     vector<vector<string>> result;
     stringstream request;
@@ -161,18 +164,18 @@ achats db::Achat(int idArticle, int quantitee){
 }
 
 //Do DataBase Cancel Job
-vector<caddieRows> db::Cancel(int idArticle, vector<caddieRows> caddie){
+void db::Cancel(int idArticle, vector<caddieRows>* caddie){
     int newstock;
     stringstream request;
     caddieRows deletedrow;
 
     articles article = this->Consult(idArticle);
     
-    for(int i = 0; i<caddie.size(); i++){
-        if(caddie[i].idArticle == idArticle){
+    for(int i = 0; i<caddie->size(); i++){
+        if(caddie->at(i).idArticle == idArticle){
             //Remove cadie from the vector
-            deletedrow = caddie[i];
-            caddie.erase(caddie.begin() + i);
+            deletedrow = caddie->at(i);
+            caddie->erase(caddie->begin() + i);
             break;
         }
     }
@@ -187,18 +190,19 @@ vector<caddieRows> db::Cancel(int idArticle, vector<caddieRows> caddie){
         cerr << m << endl;
         throw "CANT_CANCEL";
     }
-
-    return caddie;
 }
 
 //Do DataBase CancelAll Job
-vector<caddieRows> db::CancelAll(vector<caddieRows> caddie){
-
-    for(caddieRows row : caddie){
-        this->Cancel(row.idArticle, caddie);
+void db::CancelAll(vector<caddieRows> * caddie){
+    try{
+        for(caddieRows row : *caddie){
+            this->Cancel(row.idArticle, caddie);
+        }
     }
-
-    return caddie;
+    catch(const char * m){
+        throw m;
+    }
+    
 }
 
 //Do DataBase Confirmer Job

@@ -99,6 +99,7 @@ void ServiceThread(void){
 
     while(true){
         vector<caddieRows> Caddie;
+        string idUser;
 
         //Wait a condsignal from listen thread
         mLock(&mutexService);
@@ -123,7 +124,7 @@ void ServiceThread(void){
             cerr << "Message received: " << message << endl;
             
             try{
-                response = SMOP(message, &Caddie);
+                response = sSMOP(message, &Caddie, DataBase, idUser);
             }
             catch(const char * m){
                 cout << "Cant send the message due: " << m << endl;
@@ -239,7 +240,7 @@ void SIG_INT(int sig_num){
 
     close(sListen);
 
-    for(int i = 0 ; i< prop.nbrMaxClients ; i++){
+    for(int i = 0 ; i < pendingClientQueue.size() ; i++){
         close(pendingClientQueue[i]);
     }
 

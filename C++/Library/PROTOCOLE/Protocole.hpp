@@ -76,11 +76,18 @@ void SendLogout(int socket);
 ///////////////////////////////
 
 // Protocol Server Main Logic //
-void SMOP();
+string SMOP(string message, vector<caddieRows>* Caddie);
 
 
-void ResponseLogin(int socket, string protocolCommand);
-void ResponseCreateLogin(int socket, string protocolCommand);
+string ResponseLogin(vector<string> protocolCommand, vector<caddieRows>* Caddie);
+string ResponseCreateLogin(vector<string> protocolCommand, vector<caddieRows>* Caddie);
+string ResponseConsult(vector<string> protocolCommand, vector<caddieRows>* Caddie);
+string ResponseAchat(vector<string> protocolCommand, vector<caddieRows>* Caddie);
+string ResponseCaddie(vector<string> protocolCommand, vector<caddieRows>* Caddie);
+string ResponseCancel(vector<string> protocolCommand, vector<caddieRows>* Caddie);
+string ResponseCancelAll(vector<string> protocolCommand, vector<caddieRows>* Caddie);
+string ResponseConfirmer(vector<string> protocolCommand, vector<caddieRows>* Caddie);
+string ResponseLogout(vector<string> protocolCommand, vector<caddieRows>* Caddie);
 
 
 

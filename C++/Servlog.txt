@@ -1,2 +1,2 @@
-A Server Socket has been created ( 4 )
-MAIN THREAD(error): Erreur de bind()
+A Server Socket has been created ( 5 )
+bind() reussi !

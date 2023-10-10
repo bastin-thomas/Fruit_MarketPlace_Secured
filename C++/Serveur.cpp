@@ -1,4 +1,5 @@
 #include "./Library/DATABASE/db.hpp"
+#include "./Library/PROTOCOLE/Protocole.hpp"
 #include "./Library/PROPERTIES/Properties.hpp"
 #include "./Library/TCP/TCP.hpp"
 #include "./Library/THREAD/mylibthread_POSIX.h"
@@ -6,10 +7,8 @@
 //Utility Functions
 void initSig(void);
 void SIG_INT(int sig_num);
-
 void initMut(void);
 void initCond(void);
-
 void initServices(void);
 
 void showQueue(void);
@@ -27,6 +26,8 @@ int ReadCurs = 0;
 fstream mylog;
 
 
+db* DataBase;
+
 //Mutex and VarCond
 pthread_mutex_t mutexDB;
 pthread_mutex_t mutexService;
@@ -42,7 +43,8 @@ int main(){
     // Redirect cerr to file
     cerr.rdbuf(mylog.rdbuf());
 
-
+    DataBase = new db(prop.db_ip, prop.db_name, prop.db_pass, prop.db_name);
+    
     //Do some initialization thing
     initSig();
     initMut();   
@@ -82,6 +84,8 @@ int main(){
 
     cout << "ListenThread has crashed" << endl;
     return 50;
+    
+   return 0;
 }
 
 
@@ -94,6 +98,8 @@ void ServiceThread(void){
     int sService = 0;
 
     while(true){
+        vector<caddieRows> Caddie;
+
         //Wait a condsignal from listen thread
         mLock(&mutexService);
         while( ReadCurs >= WriteCurs ){
@@ -117,7 +123,7 @@ void ServiceThread(void){
             cerr << "Message received: " << message << endl;
             
             try{
-                response = SMOP(message);
+                response = SMOP(message, &Caddie);
             }
             catch(const char * m){
                 cout << "Cant send the message due: " << m << endl;
@@ -220,10 +226,6 @@ void showQueue(void){
     cerr << "WriteCurs: " << WriteCurs;
     cerr << " -- ReadCurs: " << ReadCurs << endl;
 }
-
-
-
-
 
 
 /********************************************\

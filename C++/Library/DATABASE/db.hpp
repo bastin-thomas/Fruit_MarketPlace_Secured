@@ -30,7 +30,7 @@ class db
     private:
         MYSQL* connexion;
 
-        vector<MYSQL_ROW> select(string requete);
+        vector<vector<string>> select(string requete);
         void insert(string requete);
         void update(string requete);
 
@@ -40,23 +40,18 @@ class db
         ~db();
 
 
-        void Login(string login, string passwd);
-        void CreateLogin(string login, string passwd);
+        bool Login(string login, string passwd);
+        bool CreateLogin(string login, string passwd);
 
         articles Consult(int idArticle);
 
-        void Achat(int idArticle, int quantitee);
+        achats Achat(int idArticle, int quantitee);
 
-        //void db::Caddie();
+        vector<caddieRows> Cancel(int idArticle, vector<caddieRows> caddie);
 
-        void Cancel(int idArticle);
+        vector<caddieRows> CancelAll(vector<caddieRows> caddie);
 
-        void CancelAll();
-
-        void Confirmer();
-
-        //void db::Logout();
-
+        int Confirmer(string idClient, vector<caddieRows> caddie);
 };
 
 #endif

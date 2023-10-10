@@ -216,18 +216,133 @@ void SendLogout(int socket){
 /////// Server Response ///////
 ///////////////////////////////
 
-// Protocol Server Main Logic //
-void SMOP(){
+/// @brief Main logic of the protocol server
+/// @param message message send by client
+/// @param Caddie the current cadie of the thread
+/// @return the server response to be send
+string SMOP(string message, vector<caddieRows>* Caddie){
+    vector<string> CommandElems;
+    
+    //split string in two parts, one with command, other with parameters
+    CommandElems = mystrtok(message, '@');
 
+    vector<string> CommandParam = mystrtok(CommandElems[1], '#');
+
+    if(CommandElems[0] == "LOGIN"){
+        return ResponseLogin(CommandParam, Caddie);
+    }
+    else if(CommandElems[0] == "CREATELOGIN"){
+        return ResponseCreateLogin(CommandParam, Caddie);
+    }
+    else if(CommandElems[0] == "CONSULT"){
+        return ResponseConsult(CommandParam, Caddie);
+    }
+    else if(CommandElems[0] == "ACHAT"){
+        return ResponseAchat(CommandParam, Caddie);
+    }
+    else if(CommandElems[0] == "CADDIE"){
+        return ResponseCaddie(CommandParam, Caddie);
+    }
+    else if(CommandElems[0] == "CANCEL"){
+        return ResponseCancel(CommandParam, Caddie);
+    }
+    else if(CommandElems[0] == "CANCELALL"){
+        return ResponseCancelAll(CommandParam, Caddie);
+    }
+    else if(CommandElems[0] == "CONFIRMER"){
+        return ResponseConfirmer(CommandParam, Caddie);
+    }
+    else if(CommandElems[0] == "LOGOUT"){
+        return ResponseLogout(CommandParam, Caddie);
+    }
+    else{
+        return "CRITICAL";
+    }
 }
 
-void ResponseLogin(int socket, string protocolCommand){
+/// @brief Server Logic on LOGIN request
+/// @param protocolCommand parameters from the string command
+/// @return the server response to be send
+string ResponseLogin(vector<string> protocolCommand, vector<caddieRows>* Caddie)
+{
+    Login user;
+    user.nom = protocolCommand[0];
+    user.mdp = protocolCommand[1];
 
+    
 }
 
-void ResponseCreateLogin(int socket, string protocolCommand){
-
+/// @brief Server Logic on CREATELOGIN request
+/// @param protocolCommand parameters from the string command
+/// @return the server response to be send
+string ResponseCreateLogin(vector<string> protocolCommand, vector<caddieRows>* Caddie)
+{
+    return string();
 }
+
+/// @brief Server Logic on CONSULT request
+/// @param protocolCommand parameters from the string command
+/// @return the server response to be send
+string ResponseConsult(vector<string> protocolCommand, vector<caddieRows>* Caddie)
+{
+    return string();
+}
+
+/// @brief Server Logic on ACHAT request
+/// @param protocolCommand parameters from the string command
+/// @return the server response to be send
+string ResponseAchat(vector<string> protocolCommand, vector<caddieRows>* Caddie)
+{
+    return string();
+}
+
+/// @brief Server Logic on CADDIE request
+/// @param protocolCommand parameters from the string command
+/// @return the server response to be send
+string ResponseCaddie(vector<string> protocolCommand, vector<caddieRows>* Caddie)
+{
+    return string();
+}
+
+/// @brief Server Logic on CANCEL request
+/// @param protocolCommand parameters from the string command
+/// @return the server response to be send
+string ResponseCancel(vector<string> protocolCommand, vector<caddieRows>* Caddie)
+{
+    return string();
+}
+
+/// @brief Server Logic on CANCELALL request
+/// @param protocolCommand parameters from the string command
+/// @return the server response to be send
+string ResponseCancelAll(vector<string> protocolCommand, vector<caddieRows>* Caddie)
+{
+    return string();
+}
+
+/// @brief Server Logic on CONFIRMER request
+/// @param protocolCommand parameters from the string command
+/// @return the server response to be send
+string ResponseConfirmer(vector<string> protocolCommand, vector<caddieRows>* Caddie)
+{
+    return string();
+}
+
+/// @brief Server Logic on LOGOUT request
+/// @param protocolCommand parameters from the string command
+/// @return the server response to be send
+string ResponseLogout(vector<string> protocolCommand, vector<caddieRows>* Caddie)
+{
+    return string();
+}
+
+
+
+
+
+
+
+
 
 
 

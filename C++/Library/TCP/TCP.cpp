@@ -112,7 +112,7 @@ int AcceptOnly(int sEcoute, char *ipClient){
 }
 
 
-int ClientSocket(char* ipServeur, int port){
+int ClientSocket(string ipServeur, int port){
     int sClient;
     struct addrinfo *result;
     memset(&result, 0, sizeof(struct addrinfo));

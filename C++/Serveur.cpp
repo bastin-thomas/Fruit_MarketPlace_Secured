@@ -29,7 +29,6 @@ fstream mylog;
 db* DataBase;
 
 //Mutex and VarCond
-pthread_mutex_t mutexDB;
 pthread_mutex_t mutexService;
 pthread_cond_t condService;
 
@@ -38,6 +37,9 @@ pthread_cond_t condService;
 ServerProperties prop = getServerProperties();
 
 int main(){
+    int sService = -1;
+    char* ipclient;
+
     //Open a fileLog
     mylog.open("Servlog.txt", ios::out);
     // Redirect cerr to file
@@ -54,6 +56,8 @@ int main(){
 
     try{
         sListen = ServerSocket(prop.port);
+        ListenOnly(sListen);
+        cerr << "Listen Reussi" << endl;
     }
     catch(const char* message){
         cerr << "MAIN THREAD(error): " << message << endl;
@@ -61,11 +65,8 @@ int main(){
         exit(50);
     }
     
-
-    int sService = -1;
-
     try{
-        while((sService = Accept(sListen, NULL)) != -1) {
+        while((sService = AcceptOnly(sListen, ipclient)) != -1) {
             //Add the element to the vector and show it
             pendingClientQueue.push_back(sService); 
             showQueue();
@@ -118,7 +119,7 @@ void ServiceThread(void){
 
         // Thread logic
         bool endConnexion = false;
-        while(endConnexion){
+        while(!endConnexion){
             string response;
             string message = Receive(sService);
             cerr << "Message received: " << message << endl;
@@ -177,12 +178,6 @@ void initMut(void){
     if((error = mInitDef(&mutexService)) != 0){
         cerr << "(SERVEUR " << getTid() << ") Erreur Initialisation mutexService: "<<error<<endl;
         exit(2);
-    }
-
-    // Initialisation mutexDB
-    if((error = mInitDef(&mutexDB)) != 0){
-        cerr << "(SERVEUR " << getTid() << ") Erreur Initialisation mutexService: "<<error<<endl;
-        exit(4);
     }
 }
 

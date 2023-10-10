@@ -13,6 +13,7 @@
 #include <vector>
 
 #include "../PROTOCOLE/Structure.hpp"
+#include "../THREAD/mylibthread_POSIX.h"
 
 #define IP      "192.168.1.19"
 #define USER    "Student"
@@ -29,6 +30,7 @@ class db
 {
     private:
         MYSQL* connexion;
+        pthread_mutex_t mutexDB;
 
         vector<vector<string>> select(string requete);
         void insert(string requete);

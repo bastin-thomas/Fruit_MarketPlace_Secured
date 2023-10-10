@@ -12,9 +12,14 @@ void SendLogin(int socket, string nom, string mdp){
 
     s << rep << nom << "#" << mdp;
 
+
+    cerr << s.str() << endl;
+
     Send(socket, s.str());
 
     rep = Receive(socket);
+
+    cerr << rep << endl;
 
     s1 = mystrtok(rep, '@');
     
@@ -266,15 +271,17 @@ string ResponseLogin(vector<string> protocolCommand, vector<caddieRows>* Caddie,
     Login user;
     user.nom = protocolCommand[0];
     user.mdp = protocolCommand[1];
-
+    cerr<<"nom: " << user.nom << ", mdp: " << user.mdp << endl;
     try{
         DataBase->Login(user.nom, user.mdp);
     }
     catch(const char* m){
-        string request = "LOGIN@KO#";
         cerr << m << endl;
-        request += m;
-        return request;
+
+        stringstream request;
+        request << "LOGIN@KO#" << m;
+        
+        return request.str();
     }
 
     return "LOGIN@OK";

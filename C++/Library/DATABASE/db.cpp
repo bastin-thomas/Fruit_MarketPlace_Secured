@@ -5,12 +5,27 @@ db::db()
 {
     connexion = mysql_init(NULL);
     mysql_real_connect(connexion, IP, USER, PASS, DB_NAME, 0, 0, 0);
+
+
+    // Initialisation mutexDB
+    int error;
+    if((error = mInitDef(&mutexDB)) != 0){
+        cerr << "(SERVEUR " << getTid() << ") Erreur Initialisation mutexService: "<<error<<endl;
+        exit(4);
+    }
 }
 
 db::db(string ip, string user, string password, string database)
 {
     connexion = mysql_init(NULL);
     mysql_real_connect(connexion, ip.c_str(), user.c_str(), password.c_str(), database.c_str(), 0, 0, 0);
+
+    // Initialisation mutexDB
+    int error;
+    if((error = mInitDef(&mutexDB)) != 0){
+        cerr << "(SERVEUR " << getTid() << ") Erreur Initialisation mutexService: "<<error<<endl;
+        exit(4);
+    }
 }
 
 db::~db()
@@ -27,8 +42,11 @@ bool db::Login(string login, string passwd){
     stringstream request;
     request << "SELECT password FROM accounts WHERE login=\"" << login << "\";";
 
+    
     try{
+        mLock(&mutexDB);
         result = this->select(request.str());
+        mUnLock(&mutexDB);
     }
     catch(const char * m){
         stringstream newm;
@@ -53,7 +71,7 @@ bool db::Login(string login, string passwd){
 //Do DataBase CreateLogin Job
 bool db::CreateLogin(string login, string passwd){
     vector<vector<string>> result;
-    
+    mLock(&mutexDB);
     try{
         stringstream request;
         request << "SELECT password FROM accounts WHERE login=\"" << login << "\";";
@@ -81,7 +99,7 @@ bool db::CreateLogin(string login, string passwd){
         newm << SQLHEADER << m;
         throw newm.str().c_str();
     }
-
+    mUnLock(&mutexDB);
     return true;
 }
 
@@ -194,15 +212,9 @@ void db::Cancel(int idArticle, vector<caddieRows>* caddie){
 
 //Do DataBase CancelAll Job
 void db::CancelAll(vector<caddieRows> * caddie){
-    try{
-        for(caddieRows row : *caddie){
-            this->Cancel(row.idArticle, caddie);
-        }
-    }
-    catch(const char * m){
-        throw m;
-    }
-    
+    for(caddieRows row : *caddie){
+        this->Cancel(row.idArticle, caddie);
+    }    
 }
 
 //Do DataBase Confirmer Job
@@ -222,7 +234,7 @@ int db::Confirmer(string idClient, vector<caddieRows> caddie){
     catch(const char * m){
         stringstream newm;
         newm << SQLHEADER << m;
-        throw newm.str().c_str();
+        throw newm.str();
     }
 
     return stoi(result[0][0]);
@@ -246,14 +258,16 @@ vector<vector<string>> db::select(string requete){
     if(mysql_query(connexion, requete.c_str()) != 0){
         string message = "MySqlQuery: ";
         message += mysql_error(connexion);
-        throw  message.c_str();
+        cerr << message << endl;
+        throw  "MYSQL ERROR";
     }
 
     //catch request result
     if((result = mysql_store_result(connexion)) == NULL){
         string message = "MySqlStoreResult: ";
         message += mysql_error(connexion);
-        throw  message.c_str();
+        cerr << message << endl;
+        throw  "MYSQL ERROR";
     }
 
     //Put result in a vector of row
@@ -289,7 +303,8 @@ void db::insert(string requete){
     if(mysql_query(connexion,requete.c_str()) == -1){
         string message = "MySqlQuery: ";
         message += mysql_error(connexion);
-        throw  message.c_str();
+        cerr << message << endl;
+        throw  "MYSQL ERROR";
     }
 }
 

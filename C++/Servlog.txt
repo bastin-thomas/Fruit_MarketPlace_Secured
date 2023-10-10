@@ -1,4 +1,2 @@
 A Server Socket has been created ( 5 )
-bind() reussi !
-
-SIGINT Received
+MAIN THREAD(error): Erreur de bind()

@@ -60,10 +60,10 @@ $(bin)Properties.o:		$(LibProperties)Properties.cpp  $(LibProperties)Properties.
 						@mkdir -p $(bin)
 						g++ $(LibProperties)Properties.cpp -c -o $(bin)Properties.o -std=gnu++2a -lpthread
 
-$(bin)db.o: $(LibDB)db.cpp $(LibDB)db.hpp $(LibProtocole)Structure.hpp
+$(bin)db.o: $(bin)mylibthreadPOSIX.o $(LibDB)db.cpp $(LibDB)db.hpp $(LibProtocole)Structure.hpp
 			echo db.o
 			@mkdir -p $(bin)
-			g++ $(MySQLParam) $(LibDB)db.cpp -c -o $(bin)db.o -std=gnu++2a 
+			g++ $(MySQLParam) $(bin)mylibthreadPOSIX.o $(LibDB)db.cpp -c -o $(bin)db.o -std=gnu++2a 
 
 $(bin)mylibthreadPOSIX.o: $(LibThread)mylibthread_POSIX.cpp $(LibThread)mylibthread_POSIX.h
 						 echo mylibthreadPOSIX.o

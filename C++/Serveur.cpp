@@ -29,31 +29,39 @@ fstream mylog;
 db* DataBase;
 
 //Mutex and VarCond
-pthread_mutex_t mutexDB;
 pthread_mutex_t mutexService;
 pthread_cond_t condService;
 
 
 // Config Loading
-ServerProperties prop = getServerProperties();
+ServerProperties prop;
 
 int main(){
+    int sService = -1;
+    char* ipclient;
+
     //Open a fileLog
     mylog.open("Servlog.txt", ios::out);
     // Redirect cerr to file
     cerr.rdbuf(mylog.rdbuf());
 
-    DataBase = new db(prop.db_ip, prop.db_name, prop.db_pass, prop.db_name);
+    prop = getServerProperties();
+
+    cerr << "Init DB Connexion: " << prop.db_ip << ", " << prop.db_user << ", " << prop.db_pass << ", " << prop.db_name << endl;
+    DataBase = new db(prop.db_ip, prop.db_user, prop.db_pass, prop.db_name);
+    
     
     //Do some initialization thing
     initSig();
-    initMut();   
+    initMut();
     initCond();
     initServices();
     
 
     try{
         sListen = ServerSocket(prop.port);
+        ListenOnly(sListen);
+        cerr << "Listen Reussi" << endl;
     }
     catch(const char* message){
         cerr << "MAIN THREAD(error): " << message << endl;
@@ -61,11 +69,8 @@ int main(){
         exit(50);
     }
     
-
-    int sService = -1;
-
     try{
-        while((sService = Accept(sListen, NULL)) != -1) {
+        while((sService = AcceptOnly(sListen, ipclient)) != -1) {
             //Add the element to the vector and show it
             pendingClientQueue.push_back(sService); 
             showQueue();
@@ -99,6 +104,7 @@ void ServiceThread(void){
 
     while(true){
         vector<caddieRows> Caddie;
+        string idUser;
 
         //Wait a condsignal from listen thread
         mLock(&mutexService);
@@ -117,13 +123,13 @@ void ServiceThread(void){
 
         // Thread logic
         bool endConnexion = false;
-        while(endConnexion){
+        while(!endConnexion){
             string response;
             string message = Receive(sService);
             cerr << "Message received: " << message << endl;
             
             try{
-                response = SMOP(message, &Caddie);
+                response = sSMOP(message, &Caddie, DataBase);
             }
             catch(const char * m){
                 cout << "Cant send the message due: " << m << endl;
@@ -176,12 +182,6 @@ void initMut(void){
     if((error = mInitDef(&mutexService)) != 0){
         cerr << "(SERVEUR " << getTid() << ") Erreur Initialisation mutexService: "<<error<<endl;
         exit(2);
-    }
-
-    // Initialisation mutexDB
-    if((error = mInitDef(&mutexDB)) != 0){
-        cerr << "(SERVEUR " << getTid() << ") Erreur Initialisation mutexService: "<<error<<endl;
-        exit(4);
     }
 }
 
@@ -239,7 +239,7 @@ void SIG_INT(int sig_num){
 
     close(sListen);
 
-    for(int i = 0 ; i< prop.nbrMaxClients ; i++){
+    for(int i = 0 ; i < pendingClientQueue.size() ; i++){
         close(pendingClientQueue[i]);
     }
 

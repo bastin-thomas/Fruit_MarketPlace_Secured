@@ -18,6 +18,7 @@ Server: ACHAT@id_article#quantitee#prix
 
 Client: CADDIE@
 Server: CADDIE@id_article#intitule#quantitee#prix~id_article#intitule#quantitee#prix~id_article#intitule#quantitee#prix~id_article#intitule#quantitee#prix
+        CADDIE@-1
 
 Client: CANCEL@id_article
 Server: CANCEL@OK

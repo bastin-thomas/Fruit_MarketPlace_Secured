@@ -118,7 +118,7 @@ ServerProperties getServerProperties(){
         }
 
         if(hashmap[0].compare("DB_USER") == 0){
-            prop.db_name = hashmap[1];
+            prop.db_user = hashmap[1];
             continue;
         }
 

@@ -9,7 +9,7 @@
         "*.tcc": "cpp",
         "iosfwd": "cpp",
         "chrono": "cpp",
-        "vector": "cpp"
+        "sstream": "cpp"
     },
     "C_Cpp.errorSquiggles": "Disabled"
 }

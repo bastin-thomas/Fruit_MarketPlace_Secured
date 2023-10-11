@@ -10,38 +10,9 @@
 #include <unistd.h>
 #include <stdio.h>
 #include "../TCP/TCP.hpp"
+#include "../DATABASE/db.hpp"
 
 using namespace std;
-
-struct Login{
-	string nom;
-	string mdp;
-};
-
-struct articles{
-	int idArticle;
-	string intitule;
-	float prix;
-	int stock;
-	string image;
-};
-
-struct achats{
-	int idArticle;
-	int quantitee;
-	float prix;
-};
-
-struct caddieRows{
-	int idArticle;
-	string intitule;
-	int quantitee;
-	float prix;
-};
-
-
-
-
 
 ////////////////////////////////
 /////// Client Request /////////
@@ -76,18 +47,17 @@ void SendLogout(int socket);
 ///////////////////////////////
 
 // Protocol Server Main Logic //
-string SMOP(string message, vector<caddieRows>* Caddie);
+string sSMOP(string message, vector<caddieRows> *Caddie, db *DataBase, string idClient);
 
-
-string ResponseLogin(vector<string> protocolCommand, vector<caddieRows>* Caddie);
-string ResponseCreateLogin(vector<string> protocolCommand, vector<caddieRows>* Caddie);
-string ResponseConsult(vector<string> protocolCommand, vector<caddieRows>* Caddie);
-string ResponseAchat(vector<string> protocolCommand, vector<caddieRows>* Caddie);
-string ResponseCaddie(vector<string> protocolCommand, vector<caddieRows>* Caddie);
-string ResponseCancel(vector<string> protocolCommand, vector<caddieRows>* Caddie);
-string ResponseCancelAll(vector<string> protocolCommand, vector<caddieRows>* Caddie);
-string ResponseConfirmer(vector<string> protocolCommand, vector<caddieRows>* Caddie);
-string ResponseLogout(vector<string> protocolCommand, vector<caddieRows>* Caddie);
+string ResponseLogin(vector<string> protocolCommand, vector<caddieRows> *Caddie, db *DataBase);
+string ResponseCreateLogin(vector<string> protocolCommand, vector<caddieRows>* Caddie, db* DataBase);
+string ResponseConsult(vector<string> protocolCommand, vector<caddieRows>* Caddie, db* DataBase);
+string ResponseAchat(vector<string> protocolCommand, vector<caddieRows>* Caddie, db* DataBase);
+string ResponseCaddie(vector<string> protocolCommand, vector<caddieRows>* Caddie, db* DataBase);
+string ResponseCancel(vector<string> protocolCommand, vector<caddieRows>* Caddie, db* DataBase);
+string ResponseCancelAll(vector<string> protocolCommand, vector<caddieRows>* Caddie, db* DataBase);
+string ResponseConfirmer(vector<string> protocolCommand, vector<caddieRows>* Caddie, db* DataBase, string idClient);
+string ResponseLogout(vector<string> protocolCommand, vector<caddieRows>* Caddie, db* DataBase);
 
 
 

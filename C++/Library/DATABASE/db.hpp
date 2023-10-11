@@ -1,5 +1,5 @@
 #ifndef DB_HPP
-#define DB_CPP
+#define DB_HPP
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -12,9 +12,10 @@
 #include <mysql/mysql.h>
 #include <vector>
 
-#include "../PROTOCOLE/Protocole.hpp"
+#include "../PROTOCOLE/Structure.hpp"
+#include "../THREAD/mylibthread_POSIX.h"
 
-#define IP      "192.168.1.19"
+#define IP      "127.0.0.1"
 #define USER    "Student"
 #define PASS    "PassStudent1_"
 #define DB_NAME "PourStudent"
@@ -29,6 +30,7 @@ class db
 {
     private:
         MYSQL* connexion;
+        pthread_mutex_t mutexDB;
 
         vector<vector<string>> select(string requete);
         void insert(string requete);
@@ -47,9 +49,9 @@ class db
 
         achats Achat(int idArticle, int quantitee);
 
-        vector<caddieRows> Cancel(int idArticle, vector<caddieRows> caddie);
+        void Cancel(int idArticle, vector<caddieRows> *caddie);
 
-        vector<caddieRows> CancelAll(vector<caddieRows> caddie);
+        void CancelAll(vector<caddieRows> *caddie);
 
         int Confirmer(string idClient, vector<caddieRows> caddie);
 };

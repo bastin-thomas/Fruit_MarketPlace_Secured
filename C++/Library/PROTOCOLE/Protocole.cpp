@@ -1,7 +1,5 @@
 #include "Protocole.hpp"
 
-
-
 ////////////////////////////////
 /////// Client Request /////////
 ////////////////////////////////
@@ -14,12 +12,21 @@ void SendLogin(int socket, string nom, string mdp){
 
     s << rep << nom << "#" << mdp;
 
+
+    cerr << s.str() << endl;
+
     Send(socket, s.str());
 
     rep = Receive(socket);
 
+    cerr << rep << endl;
+
     s1 = mystrtok(rep, '@');
     
+    for(string row : s1){
+        cout << row << endl;
+    }
+
     if(s1.size() == 1){
         throw "erreur protocole";
     }
@@ -227,7 +234,7 @@ void SendLogout(int socket){
 /// @param message message send by client
 /// @param Caddie the current cadie of the thread
 /// @return the server response to be send
-string SMOP(string message, vector<caddieRows>* Caddie){
+string sSMOP(string message, vector<caddieRows>* Caddie, db* DataBase){
     vector<string> CommandElems;
     
     //split string in two parts, one with command, other with parameters
@@ -236,31 +243,31 @@ string SMOP(string message, vector<caddieRows>* Caddie){
     vector<string> CommandParam = mystrtok(CommandElems[1], '#');
 
     if(CommandElems[0] == "LOGIN"){
-        return ResponseLogin(CommandParam, Caddie);
+        return ResponseLogin(CommandParam, Caddie, DataBase);
     }
     else if(CommandElems[0] == "CREATELOGIN"){
-        return ResponseCreateLogin(CommandParam, Caddie);
+        return ResponseCreateLogin(CommandParam, Caddie, DataBase);
     }
     else if(CommandElems[0] == "CONSULT"){
-        return ResponseConsult(CommandParam, Caddie);
+        return ResponseConsult(CommandParam, Caddie, DataBase);
     }
     else if(CommandElems[0] == "ACHAT"){
-        return ResponseAchat(CommandParam, Caddie);
+        return ResponseAchat(CommandParam, Caddie, DataBase);
     }
     else if(CommandElems[0] == "CADDIE"){
-        return ResponseCaddie(CommandParam, Caddie);
+        return ResponseCaddie(CommandParam, Caddie, DataBase);
     }
     else if(CommandElems[0] == "CANCEL"){
-        return ResponseCancel(CommandParam, Caddie);
+        return ResponseCancel(CommandParam, Caddie, DataBase);
     }
     else if(CommandElems[0] == "CANCELALL"){
-        return ResponseCancelAll(CommandParam, Caddie);
+        return ResponseCancelAll(CommandParam, Caddie, DataBase);
     }
     else if(CommandElems[0] == "CONFIRMER"){
-        return ResponseConfirmer(CommandParam, Caddie);
+        return ResponseConfirmer(CommandParam, Caddie, DataBase);
     }
     else if(CommandElems[0] == "LOGOUT"){
-        return ResponseLogout(CommandParam, Caddie);
+        return ResponseLogout(CommandParam, Caddie, DataBase);
     }
     else{
         return "CRITICAL";
@@ -270,77 +277,179 @@ string SMOP(string message, vector<caddieRows>* Caddie){
 /// @brief Server Logic on LOGIN request
 /// @param protocolCommand parameters from the string command
 /// @return the server response to be send
-string ResponseLogin(vector<string> protocolCommand, vector<caddieRows>* Caddie)
+string ResponseLogin(vector<string> protocolCommand, vector<caddieRows>* Caddie, db* DataBase)
 {
     Login user;
     user.nom = protocolCommand[0];
     user.mdp = protocolCommand[1];
+    cerr<<"nom: " << user.nom << ", mdp: " << user.mdp << endl;
+    try{
+        DataBase->Login(user.nom, user.mdp);
+    }
+    catch(const char* m){
+        cerr << m << endl;
 
-    return string();
+        stringstream request;
+        request << "LOGIN@KO#" << m;
+        
+        return request.str();
+    }
+
+    return "LOGIN@OK";
 }
 
 /// @brief Server Logic on CREATELOGIN request
 /// @param protocolCommand parameters from the string command
 /// @return the server response to be send
-string ResponseCreateLogin(vector<string> protocolCommand, vector<caddieRows>* Caddie)
+string ResponseCreateLogin(vector<string> protocolCommand, vector<caddieRows>* Caddie, db* DataBase)
 {
-    return string();
+    Login user;
+    user.nom = protocolCommand[0];
+    user.mdp = protocolCommand[1];
+
+    try{
+        DataBase->CreateLogin(user.nom, user.mdp);
+    }
+    catch(const char* m){
+        string request = "CREATELOGIN@KO#";
+        cerr << m << endl;
+        request += m;
+        return request;
+    }
+
+    return "CREATELOGIN@OK";
 }
 
 /// @brief Server Logic on CONSULT request
 /// @param protocolCommand parameters from the string command
 /// @return the server response to be send
-string ResponseConsult(vector<string> protocolCommand, vector<caddieRows>* Caddie)
+string ResponseConsult(vector<string> protocolCommand, vector<caddieRows>* Caddie, db* DataBase)
 {
-    return string();
+    articles article;
+    stringstream message;
+    int idArticle = stoi(protocolCommand[0]);
+    
+
+    try{
+        article = DataBase->Consult(idArticle);
+    }
+    catch(const char* m){
+        return "CONSULT@-1";
+    }
+    
+    message << "CONSULT@" << article.idArticle << "#" << article.intitule << "#" << article.stock << "#" << article.prix << "#" << article.image;
+
+    return message.str();
 }
 
 /// @brief Server Logic on ACHAT request
 /// @param protocolCommand parameters from the string command
 /// @return the server response to be send
-string ResponseAchat(vector<string> protocolCommand, vector<caddieRows>* Caddie)
+string ResponseAchat(vector<string> protocolCommand, vector<caddieRows>* Caddie, db* DataBase)
 {
-    return string();
+    achats achat;
+    stringstream message;
+    int idArticle = stoi(protocolCommand[0]);
+    int quantitee = stoi(protocolCommand[1]);
+    
+    try{
+        achat = DataBase->Achat(idArticle, quantitee);
+    }
+    catch(const char* m){
+        return "ACHAT@-1";
+    }
+    
+    message << "ACHAT@" << achat.idArticle << "#" << achat.quantitee << "#" << achat.prix;
+
+    return message.str();
 }
 
 /// @brief Server Logic on CADDIE request
 /// @param protocolCommand parameters from the string command
 /// @return the server response to be send
-string ResponseCaddie(vector<string> protocolCommand, vector<caddieRows>* Caddie)
+string ResponseCaddie(vector<string> protocolCommand, vector<caddieRows>* Caddie, db* DataBase)
 {
-    return string();
+    string m;
+    stringstream message;
+    
+    message << "CADDIE@"; 
+
+    if(Caddie->size() == 0){
+        return message.str();
+    }
+
+    for(caddieRows row : *Caddie){
+        message << row.idArticle << "#" << row.intitule << "#" << row.quantitee << "#" << row.prix << "~";
+    }
+
+    m = message.str();
+    m.pop_back();
+    
+    return m;
 }
 
 /// @brief Server Logic on CANCEL request
 /// @param protocolCommand parameters from the string command
 /// @return the server response to be send
-string ResponseCancel(vector<string> protocolCommand, vector<caddieRows>* Caddie)
+string ResponseCancel(vector<string> protocolCommand, vector<caddieRows>* Caddie, db* DataBase)
 {
-    return string();
+    stringstream message;
+    int idArticle = stoi(protocolCommand[0]);
+    
+    try{
+        DataBase->Cancel(idArticle, Caddie);
+    }
+    catch(const char* m){
+        return "CANCEL@KO";
+    }
+
+    return "CANCEL@KO";
 }
 
 /// @brief Server Logic on CANCELALL request
 /// @param protocolCommand parameters from the string command
 /// @return the server response to be send
-string ResponseCancelAll(vector<string> protocolCommand, vector<caddieRows>* Caddie)
+string ResponseCancelAll(vector<string> protocolCommand, vector<caddieRows>* Caddie, db* DataBase)
 {
-    return string();
+    stringstream message;
+    int idArticle = stoi(protocolCommand[0]);
+    
+    try{
+        DataBase->Cancel(idArticle, Caddie);
+    }
+    catch(const char* m){
+        return "CANCEL@KO";
+    }
+    
+    return "CANCEL@KO";
 }
 
 /// @brief Server Logic on CONFIRMER request
 /// @param protocolCommand parameters from the string command
 /// @return the server response to be send
-string ResponseConfirmer(vector<string> protocolCommand, vector<caddieRows>* Caddie)
+string ResponseConfirmer(vector<string> protocolCommand, vector<caddieRows>* Caddie, db* DataBase)
 {
-    return string();
+    int idFacture;
+    stringstream message;
+    string idClient = protocolCommand[0];
+    try{
+        idFacture = DataBase->Confirmer(, *Caddie);
+    }
+    catch(const char* m){
+        return "CONFIRMER@-1";
+    }
+    
+    message << "CONFIRMER@" << idFacture;
+
+    return message.str();
 }
 
 /// @brief Server Logic on LOGOUT request
 /// @param protocolCommand parameters from the string command
 /// @return the server response to be send
-string ResponseLogout(vector<string> protocolCommand, vector<caddieRows>* Caddie)
+string ResponseLogout(vector<string> protocolCommand, vector<caddieRows>* Caddie, db* DataBase)
 {
-    return string();
+    return "LOGOUT@";
 }
 
 

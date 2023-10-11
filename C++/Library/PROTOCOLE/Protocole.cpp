@@ -432,8 +432,9 @@ string ResponseConfirmer(vector<string> protocolCommand, vector<caddieRows>* Cad
     int idFacture;
     stringstream message;
     string idClient = protocolCommand[0];
+    
     try{
-        idFacture = DataBase->Confirmer(, *Caddie);
+        idFacture = DataBase->Confirmer(idClient, *Caddie);
     }
     catch(const char* m){
         return "CONFIRMER@-1";

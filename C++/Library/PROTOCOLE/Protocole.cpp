@@ -46,7 +46,7 @@ void SendLogin(int socket, string nom, string mdp){
 void SendCreateLogin(int socket, string nom, string mdp){
     stringstream s;
     vector<string> s1,s2;
-    string rep = "LOGIN@";
+    string rep = "CREATELOGIN@";
 
     s << rep << nom << "#" << mdp;
 
@@ -71,11 +71,13 @@ articles SendConsult(int socket, int idArticle){
     string rep = "CONSULT@";
 
     s << rep << idArticle << "#";
+    
+    cout << s.str() << endl;
 
     Send(socket, s.str());
 
     rep = Receive(socket);
-
+    cout << rep << endl;
     s1 = mystrtok(rep, '@');
 
     if(s1[1] == "-1"){
@@ -106,9 +108,13 @@ achats SendAchat(int socket, int idArticle, int quantitee){
 
     s << rep << idArticle << "#" << quantitee;
 
+    cout << s.str() << endl;
+
     Send(socket, s.str());
 
     rep = Receive(socket);
+
+    cout << rep << endl;
 
     s1 = mystrtok(rep, '@');
 

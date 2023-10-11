@@ -30,7 +30,7 @@ class db
 {
     private:
         MYSQL* connexion;
-        pthread_mutex_t mutexDB;
+        
 
         vector<vector<string>> select(string requete);
         void insert(string requete);

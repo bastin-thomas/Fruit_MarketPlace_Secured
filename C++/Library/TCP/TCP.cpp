@@ -32,6 +32,10 @@ int ServerSocket(int port){
 
     cout << "Mon Adresse IP: " << bindhost << " -- Mon Port: " << bindport << endl;
 
+    //Force le rebind:
+    int flag = 1;
+    setsockopt(sEcoute,SOL_SOCKET,SO_REUSEADDR,&flag,sizeof(int));
+
     // Liaison de la socket à l'adresse
     if (bind(sEcoute, result->ai_addr, result->ai_addrlen) < 0)
     {
@@ -165,7 +169,7 @@ int Send(int sSocket,char* data,int taille){
     memcpy(trame,data,taille);
 
     //Ajout des caractères de fin de chaines
-    trame[taille] = '#';
+    trame[taille] = '&';
     trame[taille+1] = ')';
     
     // Ecriture sur la socket
@@ -207,11 +211,12 @@ int Receive(int sSocket,char* data){
     
 
         //If 1st end char found, check if the other is also here
-        if (lu1 == '#')
+        if (lu1 == '&')
         {
             //Read next char
             if ((nbLus = read(sSocket,&lu2,1)) == -1)
-            return -1;
+                return -1;
+
             if (nbLus == 0) return i;
         
             //If 2nd is the end char, end loop

@@ -5,28 +5,12 @@ db::db()
 {
     connexion = mysql_init(NULL);
     connexion = mysql_real_connect(connexion, IP, USER, PASS, DB_NAME, 0, 0, 0);
-
-
-    // Initialisation mutexDB
-    int error;
-    if((error = mInitDef(&mutexDB)) != 0){
-        cerr << "(SERVEUR " << getTid() << ") Erreur Initialisation mutexService: "<<error<<endl;
-        exit(4);
-    }
 }
 
 db::db(string ip, string user, string password, string database)
 {
     connexion = mysql_init(NULL);
     connexion = mysql_real_connect(connexion, ip.c_str(), user.c_str(), password.c_str(), database.c_str(), 0, 0, 0);
-    
-
-    // Initialisation mutexDB
-    int error;
-    if((error = mInitDef(&mutexDB)) != 0){
-        cerr << "(SERVEUR " << getTid() << ") Erreur Initialisation mutexService: "<<error<<endl;
-        exit(4);
-    }
 }
 
 db::~db()
@@ -39,8 +23,6 @@ db::~db()
 /// @param passwd user password
 /// @return true if good, throw constchar* if error
 bool db::Login(string login, string passwd){
-    mLock(&mutexDB);
-
     vector<vector<string>> result;
     stringstream request;
 
@@ -50,30 +32,25 @@ bool db::Login(string login, string passwd){
     }
     catch(const char * m){
         cerr << SQLHEADER << m;
-        mUnLock(&mutexDB);
         throw "SQLERROR";
     }
 
 
     if(result.size() == 0){
-        mUnLock(&mutexDB);
         throw "NO_LOGIN";
     }
 
     string dbpasswd = result[0][0];
 
     if(dbpasswd != passwd){
-        mUnLock(&mutexDB);
         throw "BAD_LOGIN";
     }
 
-    mUnLock(&mutexDB);
     return true;
 }
 
 //Do DataBase CreateLogin Job
 bool db::CreateLogin(string login, string passwd){
-    mLock(&mutexDB);
 
     vector<vector<string>> result;
     try{
@@ -85,13 +62,11 @@ bool db::CreateLogin(string login, string passwd){
     catch(const char * m){
         stringstream newm;
         cerr << SQLHEADER << m << endl;
-        mUnLock(&mutexDB);
         throw "SQLERROR";
     }
 
 
     if(result.size() != 0){
-        mUnLock(&mutexDB);
         throw "LOGIN_EXIST";
     }
 
@@ -103,17 +78,14 @@ bool db::CreateLogin(string login, string passwd){
     catch(const char * m){
         stringstream newm;
         cerr << SQLHEADER << m << endl;
-        mUnLock(&mutexDB);
         throw "SQLERROR";
     }
 
-    mUnLock(&mutexDB);
     return true;
 }
 
 //Do DataBase Consult Job
 articles db::Consult(int idArticle){
-    mLock(&mutexDB);
 
     vector<vector<string>> result;
     articles article;
@@ -126,12 +98,10 @@ articles db::Consult(int idArticle){
     catch(const char * m){
         stringstream newm;
         cerr << SQLHEADER << m << endl;
-        mUnLock(&mutexDB);
         throw "SQLERROR";
     }
 
     if(result.size() == 0){
-        mUnLock(&mutexDB);
         throw "NO_ARTICLE";
     }
 
@@ -150,7 +120,6 @@ articles db::Consult(int idArticle){
 
 //Do DataBase Achat Job
 achats db::Achat(int idArticle, int quantitee){
-    mLock(&mutexDB);
 
     int newstock;
     stringstream request;
@@ -167,7 +136,6 @@ achats db::Achat(int idArticle, int quantitee){
         achat.prix = article.prix;
         achat.quantitee = -1;
 
-        mUnLock(&mutexDB);
         return achat;
     }
     
@@ -187,7 +155,6 @@ achats db::Achat(int idArticle, int quantitee){
         catch(const char * m){
             stringstream newm;
             cerr << SQLHEADER << m << endl;
-            mUnLock(&mutexDB);
             throw "SQLERROR";
         }
     }
@@ -195,14 +162,11 @@ achats db::Achat(int idArticle, int quantitee){
     achat.idArticle = idArticle;
     achat.prix = article.prix;
     
-    mUnLock(&mutexDB);
     return achat;
 }
 
 //Do DataBase Cancel Job
 void db::Cancel(int idArticle, vector<caddieRows>* caddie){
-    mLock(&mutexDB);
-
     int newstock;
     stringstream request;
     caddieRows deletedrow;
@@ -226,11 +190,8 @@ void db::Cancel(int idArticle, vector<caddieRows>* caddie){
     }
     catch(const char * m){
         cerr << m << endl;
-        mUnLock(&mutexDB);
         throw "CANT_CANCEL";
     }
-
-    mUnLock(&mutexDB);
 }
 
 //Do DataBase CancelAll Job
@@ -242,8 +203,6 @@ void db::CancelAll(vector<caddieRows> * caddie){
 
 //Do DataBase Confirmer Job
 int db::Confirmer(string idClient, vector<caddieRows> caddie){
-    mLock(&mutexDB);
-
     vector<vector<string>> result;
     int montant = 0;
     
@@ -259,11 +218,9 @@ int db::Confirmer(string idClient, vector<caddieRows> caddie){
     catch(const char * m){
         stringstream newm;
         cerr << SQLHEADER << m << endl;
-        mUnLock(&mutexDB);
         throw "SQLERROR";
     }
 
-    mUnLock(&mutexDB);
     return stoi(result[0][0]);
 }
 

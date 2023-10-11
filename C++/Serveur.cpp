@@ -31,6 +31,7 @@ db* DataBase;
 //Mutex and VarCond
 pthread_mutex_t mutexService;
 pthread_cond_t condService;
+pthread_mutex_t mutexDB;
 
 
 // Config Loading
@@ -189,6 +190,12 @@ void initMut(void){
     if((error = mInitDef(&mutexService)) != 0){
         cerr << "(SERVEUR " << getTid() << ") Erreur Initialisation mutexService: "<<error<<endl;
         exit(2);
+    }
+
+    // Initialisation mutexDB
+    if((error = mInitDef(&mutexDB)) != 0){
+        cerr << "(SERVEUR " << getTid() << ") Erreur Initialisation mutexService: "<<error<<endl;
+        exit(4);
     }
 }
 

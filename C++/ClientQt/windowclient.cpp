@@ -297,7 +297,7 @@ void WindowClient::on_pushButtonLogin_clicked()
   }
   
   try{
-    if(isNouveauClientChecked()){
+    if(isNouveauClientChecked() == true){
       SendCreateLogin(this->Socket,nom, mdp);
     }else{
       SendLogin(this->Socket,nom, mdp);
@@ -308,10 +308,9 @@ void WindowClient::on_pushButtonLogin_clicked()
     return;
   }
 
-  cout << test << endl;
+  
   try{
     article = SendConsult(this->Socket, this->indiceArticleAffiche);
-
   }catch(const char * m){
     this->indiceArticleAffiche++;
     return;
@@ -349,7 +348,7 @@ void WindowClient::on_pushButtonSuivant_clicked()
     article = SendConsult(this->Socket, this->indiceArticleAffiche);
 
   }catch(const char * m){
-    this->indiceArticleAffiche++;
+    this->indiceArticleAffiche--;
     return;
   }
 
@@ -371,6 +370,8 @@ void WindowClient::on_pushButtonPrecedent_clicked()
     return;
   }
 
+  cout << "TEST: " <<  article.image.c_str() << endl;
+
   setArticle(article.intitule.c_str(), article.prix, article.stock, article.image.c_str());
 }
 
@@ -378,6 +379,10 @@ void WindowClient::on_pushButtonPrecedent_clicked()
 void WindowClient::on_pushButtonAcheter_clicked()
 {
   achats achat;
+
+  if(getQuantite()<=0){
+    return;
+  }
 
   try{
     achat = SendAchat(this->Socket, this->indiceArticleAffiche, getQuantite());

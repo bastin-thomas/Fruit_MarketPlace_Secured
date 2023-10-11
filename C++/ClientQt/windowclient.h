@@ -38,7 +38,7 @@ public:
     void logoutOK();
     void setArticle(const char *intitule, float prix, int stock, const char *image);
     void setTotal(float montant);
-
+    
     void ajouteArticleTablePanier(const char *article, float prix, int quantite);
     void videTablePanier();
     void RefreshTablePanier();

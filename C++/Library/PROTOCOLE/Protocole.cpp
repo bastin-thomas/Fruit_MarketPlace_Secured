@@ -12,7 +12,6 @@ void SendLogin(int socket, string nom, string mdp){
 
     s << rep << nom << "#" << mdp;
 
-
     cerr << s.str() << endl;
 
     Send(socket, s.str());

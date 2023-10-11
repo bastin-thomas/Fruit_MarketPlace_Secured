@@ -303,7 +303,9 @@ void WindowClient::on_pushButtonLogin_clicked()
       SendLogin(this->Socket,nom, mdp);
     }
   }catch(const char * m){
-    dialogueErreur("Login", "Erreur Login");
+    dialogueErreur("Login", m);
+
+    return;
   }
 
   loginOK();
@@ -315,7 +317,9 @@ void WindowClient::on_pushButtonLogout_clicked()
   try{
     SendLogout(this->Socket);
   }catch(const char * m){
-    dialogueErreur("Logout", "Erreur Logout");
+    dialogueErreur("Logout", m);
+
+    return;
   }
 
   logoutOK();
@@ -324,23 +328,45 @@ void WindowClient::on_pushButtonLogout_clicked()
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WindowClient::on_pushButtonSuivant_clicked()
 {
+  articles article;
+  int indiceActuel;
+
+  indiceActuel = getIndiceArticleSelectionne();
+
+  indiceActuel ++;
 
   try{
-    cout << "test" << endl;
+    article = SendConsult(this->Socket, indiceActuel);
 
   }catch(const char * m){
-    dialogueErreur("Button suivant", "Erreur article suivant");
+    indiceActuel --;
+    return;
   }
+
+  setArticle(article.intitule.c_str(), article.prix, article.stock, article.image.c_str());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WindowClient::on_pushButtonPrecedent_clicked()
 {
+  int indiceActuel;
   try{
-    cout << "test" << endl;
+     // Récupérez l'indice de l'article actuellement affiché
+    indiceActuel = getIndiceArticleSelectionne();
+
+    if (indiceActuel > 0){
+        // Si l'indice actuel n'est pas le premier article
+        indiceActuel--;
+        cout << "indice de l'article" << indiceActuel << endl;
+    } else {
+        // Si l'indice actuel est déjà le premier article
+        dialogueMessage("Article précédent", "Vous êtes déjà sur le premier article.");
+    }
 
   }catch(const char * m){
-    dialogueErreur("Button precedent", "Erreur article precedent");
+    dialogueErreur("Button precedent", m);
+
+    return;
   }
 }
 
@@ -350,10 +376,11 @@ void WindowClient::on_pushButtonAcheter_clicked()
   achats achat;
 
   try{
-
     achat = SendAchat(this->Socket, getIndiceArticleSelectionne(), getQuantite());
   }catch(const char * m){
-    dialogueErreur("Button Acheter", "Erreur ajout de l'article");
+    dialogueErreur("Button Acheter", m);
+
+    return;
   }
 
   RefreshTablePanier();
@@ -365,7 +392,9 @@ void WindowClient::on_pushButtonSupprimer_clicked()
   try{
     SendCancel(this->Socket, getIndiceArticleSelectionne());
   }catch(const char * m){
-    dialogueErreur("Button Supprimer", "Erreur supression de l'article");
+    dialogueErreur("Button Supprimer", m);
+
+    return;
   }
 
   RefreshTablePanier();
@@ -377,7 +406,9 @@ void WindowClient::on_pushButtonViderPanier_clicked()
   try{
     SendCancelAll(this->Socket);
   }catch(const char * m){
-    dialogueErreur("Button Vider panier", "Erreur supression des articles");
+    dialogueErreur("Button Vider panier", m);
+
+    return;
   }
 
   RefreshTablePanier();
@@ -390,7 +421,9 @@ void WindowClient::on_pushButtonPayer_clicked()
   try{
     SendConfirmer(this->Socket, getNom());
   }catch(const char * m){
-    dialogueErreur("Button Payer", "Erreur génération facture");
+    dialogueErreur("Button Payer", m);
+
+    return;
   }
 
   RefreshTablePanier();
@@ -406,7 +439,9 @@ void WindowClient::RefreshTablePanier()
   try{
     Caddie = SendCaddie(this->Socket);
   }catch(const char * m){
-    dialogueErreur("Refresh panier", "Erreur refresh du panier");
+    dialogueErreur("Refresh panier", m);
+
+    return;
   }
 
   for(caddieRows row : Caddie){

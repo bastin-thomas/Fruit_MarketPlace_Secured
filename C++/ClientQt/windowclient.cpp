@@ -35,19 +35,7 @@ WindowClient::WindowClient(QWidget *parent) : QMainWindow(parent), ui(new Ui::Wi
     setPublicite("!!! Bienvenue sur le Maraicher en ligne !!!");
 
     //LoadConfigProperties:
-    ClientProperties properties = getClientProperties();
-    
-    //Init TCP Connexion
-    try{
-      this->Socket = ClientSocket(properties.ip, properties.port);
-    }
-    catch(const char* message){
-      cout << "ClientSocket: " << message << endl;
-    }
-
-    // Exemples à supprimer
-    // setArticle("pommes",5.53,18,"pommes.jpg");
-    // ajouteArticleTablePanier("cerises",8.96,2);
+    this->properties = getClientProperties();    
 }
 
 WindowClient::~WindowClient()
@@ -302,6 +290,8 @@ void WindowClient::on_pushButtonLogin_clicked()
   }
   catch(const char* message){
     cout << "ClientSocket: " << message << endl;
+    dialogueErreur("Login", "Impossible de communiquer avec le Serveur");
+    return;
   }
   
   try{
@@ -332,7 +322,7 @@ void WindowClient::on_pushButtonLogout_clicked()
 
   logoutOK();
 
-  close(this->Socket);
+  ::close(this->Socket);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -359,25 +349,22 @@ void WindowClient::on_pushButtonSuivant_clicked()
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WindowClient::on_pushButtonPrecedent_clicked()
 {
+  articles article;
   int indiceActuel;
-  try{
-     // Récupérez l'indice de l'article actuellement affiché
-    indiceActuel = getIndiceArticleSelectionne();
 
-    if (indiceActuel > 0){
-        // Si l'indice actuel n'est pas le premier article
-        indiceActuel--;
-        cout << "indice de l'article" << indiceActuel << endl;
-    } else {
-        // Si l'indice actuel est déjà le premier article
-        dialogueMessage("Article précédent", "Vous êtes déjà sur le premier article.");
-    }
+  indiceActuel = getIndiceArticleSelectionne();
+
+  indiceActuel --;
+
+  try{
+    article = SendConsult(this->Socket, indiceActuel);
 
   }catch(const char * m){
-    dialogueErreur("Button precedent", m);
-
+    indiceActuel ++;
     return;
   }
+
+  setArticle(article.intitule.c_str(), article.prix, article.stock, article.image.c_str());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////

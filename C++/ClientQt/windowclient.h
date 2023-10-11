@@ -5,6 +5,7 @@
 #include <vector>
 #include <iostream>
 #include <stdio.h>
+#include <unistd.h>
 
 #include "./Library/PROPERTIES/Properties.hpp"
 #include "./Library/TCP/TCP.hpp"
@@ -12,6 +13,7 @@
 #include "./Library/DATABASE/db.hpp"
 #include "./Library/PROTOCOLE/Protocole.hpp"
 #include "./Library/PROTOCOLE/Structure.hpp"
+
 
 
 
@@ -71,6 +73,8 @@ private:
 
     int port;
     string ip;
+    
+    ClientProperties properties;
 
     int Socket;
     int ServiceSocket[30];

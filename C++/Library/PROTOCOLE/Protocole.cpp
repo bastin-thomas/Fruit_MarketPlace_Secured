@@ -23,6 +23,10 @@ void SendLogin(int socket, string nom, string mdp){
 
     s1 = mystrtok(rep, '@');
     
+    for(string row : s1){
+        cout << row << endl;
+    }
+
     if(s1.size() == 1){
         throw "erreur protocole";
     }

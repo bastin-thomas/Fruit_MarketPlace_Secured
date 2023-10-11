@@ -27,10 +27,10 @@ $(bin)mainclient.o:	$(ClientQt)mainclient.cpp
 					@mkdir -p $(bin)
 					g++ $(QtLibParam) $(ClientQt)mainclient.cpp -c -o $(bin)mainclient.o -std=gnu++2a -lpthread
 
-$(bin)windowclient.o:	$(ClientQt)windowclient.cpp $(bin)Protocole.o $(ClientQt)windowclient.h   $(ClientQt)ui_windowclient.h $(bin)Properties.o
+$(bin)windowclient.o:	$(ClientQt)windowclient.cpp $(bin)Protocole.o $(ClientQt)windowclient.h $(ClientQt)ui_windowclient.h
 						echo windowclient.o
 						@mkdir -p $(bin)
-						g++ $(QtLibParam) $(bin)Protocole.o $(bin)Properties.o $(ClientQt)windowclient.cpp -c -o $(bin)windowclient.o -std=gnu++2a -lpthread 
+						g++ $(QtLibParam) $(ClientQt)windowclient.cpp -c -o $(bin)windowclient.o -std=gnu++2a -lpthread 
 
 $(bin)moc_windowclient.o:	$(ClientQt)moc_windowclient.cpp  $(ClientQt)windowclient.h
 							echo moc_windowclient.o
@@ -60,20 +60,20 @@ $(bin)Properties.o:		$(LibProperties)Properties.cpp  $(LibProperties)Properties.
 						@mkdir -p $(bin)
 						g++ $(LibProperties)Properties.cpp -c -o $(bin)Properties.o -std=gnu++2a -lpthread
 
-$(bin)db.o: $(bin)mylibthreadPOSIX.o $(LibDB)db.cpp $(LibDB)db.hpp $(LibProtocole)Structure.hpp
+$(bin)db.o: $(LibDB)db.cpp $(LibDB)db.hpp $(LibProtocole)Structure.hpp
 			echo db.o
 			@mkdir -p $(bin)
-			g++ $(MySQLParam) $(bin)mylibthreadPOSIX.o $(LibDB)db.cpp -c -o $(bin)db.o -std=gnu++2a 
+			g++ $(MySQLParam) $(LibDB)db.cpp -c -o $(bin)db.o -std=gnu++2a 
 
 $(bin)mylibthreadPOSIX.o: $(LibThread)mylibthread_POSIX.cpp $(LibThread)mylibthread_POSIX.h
 						 echo mylibthreadPOSIX.o
 						 @mkdir -p $(bin)
 						 g++ $(LibThread)mylibthread_POSIX.cpp -c -o $(bin)mylibthreadPOSIX.o -std=gnu++2a
 
-$(bin)Protocole.o:		$(LibProtocole)Protocole.cpp  $(LibProtocole)Protocole.hpp $(LibProtocole)Structure.hpp $(bin)db.o $(LibDB)db.hpp
+$(bin)Protocole.o:		$(LibProtocole)Protocole.cpp  $(LibProtocole)Protocole.hpp $(LibProtocole)Structure.hpp $(LibDB)db.hpp
 						echo Protocole.o
 						@mkdir -p $(bin)
-						g++ $(MySQLParam) $(LibProtocole)Protocole.cpp $(bin)db.o -c -o $(bin)Protocole.o -std=gnu++2a -lpthread
+						g++ $(MySQLParam) $(LibProtocole)Protocole.cpp -c -o $(bin)Protocole.o -std=gnu++2a -lpthread
 
 
 

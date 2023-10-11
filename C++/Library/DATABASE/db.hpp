@@ -15,7 +15,7 @@
 #include "../PROTOCOLE/Structure.hpp"
 #include "../THREAD/mylibthread_POSIX.h"
 
-#define IP      "192.168.1.19"
+#define IP      "127.0.0.1"
 #define USER    "Student"
 #define PASS    "PassStudent1_"
 #define DB_NAME "PourStudent"

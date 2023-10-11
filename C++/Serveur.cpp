@@ -34,7 +34,7 @@ pthread_cond_t condService;
 
 
 // Config Loading
-ServerProperties prop = getServerProperties();
+ServerProperties prop;
 
 int main(){
     int sService = -1;
@@ -45,11 +45,15 @@ int main(){
     // Redirect cerr to file
     cerr.rdbuf(mylog.rdbuf());
 
-    DataBase = new db(prop.db_ip, prop.db_name, prop.db_pass, prop.db_name);
+    prop = getServerProperties();
+
+    cerr << "Init DB Connexion: " << prop.db_ip << ", " << prop.db_user << ", " << prop.db_pass << ", " << prop.db_name << endl;
+    DataBase = new db(prop.db_ip, prop.db_user, prop.db_pass, prop.db_name);
+    
     
     //Do some initialization thing
     initSig();
-    initMut();   
+    initMut();
     initCond();
     initServices();
     

@@ -303,7 +303,8 @@ void WindowClient::on_pushButtonLogin_clicked()
       SendLogin(this->Socket,nom, mdp);
     }
   }catch(const char * m){
-    dialogueErreur("Login", "Erreur Login");
+    dialogueErreur("Login", m);
+    return;
   }
 
   loginOK();
@@ -315,7 +316,7 @@ void WindowClient::on_pushButtonLogout_clicked()
   try{
     SendLogout(this->Socket);
   }catch(const char * m){
-    dialogueErreur("Logout", "Erreur Logout");
+    dialogueErreur("Logout", m);
   }
 
   logoutOK();
@@ -329,7 +330,7 @@ void WindowClient::on_pushButtonSuivant_clicked()
     cout << "test" << endl;
 
   }catch(const char * m){
-    dialogueErreur("Button suivant", "Erreur article suivant");
+    dialogueErreur("Button suivant", m);
   }
 }
 
@@ -340,7 +341,7 @@ void WindowClient::on_pushButtonPrecedent_clicked()
     cout << "test" << endl;
 
   }catch(const char * m){
-    dialogueErreur("Button precedent", "Erreur article precedent");
+    dialogueErreur("Button precedent", m);
   }
 }
 
@@ -353,7 +354,7 @@ void WindowClient::on_pushButtonAcheter_clicked()
 
     achat = SendAchat(this->Socket, getIndiceArticleSelectionne(), getQuantite());
   }catch(const char * m){
-    dialogueErreur("Button Acheter", "Erreur ajout de l'article");
+    dialogueErreur("Button Acheter", m);
   }
 
   RefreshTablePanier();

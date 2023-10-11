@@ -12,7 +12,6 @@ void SendLogin(int socket, string nom, string mdp){
 
     s << rep << nom << "#" << mdp;
 
-
     cerr << s.str() << endl;
 
     Send(socket, s.str());
@@ -23,22 +22,24 @@ void SendLogin(int socket, string nom, string mdp){
 
     s1 = mystrtok(rep, '@');
     
-    for(string row : s1){
-        cout << row << endl;
-    }
-
     if(s1.size() == 1){
         throw "erreur protocole";
     }
 
+    if(s1[1] == "OK")
+        return;
+
     s2 = mystrtok(s1.at(1), '#');
 
-    if(s2.size() == 1){
-        throw "erreur protocole";
-    }
+    if(s2[0] == "KO"){
+        if(s2[1] == "NO_LOGIN")
+            throw "Le login encodé n'existe pas";
 
-    if(s2[0] != "OK"){
-        throw "Erreur création Login";
+        else if(s2[1] == "BAD_LOGIN")
+            throw "Le mot de passe entré n'existe pas";
+            
+        else
+            throw "Erreur Innatendue";
     }
 }
 
@@ -432,7 +433,7 @@ string ResponseConfirmer(vector<string> protocolCommand, vector<caddieRows>* Cad
     int idFacture;
     stringstream message;
     string idClient = protocolCommand[0];
-    
+
     try{
         idFacture = DataBase->Confirmer(idClient, *Caddie);
     }
@@ -450,7 +451,7 @@ string ResponseConfirmer(vector<string> protocolCommand, vector<caddieRows>* Cad
 /// @return the server response to be send
 string ResponseLogout(vector<string> protocolCommand, vector<caddieRows>* Caddie, db* DataBase)
 {
-    return "LOGOUT@";
+    throw true;
 }
 
 

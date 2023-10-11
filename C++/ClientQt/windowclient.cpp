@@ -36,10 +36,6 @@ WindowClient::WindowClient(QWidget *parent) : QMainWindow(parent), ui(new Ui::Wi
 
     //LoadConfigProperties:
     ClientProperties properties = getClientProperties();
-
-    //Init Global Properties:
-    this->readCursor = 0;
-    this->writeCursor = 0;
     
     //Init TCP Connexion
     try{
@@ -48,9 +44,6 @@ WindowClient::WindowClient(QWidget *parent) : QMainWindow(parent), ui(new Ui::Wi
     catch(const char* message){
       cout << "ClientSocket: " << message << endl;
     }
-
-    //Request Login
-    // RequestLogin(sendId);
 
     // Exemples à supprimer
     setArticle("pommes",5.53,18,"pommes.jpg");
@@ -287,6 +280,7 @@ void WindowClient::dialogueErreur(const char* titre,const char* message)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WindowClient::closeEvent(QCloseEvent *event)
 {
+  on_pushButtonLogout_clicked();
 
   exit(0);
 }
@@ -309,50 +303,111 @@ void WindowClient::on_pushButtonLogin_clicked()
       SendLogin(this->Socket,nom, mdp);
     }
   }catch(const char * m){
-    cout << "Erreur : " << m << endl;
+    dialogueErreur("Login", "Erreur Login");
   }
 
-  
+  loginOK();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WindowClient::on_pushButtonLogout_clicked()
 {
+  try{
+    SendLogout(this->Socket);
+  }catch(const char * m){
+    dialogueErreur("Logout", "Erreur Logout");
+  }
 
+  logoutOK();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WindowClient::on_pushButtonSuivant_clicked()
 {
 
+  try{
+    cout << "test" << endl;
+
+  }catch(const char * m){
+    dialogueErreur("Button suivant", "Erreur article suivant");
+  }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WindowClient::on_pushButtonPrecedent_clicked()
 {
+  try{
+    cout << "test" << endl;
 
+  }catch(const char * m){
+    dialogueErreur("Button precedent", "Erreur article precedent");
+  }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WindowClient::on_pushButtonAcheter_clicked()
 {
+  achats achat;
 
+  try{
+
+    achat = SendAchat(this->Socket, getIndiceArticleSelectionne(), getQuantite());
+  }catch(const char * m){
+    dialogueErreur("Button Acheter", "Erreur ajout de l'article");
+  }
+
+  RefreshTablePanier();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WindowClient::on_pushButtonSupprimer_clicked()
 {
-
+  try{
+    SendCancel(this->Socket, getIndiceArticleSelectionne());
+  }catch(const char * m){
+    dialogueErreur("Button Supprimer", "Erreur supression de l'article");
+  }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WindowClient::on_pushButtonViderPanier_clicked()
 {
+  try{
+    SendCancelAll(this->Socket);
+  }catch(const char * m){
+    dialogueErreur("Button Vider panier", "Erreur supression des articles");
+  }
 
+  videTablePanier();
+  setTotal(-1.0);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WindowClient::on_pushButtonPayer_clicked()
 {
+  try{
+    SendConfirmer(this->Socket, getNom());
+  }catch(const char * m){
+    dialogueErreur("Button Payer", "Erreur génération facture");
+  }
 
+  RefreshTablePanier();
+  setTotal(-1.0);
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void WindowClient::RefreshTablePanier()
+{
+  vector<caddieRows> Caddie;
+  videTablePanier();
+
+  try{
+    Caddie = SendCaddie(this->Socket);
+  }catch(const char * m){
+    dialogueErreur("Refresh panier", "Erreur refresh du panier");
+  }
+
+  for(caddieRows row : Caddie){
+    ajouteArticleTablePanier(row.intitule.c_str() , row.prix, row.quantitee);
+  }
 }

@@ -29,14 +29,14 @@ articles SendConsult(int socket, int idArticle);
 achats SendAchat(int socket, int idArticle, int quantitee);
 
 // CADDIE //
-void SendCaddie(int socket);
+vector<caddieRows> SendCaddie(int socket);
 
 // CANCEL //
 void SendCancel(int socket, int idArticle);
 void SendCancelAll(int socket);
 
 // CONFIRMER //
-int SendConfirmer(int socket);
+int SendConfirmer(int socket, string nom);
 
 // LOGOUT //
 void SendLogout(int socket);

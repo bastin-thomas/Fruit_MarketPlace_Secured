@@ -69,7 +69,7 @@ articles SendConsult(int socket, int idArticle){
     vector<string> s1,s2;
     string rep = "CONSULT@";
 
-    s << rep << idArticle;;
+    s << rep << idArticle << "#";
 
     Send(socket, s.str());
 
@@ -131,10 +131,13 @@ achats SendAchat(int socket, int idArticle, int quantitee){
 }
 
 // CADDIE //
-void SendCaddie(int socket){
+vector<caddieRows> SendCaddie(int socket){
+    vector<caddieRows> Caddie;
     stringstream s;
-    vector<string> s1;
+    vector<string> s1, s2;
     string rep = "CADDIE@";
+
+    s << rep;
 
     Send(socket, s.str());
 
@@ -145,6 +148,10 @@ void SendCaddie(int socket){
     if(s1[1] == "-1"){
         throw "Erreur de l'opération d'envoi du Caddie";
     }
+
+    s2 = mystrtok(s1[1], '#');
+
+    return Caddie; 
 }
 
 // CANCEL //
@@ -153,7 +160,7 @@ void SendCancel(int socket, int idArticle){
     vector<string> s1;
     string rep = "CANCEL@";
 
-    s << rep << idArticle;
+    s << rep << idArticle << "#";
 
     Send(socket, s.str());
 
@@ -185,12 +192,12 @@ void SendCancelAll(int socket){
 }
 
 // CONFIRMER //
-int SendConfirmer(int socket){
+int SendConfirmer(int socket, string nom){
     stringstream s;
     vector<string> s1,s2;
     string rep = "CONFIRMER@";
 
-    s << rep;
+    s << rep << nom << "#";
 
     Send(socket, s.str());
 

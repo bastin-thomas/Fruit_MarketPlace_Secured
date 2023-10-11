@@ -278,9 +278,11 @@ void WindowClient::closeEvent(QCloseEvent *event)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WindowClient::on_pushButtonLogin_clicked()
 {
-  string nom = getNom();
+  this->indiceArticleAffiche = 1;
 
+  string nom = getNom();
   string mdp = getMotDePasse();
+  articles article;
 
   cout << "log : " << nom << " " << mdp << endl;
 
@@ -306,6 +308,17 @@ void WindowClient::on_pushButtonLogin_clicked()
     return;
   }
 
+  cout << test << endl;
+  try{
+    article = SendConsult(this->Socket, this->indiceArticleAffiche);
+
+  }catch(const char * m){
+    this->indiceArticleAffiche++;
+    return;
+  }
+
+  setArticle(article.intitule.c_str(), article.prix, article.stock, article.image.c_str());
+
   loginOK();
 }
 
@@ -329,17 +342,14 @@ void WindowClient::on_pushButtonLogout_clicked()
 void WindowClient::on_pushButtonSuivant_clicked()
 {
   articles article;
-  int indiceActuel;
 
-  indiceActuel = getIndiceArticleSelectionne();
-
-  indiceActuel ++;
+  this->indiceArticleAffiche++;
 
   try{
-    article = SendConsult(this->Socket, indiceActuel);
+    article = SendConsult(this->Socket, this->indiceArticleAffiche);
 
   }catch(const char * m){
-    indiceActuel --;
+    this->indiceArticleAffiche++;
     return;
   }
 
@@ -350,17 +360,14 @@ void WindowClient::on_pushButtonSuivant_clicked()
 void WindowClient::on_pushButtonPrecedent_clicked()
 {
   articles article;
-  int indiceActuel;
 
-  indiceActuel = getIndiceArticleSelectionne();
-
-  indiceActuel --;
+  this->indiceArticleAffiche--;
 
   try{
-    article = SendConsult(this->Socket, indiceActuel);
+    article = SendConsult(this->Socket, this->indiceArticleAffiche);
 
   }catch(const char * m){
-    indiceActuel ++;
+    this->indiceArticleAffiche++;
     return;
   }
 
@@ -373,7 +380,7 @@ void WindowClient::on_pushButtonAcheter_clicked()
   achats achat;
 
   try{
-    achat = SendAchat(this->Socket, getIndiceArticleSelectionne(), getQuantite());
+    achat = SendAchat(this->Socket, this->indiceArticleAffiche, getQuantite());
   }catch(const char * m){
     dialogueErreur("Button Acheter", m);
 

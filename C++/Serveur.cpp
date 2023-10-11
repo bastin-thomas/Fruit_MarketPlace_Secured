@@ -129,10 +129,11 @@ void ServiceThread(void){
             cerr << "Message received: " << message << endl;
             
             try{
-                if(response == "CRITICAL" || response == "CRITICAL@"){
+                if(message == "CRITICAL" || message == "CRITICAL@"){
                     endConnexion = true;
                     continue;
                 }
+                
                 response = sSMOP(message, &Caddie, DataBase);
             }
             catch(const char * m){

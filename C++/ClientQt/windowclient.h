@@ -71,6 +71,8 @@ private:
     char motDePasse[20];
     char nom[20];
 
+    int indiceArticleAffiche;
+
     int port;
     string ip;
     

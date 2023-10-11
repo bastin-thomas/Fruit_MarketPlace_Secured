@@ -563,6 +563,5 @@ FodyWeavers.xsd
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,visualstudio
 
-./C++/Client.cfg
-./C++/Server.cfg
-./C++/Servlog.txt
+*.cfg
+*.txt

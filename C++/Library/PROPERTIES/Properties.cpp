@@ -36,7 +36,7 @@ ClientProperties getClientProperties(){
 
     if(read.fail()){
         write.open(path);
-        write << "ServerIP=192.168.1.61" << endl;
+        write << "ServerIP=127.0.0.1" << endl;
         write << "ServerPort=50001" << endl;
         write.close();
 
@@ -85,7 +85,7 @@ ServerProperties getServerProperties(){
         write.open(path);
         write << "ServerPort=50001" << endl;
         write << "ServerMaxClient=5" << endl;
-        write << "DB_IP=192.168.1.19" << endl;
+        write << "DB_IP=127.0.0.1" << endl;
         write << "DB_USER=Student" << endl;
         write << "DB_PASS=PassStudent1_" << endl;
         write << "DB_NAME=PourStudent" << endl;

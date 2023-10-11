@@ -1,2 +1,0 @@
-A Server Socket has been created ( 5 )
-bind() reussi !

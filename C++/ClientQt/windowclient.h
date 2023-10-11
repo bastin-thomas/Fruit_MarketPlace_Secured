@@ -2,6 +2,7 @@
 #define WINDOWCLIENT_H
 
 #include <QMainWindow>
+#include <vector>
 
 #include "./Library/PROPERTIES/Properties.hpp"
 #include "./Library/TCP/TCP.hpp"
@@ -38,6 +39,7 @@ public:
 
     void ajouteArticleTablePanier(const char *article, float prix, int quantite);
     void videTablePanier();
+    void RefreshTablePanier();
     int getIndiceArticleSelectionne();
 
     // Clic sur la croix de la fenetre
@@ -68,7 +70,5 @@ private:
 
     int Socket;
     int ServiceSocket[30];
-    int readCursor;
-    int writeCursor;
 };
 #endif // WINDOWCLIENT_H

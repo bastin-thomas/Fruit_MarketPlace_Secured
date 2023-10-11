@@ -46,8 +46,8 @@ WindowClient::WindowClient(QWidget *parent) : QMainWindow(parent), ui(new Ui::Wi
     }
 
     // Exemples à supprimer
-    setArticle("pommes",5.53,18,"pommes.jpg");
-    ajouteArticleTablePanier("cerises",8.96,2);
+    // setArticle("pommes",5.53,18,"pommes.jpg");
+    // ajouteArticleTablePanier("cerises",8.96,2);
 }
 
 WindowClient::~WindowClient()
@@ -367,6 +367,8 @@ void WindowClient::on_pushButtonSupprimer_clicked()
   }catch(const char * m){
     dialogueErreur("Button Supprimer", "Erreur supression de l'article");
   }
+
+  RefreshTablePanier();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -378,7 +380,7 @@ void WindowClient::on_pushButtonViderPanier_clicked()
     dialogueErreur("Button Vider panier", "Erreur supression des articles");
   }
 
-  videTablePanier();
+  RefreshTablePanier();
   setTotal(-1.0);
 }
 

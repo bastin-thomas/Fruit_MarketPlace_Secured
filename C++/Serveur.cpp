@@ -129,7 +129,7 @@ void ServiceThread(void){
             cerr << "Message received: " << message << endl;
             
             try{
-                response = sSMOP(message, &Caddie, DataBase, idUser);
+                response = sSMOP(message, &Caddie, DataBase);
             }
             catch(const char * m){
                 cout << "Cant send the message due: " << m << endl;

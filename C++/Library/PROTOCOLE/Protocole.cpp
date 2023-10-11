@@ -227,7 +227,7 @@ void SendLogout(int socket){
 /// @param message message send by client
 /// @param Caddie the current cadie of the thread
 /// @return the server response to be send
-string sSMOP(string message, vector<caddieRows>* Caddie, db* DataBase, string idClient){
+string sSMOP(string message, vector<caddieRows>* Caddie, db* DataBase){
     vector<string> CommandElems;
     
     //split string in two parts, one with command, other with parameters
@@ -257,7 +257,7 @@ string sSMOP(string message, vector<caddieRows>* Caddie, db* DataBase, string id
         return ResponseCancelAll(CommandParam, Caddie, DataBase);
     }
     else if(CommandElems[0] == "CONFIRMER"){
-        return ResponseConfirmer(CommandParam, Caddie, DataBase, idClient);
+        return ResponseConfirmer(CommandParam, Caddie, DataBase);
     }
     else if(CommandElems[0] == "LOGOUT"){
         return ResponseLogout(CommandParam, Caddie, DataBase);
@@ -420,13 +420,13 @@ string ResponseCancelAll(vector<string> protocolCommand, vector<caddieRows>* Cad
 /// @brief Server Logic on CONFIRMER request
 /// @param protocolCommand parameters from the string command
 /// @return the server response to be send
-string ResponseConfirmer(vector<string> protocolCommand, vector<caddieRows>* Caddie, db* DataBase, string idClient)
+string ResponseConfirmer(vector<string> protocolCommand, vector<caddieRows>* Caddie, db* DataBase)
 {
     int idFacture;
     stringstream message;
-    
+    string idClient = protocolCommand[0];
     try{
-        idFacture = DataBase->Confirmer(idClient, *Caddie);
+        idFacture = DataBase->Confirmer(, *Caddie);
     }
     catch(const char* m){
         return "CONFIRMER@-1";

@@ -111,7 +111,7 @@ void ServiceThread(void){
         while( ReadCurs >= WriteCurs ){
             pthread_cond_wait(&condService, &mutexService);
         }
-
+        
         //Read socket and free mutex
         sService = pendingClientQueue[ReadCurs];
         pendingClientQueue[ReadCurs] = -1;
@@ -136,6 +136,8 @@ void ServiceThread(void){
             }
             catch(bool finish){
                 endConnexion = finish;
+                cout << "Client Deconnecte --> " << endl;
+                close(sService);
                 continue;
             }
             

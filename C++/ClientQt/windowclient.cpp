@@ -304,7 +304,7 @@ void WindowClient::on_pushButtonLogin_clicked()
     }
   }catch(const char * m){
     dialogueErreur("Login", m);
-
+    
     return;
   }
 

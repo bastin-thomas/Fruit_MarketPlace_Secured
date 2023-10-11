@@ -296,6 +296,14 @@ void WindowClient::on_pushButtonLogin_clicked()
 
   cout << "log : " << nom << " " << mdp << endl;
 
+  //Init TCP Connexion
+  try{
+    this->Socket = ClientSocket(properties.ip, properties.port);
+  }
+  catch(const char* message){
+    cout << "ClientSocket: " << message << endl;
+  }
+  
   try{
     if(isNouveauClientChecked()){
       SendCreateLogin(this->Socket,nom, mdp);
@@ -304,7 +312,7 @@ void WindowClient::on_pushButtonLogin_clicked()
     }
   }catch(const char * m){
     dialogueErreur("Login", m);
-    
+
     return;
   }
 
@@ -323,6 +331,8 @@ void WindowClient::on_pushButtonLogout_clicked()
   }
 
   logoutOK();
+
+  close(this->Socket);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////

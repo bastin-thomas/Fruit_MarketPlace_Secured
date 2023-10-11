@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 #include <vector>
+#include <iostream>
+#include <stdio.h>
 
 #include "./Library/PROPERTIES/Properties.hpp"
 #include "./Library/TCP/TCP.hpp"
@@ -38,7 +40,7 @@ public:
     void logoutOK();
     void setArticle(const char *intitule, float prix, int stock, const char *image);
     void setTotal(float montant);
-    
+
     void ajouteArticleTablePanier(const char *article, float prix, int quantite);
     void videTablePanier();
     void RefreshTablePanier();

@@ -324,15 +324,18 @@ void WindowClient::on_pushButtonLogin_clicked()
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WindowClient::on_pushButtonLogout_clicked()
 {
-  try{
-    SendCancelAll(this->Socket);
-    SendLogout(this->Socket);
-  }catch(const char * m){
+  if(ui->pushButtonLogin->isEnabled()){
+    try{
+      SendCancelAll(this->Socket);
+      SendLogout(this->Socket);
+    }catch(const char * m){
 
+    }
   }
+  
+  
 
   logoutOK();
-
   ::close(this->Socket);
 }
 

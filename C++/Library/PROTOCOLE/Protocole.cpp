@@ -22,6 +22,10 @@ void SendLogin(int socket, string nom, string mdp){
 
     s1 = mystrtok(rep, '@');
     
+    if(rep == "CRITICAL@"){
+        throw "La connexion avec le serveur a été coupée";
+    }
+
     if(s1.size() == 1){
         throw "erreur protocole";
     }
@@ -54,6 +58,10 @@ void SendCreateLogin(int socket, string nom, string mdp){
 
     rep = Receive(socket);
 
+    if(rep == "CRITICAL@"){
+        throw "La connexion avec le serveur a été coupée";
+    }
+
     s1 = mystrtok(rep, '@');
 
     s2 = mystrtok(s1[1], '#');
@@ -77,6 +85,11 @@ articles SendConsult(int socket, int idArticle){
     Send(socket, s.str());
 
     rep = Receive(socket);
+
+    if(rep == "CRITICAL@"){
+        throw "La connexion avec le serveur a été coupée";
+    }
+
     cout << rep << endl;
     s1 = mystrtok(rep, '@');
 
@@ -114,6 +127,10 @@ achats SendAchat(int socket, int idArticle, int quantitee){
 
     rep = Receive(socket);
 
+    if(rep == "CRITICAL@"){
+        throw "La connexion avec le serveur a été coupée";
+    }
+
     cout << rep << endl;
 
     s1 = mystrtok(rep, '@');
@@ -149,6 +166,10 @@ vector<caddieRows> SendCaddie(int socket){
     Send(socket, s.str());
 
     rep = Receive(socket);
+
+    if(rep == "CRITICAL@"){
+        throw "La connexion avec le serveur a été coupée";
+    }
 
 
     if(rep == "CADDIE@"){
@@ -191,6 +212,10 @@ void SendCancel(int socket, int idArticle){
 
     rep = Receive(socket);
 
+    if(rep == "CRITICAL@"){
+        throw "La connexion avec le serveur a été coupée";
+    }
+
     s1 = mystrtok(rep, '@');
 
     if(s1[1] != "OK"){
@@ -208,6 +233,10 @@ void SendCancelAll(int socket){
     Send(socket, s.str());
 
     rep = Receive(socket);
+
+    if(rep == "CRITICAL@"){
+        throw "La connexion avec le serveur a été coupée";
+    }
 
     s1 = mystrtok(rep, '@');
 
@@ -227,6 +256,10 @@ int SendConfirmer(int socket, string nom){
     Send(socket, s.str());
 
     rep = Receive(socket);
+
+    if(rep == "CRITICAL@"){
+        throw "La connexion avec le serveur a été coupée";
+    }
 
     s1 = mystrtok(rep, '@');
 

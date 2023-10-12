@@ -329,7 +329,7 @@ void WindowClient::on_pushButtonLogout_clicked()
       SendCancelAll(this->Socket);
       SendLogout(this->Socket);
     }catch(const char * m){
-      if(m == "La connexion avec le serveur a été coupée"){
+      if(strcmp(m, "La connexion avec le serveur a été coupée") == 0){
         dialogueErreur("Connexion Server", "La connexion avec le serveur a été coupée");
         logoutOK();
         return;
@@ -354,7 +354,7 @@ void WindowClient::on_pushButtonSuivant_clicked()
     article = SendConsult(this->Socket, this->indiceArticleAffiche);
 
   }catch(const char * m){
-    if(m == "La connexion avec le serveur a été coupée"){
+    if(strcmp(m, "La connexion avec le serveur a été coupée") == 0){
         dialogueErreur("Connexion Server", "La connexion avec le serveur a été coupée");
         logoutOK();
         return;
@@ -378,7 +378,7 @@ void WindowClient::on_pushButtonPrecedent_clicked()
     article = SendConsult(this->Socket, this->indiceArticleAffiche);
 
   }catch(const char * m){
-      if(m == "La connexion avec le serveur a été coupée"){
+      if(strcmp(m, "La connexion avec le serveur a été coupée") == 0){
         dialogueErreur("Connexion Server", "La connexion avec le serveur a été coupée");
         logoutOK();
         return;
@@ -403,7 +403,7 @@ void WindowClient::on_pushButtonAcheter_clicked()
   try{
     SendAchat(this->Socket, this->indiceArticleAffiche, getQuantite());
   }catch(const char * m){
-    if(m == "La connexion avec le serveur a été coupée"){
+    if(strcmp(m, "La connexion avec le serveur a été coupée") == 0){
         dialogueErreur("Connexion Server", "La connexion avec le serveur a été coupée");
         logoutOK();
         return;
@@ -419,7 +419,7 @@ void WindowClient::on_pushButtonAcheter_clicked()
   try{
     article = SendConsult(this->Socket, this->indiceArticleAffiche);
   }catch(const char * m){
-    if(m == "La connexion avec le serveur a été coupée"){
+    if(strcmp(m, "La connexion avec le serveur a été coupée") == 0){
         dialogueErreur("Connexion Server", "La connexion avec le serveur a été coupée");
         logoutOK();
         return;
@@ -441,7 +441,7 @@ void WindowClient::on_pushButtonSupprimer_clicked()
   try{
     SendCancel(this->Socket, id);
   }catch(const char * m){
-    if(m == "La connexion avec le serveur a été coupée"){
+    if(strcmp(m, "La connexion avec le serveur a été coupée") == 0){
         dialogueErreur("Connexion Server", "La connexion avec le serveur a été coupée");
         logoutOK();
         return;
@@ -457,7 +457,7 @@ void WindowClient::on_pushButtonSupprimer_clicked()
   try{
     article = SendConsult(this->Socket, this->indiceArticleAffiche);
   }catch(const char * m){
-    if(m == "La connexion avec le serveur a été coupée"){
+    if(strcmp(m, "La connexion avec le serveur a été coupée") == 0){
         dialogueErreur("Connexion Server", "La connexion avec le serveur a été coupée");
         logoutOK();
         return;
@@ -487,7 +487,7 @@ void WindowClient::on_pushButtonViderPanier_clicked()
   try{
     article = SendConsult(this->Socket, this->indiceArticleAffiche);
   }catch(const char * m){
-    if(m == "La connexion avec le serveur a été coupée"){
+    if(strcmp(m, "La connexion avec le serveur a été coupée") == 0){
         dialogueErreur("Connexion Server", "La connexion avec le serveur a été coupée");
         logoutOK();
         return;
@@ -504,7 +504,7 @@ void WindowClient::on_pushButtonPayer_clicked()
   try{
     SendConfirmer(this->Socket, getNom());
   }catch(const char * m){
-    if(m == "La connexion avec le serveur a été coupée"){
+    if(strcmp(m, "La connexion avec le serveur a été coupée") == 0){
         dialogueErreur("Connexion Server", "La connexion avec le serveur a été coupée");
         logoutOK();
         return;
@@ -529,7 +529,7 @@ void WindowClient::RefreshTablePanier()
   try{
     Caddie = SendCaddie(this->Socket);
   }catch(const char * m){
-    if(m == "La connexion avec le serveur a été coupée"){
+    if(strcmp(m, "La connexion avec le serveur a été coupée") == 0){
         dialogueErreur("Connexion Server", "La connexion avec le serveur a été coupée");
         logoutOK();
         return;

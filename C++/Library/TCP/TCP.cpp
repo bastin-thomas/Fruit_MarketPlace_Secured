@@ -159,7 +159,7 @@ int Send(int sSocket, string data){
 }
 
 
-//Permet d'envoyée des bytes sur un socket
+//Permet d'envoyer des bytes sur un socket
 int Send(int sSocket,char* data,int taille){
     if (taille > TAILLE_MAX_DATA)
         return -1;

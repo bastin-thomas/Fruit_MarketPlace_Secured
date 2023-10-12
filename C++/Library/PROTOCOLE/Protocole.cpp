@@ -317,7 +317,7 @@ string sSMOP(string message, vector<caddieRows>* Caddie, db* DataBase, pthread_m
         return ResponseLogout(CommandParam, Caddie, DataBase);
     }
     else{
-        return "CRITICAL";
+        return "CRITICAL@";
     }
 }
 

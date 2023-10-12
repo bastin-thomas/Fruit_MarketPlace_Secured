@@ -243,7 +243,7 @@ void SendLogout(int socket){
     
     string rep = "LOGOUT@";
 
-    s << rep;
+    s << rep << endl;
 
     Send(socket, s.str());
 }

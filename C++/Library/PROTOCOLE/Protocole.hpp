@@ -47,7 +47,7 @@ void SendLogout(int socket);
 ///////////////////////////////
 
 // Protocol Server Main Logic //
-string sSMOP(string message, vector<caddieRows> *Caddie, db *DataBase);
+string sSMOP(string message, vector<caddieRows> *Caddie, db *DataBase, pthread_mutex_t mutexDB);
 
 string ResponseLogin(vector<string> protocolCommand, vector<caddieRows> *Caddie, db *DataBase);
 string ResponseCreateLogin(vector<string> protocolCommand, vector<caddieRows>* Caddie, db* DataBase);

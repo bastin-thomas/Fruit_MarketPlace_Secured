@@ -135,7 +135,7 @@ void ServiceThread(void){
                     continue;
                 }
                 
-                response = sSMOP(message, &Caddie, DataBase);
+                response = sSMOP(message, &Caddie, DataBase, mutexDB);
             }
             catch(const char * m){
                 cout << "Cant send the message due: " << m << endl;

@@ -39,7 +39,7 @@ void SendLogin(int socket, string nom, string mdp){
             throw "Le mot de passe entré n'existe pas";
             
         else
-            throw "Erreur Innatendue";
+            throw "Erreur inattendue";
     }
 }
 
@@ -141,7 +141,7 @@ achats SendAchat(int socket, int idArticle, int quantitee){
 vector<caddieRows> SendCaddie(int socket){
     vector<caddieRows> Caddie;
     stringstream s;
-    vector<string> s1, s2;
+    vector<string> s1, s2, rowList;
     string rep = "CADDIE@";
 
     s << rep;
@@ -150,14 +150,32 @@ vector<caddieRows> SendCaddie(int socket){
 
     rep = Receive(socket);
 
+
+    if(rep == "CADDIE@"){
+        return Caddie;
+    }
+
     s1 = mystrtok(rep, '@');
 
     if(s1[1] == "-1"){
-        throw "Erreur de l'opération d'envoi du Caddie";
+        throw "Erreur de l'operation d'envoi du Caddie";
     }
 
-    s2 = mystrtok(s1[1], '#');
+    rowList = mystrtok(s1[1], '~');
+   
+    for(string row : rowList){
+        if(row == "") break;
+        caddieRows tmp;
+        s2 = mystrtok(row, '#');
 
+        tmp.idArticle = stoi(s2[0]);
+        tmp.intitule = s2[1];
+        tmp.quantitee = stoi(s2[2]);
+        tmp.prix = stof(s2[3]);
+
+        Caddie.push_back(tmp);
+    }
+ 
     return Caddie; 
 }
 
@@ -241,37 +259,59 @@ void SendLogout(int socket){
 /// @param message message send by client
 /// @param Caddie the current cadie of the thread
 /// @return the server response to be send
-string sSMOP(string message, vector<caddieRows>* Caddie, db* DataBase){
+string sSMOP(string message, vector<caddieRows>* Caddie, db* DataBase, pthread_mutex_t mutexDB){
     vector<string> CommandElems;
-    
+    string response;
     //split string in two parts, one with command, other with parameters
     CommandElems = mystrtok(message, '@');
 
     vector<string> CommandParam = mystrtok(CommandElems[1], '#');
 
     if(CommandElems[0] == "LOGIN"){
-        return ResponseLogin(CommandParam, Caddie, DataBase);
+        
+        mLock(&mutexDB);
+        response = ResponseLogin(CommandParam, Caddie, DataBase);
+        mUnLock(&mutexDB);
+        return response;
     }
     else if(CommandElems[0] == "CREATELOGIN"){
-        return ResponseCreateLogin(CommandParam, Caddie, DataBase);
+        mLock(&mutexDB);
+        response = ResponseCreateLogin(CommandParam, Caddie, DataBase);
+        mUnLock(&mutexDB);
+        return response;
     }
     else if(CommandElems[0] == "CONSULT"){
-        return ResponseConsult(CommandParam, Caddie, DataBase);
+        mLock(&mutexDB);
+        response = ResponseConsult(CommandParam, Caddie, DataBase);
+        mUnLock(&mutexDB);
+        return response;
     }
     else if(CommandElems[0] == "ACHAT"){
-        return ResponseAchat(CommandParam, Caddie, DataBase);
+        mLock(&mutexDB);
+        response = ResponseAchat(CommandParam, Caddie, DataBase);
+        mUnLock(&mutexDB);
+        return response;
     }
     else if(CommandElems[0] == "CADDIE"){
         return ResponseCaddie(CommandParam, Caddie, DataBase);
     }
     else if(CommandElems[0] == "CANCEL"){
-        return ResponseCancel(CommandParam, Caddie, DataBase);
+        mLock(&mutexDB);
+        response = ResponseCancel(CommandParam, Caddie, DataBase);
+        mUnLock(&mutexDB);
+        return response;
     }
     else if(CommandElems[0] == "CANCELALL"){
-        return ResponseCancelAll(CommandParam, Caddie, DataBase);
+        mLock(&mutexDB);
+        response = ResponseCancelAll(CommandParam, Caddie, DataBase);
+        mUnLock(&mutexDB);
+        return response;
     }
     else if(CommandElems[0] == "CONFIRMER"){
-        return ResponseConfirmer(CommandParam, Caddie, DataBase);
+        mLock(&mutexDB);
+        response = ResponseConfirmer(CommandParam, Caddie, DataBase);
+        mUnLock(&mutexDB);
+        return response;
     }
     else if(CommandElems[0] == "LOGOUT"){
         return ResponseLogout(CommandParam, Caddie, DataBase);
@@ -354,19 +394,54 @@ string ResponseConsult(vector<string> protocolCommand, vector<caddieRows>* Caddi
 /// @return the server response to be send
 string ResponseAchat(vector<string> protocolCommand, vector<caddieRows>* Caddie, db* DataBase)
 {
+    articles article;
     achats achat;
     stringstream message;
+    vector<caddieRows> Caddietmp = *Caddie;
+    
     int idArticle = stoi(protocolCommand[0]);
     int quantitee = stoi(protocolCommand[1]);
     
     try{
+        article = DataBase->Consult(idArticle);
         achat = DataBase->Achat(idArticle, quantitee);
+
+        if(achat.quantitee == -1){
+            cerr << "ACHAT@-1" << endl;
+            return "ACHAT@-1";
+        }
     }
     catch(const char* m){
+        cerr << "ACHAT@-1" << endl;
         return "ACHAT@-1";
     }
-    
+
     message << "ACHAT@" << achat.idArticle << "#" << achat.quantitee << "#" << achat.prix;
+
+
+    bool found = false;
+    int i = 0;
+    for(caddieRows row : Caddietmp){
+        if(row.idArticle == idArticle){
+            found = true;
+            Caddie->at(i).quantitee = Caddie->at(i).quantitee + achat.quantitee;
+            return message.str();
+        }
+        i++;
+    }
+
+    
+    if(!found && achat.quantitee != 0){
+        caddieRows newrow;
+
+        //Add a new row to the caddie
+        newrow.idArticle = idArticle;
+        newrow.intitule = article.intitule;
+        newrow.prix = achat.prix;
+        newrow.quantitee = achat.quantitee;
+
+        Caddie->push_back(newrow);
+    }
 
     return message.str();
 }
@@ -384,15 +459,12 @@ string ResponseCaddie(vector<string> protocolCommand, vector<caddieRows>* Caddie
     if(Caddie->size() == 0){
         return message.str();
     }
-
-    for(caddieRows row : *Caddie){
-        message << row.idArticle << "#" << row.intitule << "#" << row.quantitee << "#" << row.prix << "~";
+    
+    for(int i = 0; i< Caddie->size() ; i++){
+        message << Caddie->at(i).idArticle << "#" << Caddie->at(i).intitule << "#" << Caddie->at(i).quantitee << "#" << Caddie->at(i).prix << "~";
     }
 
-    m = message.str();
-    m.pop_back();
-    
-    return m;
+    return message.str();
 }
 
 /// @brief Server Logic on CANCEL request
@@ -400,7 +472,6 @@ string ResponseCaddie(vector<string> protocolCommand, vector<caddieRows>* Caddie
 /// @return the server response to be send
 string ResponseCancel(vector<string> protocolCommand, vector<caddieRows>* Caddie, db* DataBase)
 {
-    stringstream message;
     int idArticle = stoi(protocolCommand[0]);
     
     try{
@@ -410,25 +481,26 @@ string ResponseCancel(vector<string> protocolCommand, vector<caddieRows>* Caddie
         return "CANCEL@KO";
     }
 
-    return "CANCEL@KO";
+    return "CANCEL@OK";
 }
 
 /// @brief Server Logic on CANCELALL request
 /// @param protocolCommand parameters from the string command
 /// @return the server response to be send
 string ResponseCancelAll(vector<string> protocolCommand, vector<caddieRows>* Caddie, db* DataBase)
-{
-    stringstream message;
-    int idArticle = stoi(protocolCommand[0]);
-    
+{   
+    vector<caddieRows> tmp = *Caddie;
+
     try{
-        DataBase->Cancel(idArticle, Caddie);
+        for(caddieRows row : tmp){
+            DataBase->Cancel(row.idArticle, Caddie);
+        }
     }
     catch(const char* m){
         return "CANCEL@KO";
     }
     
-    return "CANCEL@KO";
+    return "CANCEL@OK";
 }
 
 /// @brief Server Logic on CONFIRMER request
@@ -441,13 +513,17 @@ string ResponseConfirmer(vector<string> protocolCommand, vector<caddieRows>* Cad
     string idClient = protocolCommand[0];
 
     try{
-        idFacture = DataBase->Confirmer(idClient, *Caddie);
+        idFacture = DataBase->Confirmer(idClient, Caddie);
     }
     catch(const char* m){
         return "CONFIRMER@-1";
     }
     
     message << "CONFIRMER@" << idFacture;
+
+    for(caddieRows row : *Caddie){
+        cout << row.intitule << endl;
+    }
 
     return message.str();
 }

@@ -78,6 +78,8 @@ private:
     
     ClientProperties properties;
 
+    vector<caddieRows> Caddie;
+
     int Socket;
     int ServiceSocket[30];
 };

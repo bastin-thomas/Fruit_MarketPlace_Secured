@@ -32,7 +32,7 @@ WindowClient::WindowClient(QWidget *parent) : QMainWindow(parent), ui(new Ui::Wi
     ui->tableWidgetPanier->horizontalHeader()->setStyleSheet("background-color: lightyellow");
 
     ui->pushButtonPayer->setText("Confirmer achat");
-    setPublicite("!!! Bienvenue sur le Maraicher en ligne !!!");
+    setPublicite("--------------------------------------------------------------------");
 
     //LoadConfigProperties:
     this->properties = getClientProperties();    
@@ -370,27 +370,35 @@ void WindowClient::on_pushButtonPrecedent_clicked()
     return;
   }
 
-  cout << "TEST: " <<  article.image.c_str() << endl;
-
   setArticle(article.intitule.c_str(), article.prix, article.stock, article.image.c_str());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WindowClient::on_pushButtonAcheter_clicked()
 {
-  achats achat;
+  cerr << "indice: " << this->indiceArticleAffiche << endl;
 
   if(getQuantite()<=0){
     return;
   }
 
   try{
-    achat = SendAchat(this->Socket, this->indiceArticleAffiche, getQuantite());
+    SendAchat(this->Socket, this->indiceArticleAffiche, getQuantite());
   }catch(const char * m){
     dialogueErreur("Button Acheter", m);
 
     return;
   }
+
+
+  
+  articles article;
+  try{
+    article = SendConsult(this->Socket, this->indiceArticleAffiche);
+  }catch(const char * m){
+    return;
+  }
+  setArticle(article.intitule.c_str(), article.prix, article.stock, article.image.c_str());
 
   RefreshTablePanier();
 }
@@ -398,15 +406,25 @@ void WindowClient::on_pushButtonAcheter_clicked()
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WindowClient::on_pushButtonSupprimer_clicked()
 {
+  
+  int id = this->Caddie.at(getIndiceArticleSelectionne()).idArticle;
+
   try{
-    SendCancel(this->Socket, getIndiceArticleSelectionne());
+    SendCancel(this->Socket, id);
   }catch(const char * m){
     dialogueErreur("Button Supprimer", m);
-
     return;
   }
 
   RefreshTablePanier();
+
+  articles article;
+  try{
+    article = SendConsult(this->Socket, this->indiceArticleAffiche);
+  }catch(const char * m){
+    return;
+  }
+  setArticle(article.intitule.c_str(), article.prix, article.stock, article.image.c_str());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -421,7 +439,16 @@ void WindowClient::on_pushButtonViderPanier_clicked()
   }
 
   RefreshTablePanier();
-  setTotal(-1.0);
+
+  setTotal(0.0);
+
+  articles article;
+  try{
+    article = SendConsult(this->Socket, this->indiceArticleAffiche);
+  }catch(const char * m){
+    return;
+  }
+  setArticle(article.intitule.c_str(), article.prix, article.stock, article.image.c_str());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -431,9 +458,10 @@ void WindowClient::on_pushButtonPayer_clicked()
     SendConfirmer(this->Socket, getNom());
   }catch(const char * m){
     dialogueErreur("Button Payer", m);
-
     return;
   }
+
+  dialogueMessage("Commande Réussie","Félicitation, votre commande a bien été enregistrée. Cependant il vous faut encore la payée.");
 
   RefreshTablePanier();
   setTotal(-1.0);
@@ -442,7 +470,7 @@ void WindowClient::on_pushButtonPayer_clicked()
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WindowClient::RefreshTablePanier()
 {
-  vector<caddieRows> Caddie;
+  Caddie.empty();
   videTablePanier();
 
   try{
@@ -453,7 +481,10 @@ void WindowClient::RefreshTablePanier()
     return;
   }
 
+  float prix = 0;
   for(caddieRows row : Caddie){
     ajouteArticleTablePanier(row.intitule.c_str() , row.prix, row.quantitee);
+    prix += row.prix*row.quantitee;
   }
+  setTotal(prix);
 }

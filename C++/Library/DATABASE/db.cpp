@@ -147,7 +147,7 @@ achats db::Achat(int idArticle, int quantitee){
     else{
         try{
             //If stock and exist, remove stock from db and return achat; (be added to the caddie)
-            request << "UPDATE SET stock = \""<< newstock <<"\" WHERE id =\"" << idArticle << "\";";
+            request << "UPDATE articles SET stock = \""<< newstock <<"\" WHERE id =\"" << idArticle << "\";";
             this->update(request.str());
 
             achat.quantitee = quantitee;
@@ -185,7 +185,7 @@ void db::Cancel(int idArticle, vector<caddieRows>* caddie){
     newstock = article.stock + deletedrow.quantitee;
 
     try{
-        request << "UPDATE SET stock = \""<< newstock <<"\" WHERE id =\"" << idArticle << "\";";
+        request << "UPDATE articles SET stock = \""<< newstock <<"\" WHERE id =\"" << idArticle << "\";";
         this->update(request.str());
     }
     catch(const char * m){
@@ -202,17 +202,32 @@ void db::CancelAll(vector<caddieRows> * caddie){
 }
 
 //Do DataBase Confirmer Job
-int db::Confirmer(string idClient, vector<caddieRows> caddie){
+int db::Confirmer(string idClient, vector<caddieRows> * caddie){
     vector<vector<string>> result;
     int montant = 0;
     
-    for(caddieRows row : caddie){
+    //Loop on the caddie to calculate the bill
+    for(caddieRows row : *caddie){
         montant+=row.prix*row.quantitee;
     }
 
+
+    //Insert a new "factures" in the DB
     try{
         stringstream request;
-        request << "INSERT INTO factures (idClient, montant) VALUES (\"" << idClient << "\",\"" << montant << "\") RETURNING id;";
+        request << "INSERT INTO factures (idClient, montant) VALUES (\"" << idClient << "\",\"" << montant << "\");";
+        this->insert(request.str());
+    }
+    catch(const char * m){
+        stringstream newm;
+        cerr << SQLHEADER << m << endl;
+        throw "SQLERROR";
+    }
+
+    //Get the ID from the last row insterted (factures)
+    try{
+        stringstream request;
+        request << "SELECT LAST_INSERT_ID();";
         result = this->select(request.str());
     }
     catch(const char * m){
@@ -221,7 +236,28 @@ int db::Confirmer(string idClient, vector<caddieRows> caddie){
         throw "SQLERROR";
     }
 
-    return stoi(result[0][0]);
+    //put the factures id in a int
+    int Factid = stoi(result[0][0]);
+
+
+
+    //Loop on all row of the caddie to send them to the "ventes" table
+    for(caddieRows row : *caddie){
+        try{
+            stringstream request;
+            request << "INSERT INTO ventes (idFacture, idArticle, quantité) VALUES (\"" << Factid << "\",\"" << row.idArticle << "\",\""<< row.quantitee <<"\");";
+            this->insert(request.str());
+        }catch(const char * m){
+            stringstream newm;
+            cerr << SQLHEADER << m << endl;
+            throw "SQLERROR";
+        }
+    }
+    
+    //Once everything done, empty the caddie (server side)
+    caddie->clear();
+    
+    return Factid;
 }
 
 

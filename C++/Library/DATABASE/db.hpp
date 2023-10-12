@@ -53,7 +53,7 @@ class db
 
         void CancelAll(vector<caddieRows> *caddie);
 
-        int Confirmer(string idClient, vector<caddieRows> caddie);
+        int Confirmer(string idClient, vector<caddieRows> * caddie);
 };
 
 #endif

@@ -36,24 +36,21 @@ import javax.mail.internet.MimeUtility;
 public class UtilityLib {
     
     /**
-     * Get the Sender and the object of all Message
-     * @param msg the mime list.
+     * Get the Sender and the object of all Message 
+     * @param messagesList The Message List.
      * @return ArrayList wich containe multiple ArrayList paired From & Subject
      * @throws MessagingException 
      */
-    public static ArrayList GetHeadSender(Message[] msg) throws MessagingException{
+    public static ArrayList GetHeadSender(Message[] messagesList) throws MessagingException{
         
         ArrayList messagesData = new ArrayList();
         
-        for (int i=0; i<msg.length; i++) {
-            ArrayList<String> vec = new ArrayList<String>();
-            
-            String From = convertAddress(msg[i].getFrom());            
-            String Subject = msg[i].getSubject();
-            
+        for (Message msg : messagesList) {
+            ArrayList<String> vec = new ArrayList<>();
+            String From = convertAddress(msg.getFrom());
+            String Subject = msg.getSubject();
             vec.add(From);
             vec.add(Subject);
-            
             messagesData.add(vec.clone());
         }
         
@@ -72,7 +69,7 @@ public class UtilityLib {
         
         if(fromAdd == null) return "";
         
-        //Creation disposition'une String sur base disposition'adresse
+        //Creation d'une String sur base d'adresse
         for (Address Add : fromAdd) {
             if (fromAdd != null) {
                 if (i == fromAdd.length-1) {
@@ -182,6 +179,7 @@ public class UtilityLib {
                 }
             }
         } 
+        
         //SimplePart Message:
         else {
             txt =  MimeUtility.decodeText((String) msg.getContent());
@@ -230,7 +228,7 @@ public class UtilityLib {
     
     
     /*Ajoute les fichier joints au message principal*/
-    public static void setFilePart(Multipart msg, String FilePath, Vector<String> FileList) throws IOException, MessagingException{
+    public static void setFilePart(Multipart msg, String FilePath, ArrayList<String> FileList) throws IOException, MessagingException{
             String[] Names = FilePath.split("/");
             String Name = Names[Names.length - 1];
             MimeBodyPart BodyPart = new MimeBodyPart();
@@ -245,12 +243,10 @@ public class UtilityLib {
             FileList.add(Name);
     }
     
-    public static Address[] convertAddr(Vector<String> vec) throws AddressException{
-        Vector<Address> Addresses = new Vector<Address>();
+    public static Address[] convertAddr(ArrayList<String> vec) throws AddressException{
+        ArrayList<Address> Addresses = new ArrayList<>();
         
-        Iterator i = vec.iterator();
-        while(i.hasNext()){
-            String tmp = (String) i.next();
+        for (String tmp : vec) {
             if(!tmp.equals("")){
                 Addresses.add(new InternetAddress(tmp));
             }

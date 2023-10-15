@@ -4,19 +4,27 @@
  */
 package be.hepl.java_mail.GUI;
 
+import be.hepl.java_mail.JMailLib.ClientMail;
+import javax.mail.MessagingException;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author Arkios
  */
 public class LoginPage extends javax.swing.JFrame {
-
+    
+    // <editor-fold defaultstate="collapsed" desc="Constructors">
     /**
      * Creates new form LoginPage
      */
     public LoginPage() {
         initComponents();
     }
-
+    // </editor-fold>
+    
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -26,22 +34,150 @@ public class LoginPage extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jComboBox1 = new javax.swing.JComboBox<>();
+        login = new javax.swing.JTextField();
+        Password = new javax.swing.JPasswordField();
+        jLabel2 = new javax.swing.JLabel();
+        KO = new javax.swing.JToggleButton();
+        jLabel1 = new javax.swing.JLabel();
+        Login = new javax.swing.JToggleButton();
+        jLabel3 = new javax.swing.JLabel();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Gmail pop3", "Gmail imap", "Outlook pop3", "Outlook imap" }));
+
+        login.setText("riverside.redmrp@gmail.com");
+
+        Password.setText("cinzimdyajihxlcv");
+
+        jLabel2.setText("Login");
+
+        KO.setText("Annuler");
+        KO.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                KOActionPerformed(evt);
+            }
+        });
+
+        jLabel1.setText("Mod de Passe");
+
+        Login.setText("Login");
+        Login.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                LoginActionPerformed(evt);
+            }
+        });
+
+        jLabel3.setText("Provider");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(75, 75, 75)
+                        .addComponent(KO, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(53, 53, 53)
+                        .addComponent(Login, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel3)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 216, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel1)
+                                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(login, javax.swing.GroupLayout.PREFERRED_SIZE, 216, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(Password, javax.swing.GroupLayout.PREFERRED_SIZE, 216, javax.swing.GroupLayout.PREFERRED_SIZE))))))
+                .addGap(0, 69, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(27, 27, 27)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(login, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(Password, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(20, 20, 20)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(KO, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(Login, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(27, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+    
+    //</editor-fold>
+    
+    // <editor-fold defaultstate="collapsed" desc="Events">    
+    private void LoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LoginActionPerformed
+        //Reception Input
+        String host;
+        String prot;
+        
+        String s = (String) jComboBox1.getSelectedItem();
+        String[] p = s.split(" ");
+        host = p[0];
 
+        switch(host) {
+            case "Outlook":
+            host = "smtp-mail.outlook.com";
+            break;
+            case "Gmail":
+            default:
+            host = "smtp.gmail.com";
+        }
+        
+        prot = p[1];
+        ClientMail session = null;
+        try {
+            session = new ClientMail(host, prot, login.getText(), Password.getText());
+        } catch (MessagingException ex) {
+            JOptionPane.showMessageDialog(this, "Erreur: " + ex.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
+        }
+
+        /*
+        //Instanciation HomePage
+        HomePage window = null;
+        try {
+            window = new HomePage(session);
+        } catch (MessagingException ex) {
+            JOptionPane.showMessageDialog(this, "Erreur: " + ex.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        window.setTitle(this.login.getText());
+        session.setIdent(window.getTitle());
+        window.StartThreadRefresh();
+        window.setVisible(true);
+        
+        this.dispose();
+        */
+    }//GEN-LAST:event_LoginActionPerformed
+
+    private void KOActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_KOActionPerformed
+        System.exit(0);
+    }//GEN-LAST:event_KOActionPerformed
+    // </editor-fold>
+    
+    // <editor-fold defaultstate="collapsed" desc="Main">
     /**
      * @param args the command line arguments
      */
@@ -76,7 +212,18 @@ public class LoginPage extends javax.swing.JFrame {
             }
         });
     }
-
+    // </editor-fold>
+    
+    // <editor-fold defaultstate="collapsed" desc="Properties">
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JToggleButton KO;
+    private javax.swing.JToggleButton Login;
+    private javax.swing.JPasswordField Password;
+    private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JTextField login;
     // End of variables declaration//GEN-END:variables
+    // </editor-fold>
 }

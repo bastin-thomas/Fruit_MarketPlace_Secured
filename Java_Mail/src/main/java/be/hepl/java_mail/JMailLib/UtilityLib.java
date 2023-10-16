@@ -34,29 +34,6 @@ import javax.mail.internet.MimeUtility;
  * @author Arkios
  */
 public class UtilityLib {
-    
-    /**
-     * Get the Sender and the object of all Message 
-     * @param messagesList The Message List.
-     * @return ArrayList wich containe multiple ArrayList paired From & Subject
-     * @throws MessagingException 
-     */
-    public static ArrayList GetHeadSender(Message[] messagesList) throws MessagingException{
-        
-        ArrayList messagesData = new ArrayList();
-        
-        for (Message msg : messagesList) {
-            ArrayList<String> vec = new ArrayList<>();
-            String From = convertAddress(msg.getFrom());
-            String Subject = msg.getSubject();
-            vec.add(From);
-            vec.add(Subject);
-            messagesData.add(vec.clone());
-        }
-        
-        return messagesData;
-    }
-    
     /**
      * 
      * @param fromAdd
@@ -91,22 +68,6 @@ public class UtilityLib {
             i++;
         }
         return From;
-    }
-    
-    
-    /**
-     * 
-     * @param index
-     * @param msg
-     * @return
-     * @throws MessagingException 
-     */
-    public static Enumeration getAllHeadersFrom(int index, Message[] msg) throws MessagingException{
-        Enumeration e = null;
-        
-        e = msg[index].getAllHeaders();
-        
-        return e;
     }
     
     
@@ -243,6 +204,7 @@ public class UtilityLib {
             FileList.add(Name);
     }
     
+    
     public static Address[] convertAddr(ArrayList<String> vec) throws AddressException{
         ArrayList<Address> Addresses = new ArrayList<>();
         
@@ -255,6 +217,7 @@ public class UtilityLib {
         Object[] tmp = Addresses.toArray();
         return Arrays.copyOf(tmp, tmp.length, Address[].class);
     }
+    
     
     /*Envoi de message texte basique sans piece jointe*/
     public static void createMessageSimple(MimeMessage msg, Address[] To, Address[] Cc, String Subject, String Text) throws MessagingException{

@@ -5,6 +5,9 @@
 package be.hepl.java_mail.GUI;
 
 import be.hepl.java_mail.JMailLib.ClientMail;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.mail.MessagingException;
 import javax.swing.JOptionPane;
 
@@ -49,7 +52,7 @@ public class LoginPage extends javax.swing.JFrame {
 
         login.setText("riverside.redmrp@gmail.com");
 
-        Password.setText("cinzimdyajihxlcv");
+        Password.setText("kkos wgcn auhv lpli");
 
         jLabel2.setText("Login");
 
@@ -149,26 +152,40 @@ public class LoginPage extends javax.swing.JFrame {
         ClientMail session = null;
         try {
             session = new ClientMail(host, prot, login.getText(), Password.getText());
-        } catch (MessagingException ex) {
+        }
+        catch (MessagingException ex) {
             JOptionPane.showMessageDialog(this, "Erreur: " + ex.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
         }
+        catch (Exception ex){
+            System.out.println(ex.toString() + "Host: " + host + ", prot: " + prot + ", login" + login.getText() + ", Password" + Password.getText());
+        }
 
-        /*
-        //Instanciation HomePage
-        HomePage window = null;
+        
         try {
-            window = new HomePage(session);
+            session.GetListMail();
         } catch (MessagingException ex) {
+            Logger.getLogger(LoginPage.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(LoginPage.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        
+        /*
+            //Instanciation HomePage
+            HomePage window = null;
+            try {
+            window = new HomePage(session);
+            } catch (MessagingException ex) {
             JOptionPane.showMessageDialog(this, "Erreur: " + ex.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
             return;
-        }
-
-        window.setTitle(this.login.getText());
-        session.setIdent(window.getTitle());
-        window.StartThreadRefresh();
-        window.setVisible(true);
-        
-        this.dispose();
+            }
+            
+            window.setTitle(this.login.getText());
+            session.setIdent(window.getTitle());
+            window.StartThreadRefresh();
+            window.setVisible(true);
+            
+            this.dispose();
         */
     }//GEN-LAST:event_LoginActionPerformed
 

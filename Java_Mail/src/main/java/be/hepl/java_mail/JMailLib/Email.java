@@ -4,16 +4,19 @@
  */
 package be.hepl.java_mail.JMailLib;
 
-import static be.hepl.java_mail.JMailLib.UtilityLib.convertAddress;
+import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import javax.mail.Address;
-import javax.mail.Message;
 import javax.mail.Message.RecipientType;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.Part;
+import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeUtility;
 
@@ -69,7 +72,6 @@ public class Email {
     }        
     // </editor-fold>
 
-    
     // <editor-fold defaultstate="collapsed" desc="Getters/Setters">
    
     /**
@@ -78,7 +80,8 @@ public class Email {
      * @throws javax.mail.MessagingException
      */
     private void setFrom(Address[] from) throws MessagingException {
-        this._from = convertAddress(from);
+        //Get From 
+        this._from = (from.length < 1) ? "" : ((InternetAddress)from[0]).getAddress();
     }
     
     /**
@@ -95,7 +98,7 @@ public class Email {
         
         
         for(Address row : _to){
-            tmp.add(row.toString());
+            tmp.add(((InternetAddress)row).getAddress());
         }
         this._to = tmp;
     }
@@ -113,7 +116,7 @@ public class Email {
         }
         
         for(Address row : _CC){
-            tmp.add(row.toString());
+            tmp.add(((InternetAddress)row).getAddress());
         }
         this._CC = tmp;
     }
@@ -142,7 +145,7 @@ public class Email {
             Part part = MultiMsg.getBodyPart(i);        //get a nested part
             
             //Message Principal en Directe
-            if(part.isMimeType("text/plain")) { //&& part.getFileName() == null
+            if(part.isMimeType("text/plain") && part.getFileName() == null) {
                 ReturnedMessage = MimeUtility.decodeText((String) part.getContent());
                 break;
             }
@@ -156,7 +159,7 @@ public class Email {
                     //On loop dans le multipart a la recherche d'un textplain
                     for(int j = 0 ; j<n2 ; j++){
                         Part part2 = NestedMP.getBodyPart(0);
-                        if(part2.isMimeType("text/plain")){
+                        if(part2.isMimeType("text/plain") && part.getFileName() == null){
                             ReturnedMessage = MimeUtility.decodeText((String) part2.getContent());
                             break;
                         }
@@ -221,14 +224,46 @@ public class Email {
      * 
      * @param _headers 
      */
-    private void setHeaders(Enumeration _headers) {
+    private void setHeaders(Enumeration _headers) throws UnsupportedEncodingException {
         ArrayList<String> tmp = new ArrayList<>();
         
         while (_headers.hasMoreElements()) {
-            tmp.add((String) _headers.nextElement());
+            tmp.add(MimeUtility.decodeText((String)_headers.nextElement()));
         }
         
         this._headers = tmp;
+    }
+    
+    /**
+     * Get To into a string
+     * @return 
+     */
+    public String getTo_String() {
+        if(_to.isEmpty()) {return "";}
+        
+        String txt = "";
+        for(String addr : _to){
+            txt += ", " + addr;
+        }
+        //On retire la première virgule
+        txt = txt.substring(2);
+        return txt;
+    }
+
+    /**
+     * Get CC into a string
+     * @return 
+     */
+    public String getCC_String() {
+        if(_CC.isEmpty()) {return "";}
+        
+        String txt = "";
+        for(String addr : _CC){
+            txt += ", " + addr;
+        }
+        //On retire la première virgule
+        txt = txt.substring(2);
+        return txt;
     }
     
     // <editor-fold defaultstate="collapsed" desc="Getters">
@@ -276,6 +311,59 @@ public class Email {
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Methods">
+    /**
+     * 
+     * @param directory
+     * @param fileName
+     * @throws MessagingException
+     * @throws IOException 
+     */
+    public void SaveFileTo(String directory, String fileName) throws MessagingException, IOException{
+        if (source.isMimeType("multipart/*")) {
+            Multipart msgMP = (Multipart) source.getContent();
+            int n = msgMP.getCount();
+            
+            for(int i = 0 ; i<n ; i++){
+                //Search the good file
+                Part part = msgMP.getBodyPart(i);
+                if (part.getDisposition() != null && part.getDisposition().equalsIgnoreCase(Part.ATTACHMENT)) {
+                    
+                    //Si le part est un fichier et que le nom correspond, on récupère une référence vers sont flux d'entrée
+                    if(MimeUtility.decodeText(part.getFileName()).equals(fileName)){
+                        
+                        System.out.println("Fichier a télécharger : " + MimeUtility.decodeText(part.getFileName()));
+                        
+                        //Connexion avec le serveur pour récupérer le fichier
+                        InputStream readStream = part.getInputStream();
+                        //Endroit ou il va falloir enregistrer le fichier
+                        FileOutputStream writeStream = new FileOutputStream(directory);
+                        //Temporary Stream
+                        ByteArrayOutputStream tmp = new ByteArrayOutputStream();
+                        
+                        
+                        int c;
+                        //On met l'inputStream dans le buffer temporaire
+                        while ((c = readStream.read()) != -1) {
+                            writeStream.write(c);
+                        }
+                                                
+                        
+                        //On écrit depuis le stream tampons dans le fichier
+                        tmp.writeTo(writeStream);
+                        
+                        //On ferme tout les flux
+                        writeStream.close();
+                        tmp.close();
+                        readStream.close();
+                        
+                        break;
+                    }
+                }
+            }
+        }
+    }
+        
+        
     @Override
     public String toString() {
         String toreturn = "";

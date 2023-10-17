@@ -34,190 +34,6 @@ import javax.mail.internet.MimeUtility;
  * @author Arkios
  */
 public class UtilityLib {
-    /**
-     * 
-     * @param fromAdd
-     * @return
-     * @throws MessagingException 
-     */
-    public static String convertAddress(Address[] fromAdd) throws MessagingException{
-        String From = "";
-        int i = 0;
-        
-        if(fromAdd == null) return "";
-        
-        //Creation d'une String sur base d'adresse
-        for (Address Add : fromAdd) {
-            if (fromAdd != null) {
-                if (i == fromAdd.length-1) {
-                    if (Add.getClass().equals(InternetAddress.class)) {
-                        InternetAddress iad = (InternetAddress) Add;
-                        From += iad.getAddress();
-                    } else {
-                        From += fromAdd[0].toString();
-                    }
-                } else {
-                    if (Add.getClass().equals(InternetAddress.class)) {
-                        InternetAddress iad = (InternetAddress) Add;
-                        From += iad.getAddress() + ", ";
-                    } else {
-                        From += fromAdd[0].toString() + ", ";
-                    }
-                }
-            }
-            i++;
-        }
-        return From;
-    }
-    
-    
-    /**
-     * 
-     * @param initialArray
-     * @param newValue
-     * @return 
-     */
-    public static Message[] AddToArray(Message[] initialArray , Message newValue) {
-        Message[] newArray = new Message[initialArray.length + 1];
-        for (int index = 0; index < initialArray.length; index++) {
-            newArray[index] = initialArray[index];
-        }
-
-        newArray[newArray.length - 1] = newValue;
-        return newArray;
-    }
-    
-    
-    
-    /**
-     * 
-     * @param msg
-     * @param fichier
-     * @return
-     * @throws MessagingException
-     * @throws IOException 
-     */
-    public static String getTextFromMessage(Message msg, List<String> fichier) throws MessagingException, IOException{
-        String txt = "";
-        
-        if(msg.isMimeType("multipart/*")) {
-            Multipart MultiMsg = (Multipart) msg.getContent();
-            int n = MultiMsg.getCount();
-            System.out.println("PartCount: " + n);
-            
-            for (int j = 0; j < n; j++) {
-                Part part = MultiMsg.getBodyPart(j);
-                String disposition = part.getDisposition();
-                
-                //Message Principal si en Alternative (message avec des embeds)
-                Multipart MultiMsg2;
-                if(part.isMimeType("multipart/alternative")){
-                    
-                    MultiMsg2 = (Multipart) part.getContent();
-                    int n2 = MultiMsg2.getCount();
-                    Part part2 = MultiMsg2.getBodyPart(0);
-                    
-                    if(part2.isMimeType("text/plain")){
-                        txt += MimeUtility.decodeText((String) part2.getContent());
-                    }
-                    else{
-                        txt = "Error Message Not Found";
-                    }
-                }
-                
-                //Message Principal
-                if (part.isMimeType("text/plain")) { //&& part.getFileName() == null
-                    System.out.println("This is the message" + part.getContentType());
-                    txt += MimeUtility.decodeText((String) part.getContent());
-                }
-                
-                //Attachment
-                if (disposition != null && disposition.equalsIgnoreCase(Part.ATTACHMENT)) {
-                    String FileName = MimeUtility.decodeText(part.getFileName());
-                    
-                    fichier.add(FileName);
-                    System.out.println("Nom fichier : " + FileName);
-                }
-            }
-        } 
-        
-        //SimplePart Message:
-        else {
-            txt =  MimeUtility.decodeText((String) msg.getContent());
-        }    
-        return txt;
-    }
-    
-    /**
-     * 
-     * @param directory
-     * @param FileName
-     * @param m
-     * @throws MessagingException
-     * @throws IOException 
-     */
-    public static void saveFileTo(String directory, String FileName, Message m) throws MessagingException, IOException{
-        if (m.isMimeType("multipart/*")) {
-            Multipart msgMP = (Multipart) m.getContent();
-            int np = msgMP.getCount();
-
-            //Passage dans les BodyParts:
-            for (int j = 0; j < np; j++) {
-
-                Part part = msgMP.getBodyPart(j);
-                String disposition = part.getDisposition();
-
-                if (disposition != null && disposition.equalsIgnoreCase(Part.ATTACHMENT)) {
-                    if(part.getFileName().equals(FileName)){
-                        System.out.println("Fichier a télécharger : " + part.getFileName());
-                        int c;
-                        
-                        InputStream readStream = part.getInputStream();
-                        FileOutputStream writeStream = new FileOutputStream(directory);
-                        ByteArrayOutputStream tmp = new ByteArrayOutputStream();
-                        
-                        while ((c = readStream.read()) != -1) {
-                            tmp.write(c);
-                        }
-                        tmp.writeTo(writeStream);
-                        writeStream.close();
-                    }
-                }
-            }
-        }
-    }
-    
-    
-    /*Ajoute les fichier joints au message principal*/
-    public static void setFilePart(Multipart msg, String FilePath, ArrayList<String> FileList) throws IOException, MessagingException{
-            String[] Names = FilePath.split("/");
-            String Name = Names[Names.length - 1];
-            MimeBodyPart BodyPart = new MimeBodyPart();
-            
-            //Idiqué le type de multipart
-            BodyPart.attachFile(new File(FilePath));            
-            BodyPart.setDataHandler (new DataHandler(new FileDataSource (FilePath)));
-            BodyPart.setFileName(Name);
-            
-            msg.addBodyPart(BodyPart);
-            
-            FileList.add(Name);
-    }
-    
-    
-    public static Address[] convertAddr(ArrayList<String> vec) throws AddressException{
-        ArrayList<Address> Addresses = new ArrayList<>();
-        
-        for (String tmp : vec) {
-            if(!tmp.equals("")){
-                Addresses.add(new InternetAddress(tmp));
-            }
-        }
-        
-        Object[] tmp = Addresses.toArray();
-        return Arrays.copyOf(tmp, tmp.length, Address[].class);
-    }
-    
     
     /*Envoi de message texte basique sans piece jointe*/
     public static void createMessageSimple(MimeMessage msg, Address[] To, Address[] Cc, String Subject, String Text) throws MessagingException{
@@ -249,5 +65,34 @@ public class UtilityLib {
             Multip.addBodyPart(msgBP);
             
             msg.setContent(Multip);
+    }
+    
+    /*Ajoute les fichier joints au message principal*/
+    public static void setFilePart(Multipart msg, String FilePath, ArrayList<String> FileList) throws IOException, MessagingException{
+            String[] Names = FilePath.split("/");
+            String Name = Names[Names.length - 1];
+            MimeBodyPart BodyPart = new MimeBodyPart();
+            
+            //Idiqué le type de multipart
+            BodyPart.attachFile(new File(FilePath));            
+            BodyPart.setDataHandler (new DataHandler(new FileDataSource (FilePath)));
+            BodyPart.setFileName(Name);
+            
+            msg.addBodyPart(BodyPart);
+            
+            FileList.add(Name);
+    }
+    
+    public static Address[] convertAddr(ArrayList<String> vec) throws AddressException{
+        ArrayList<Address> Addresses = new ArrayList<>();
+        
+        for (String tmp : vec) {
+            if(!tmp.equals("")){
+                Addresses.add(new InternetAddress(tmp));
+            }
+        }
+        
+        Object[] tmp = Addresses.toArray();
+        return Arrays.copyOf(tmp, tmp.length, Address[].class);
     }
 }

@@ -5,7 +5,7 @@
 package be.hepl.java_mail.GUI;
 
 import be.hepl.java_mail.JMailLib.ClientMail;
-import java.io.IOException;
+import be.hepl.java_mail.JMailLib.ThreadConnexion;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.mail.MessagingException;
@@ -81,10 +81,10 @@ public class LoginPage extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(75, 75, 75)
+                        .addGap(50, 50, 50)
                         .addComponent(KO, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(53, 53, 53)
-                        .addComponent(Login, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(43, 43, 43)
+                        .addComponent(Login, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -100,7 +100,7 @@ public class LoginPage extends javax.swing.JFrame {
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(login, javax.swing.GroupLayout.PREFERRED_SIZE, 216, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(Password, javax.swing.GroupLayout.PREFERRED_SIZE, 216, javax.swing.GroupLayout.PREFERRED_SIZE))))))
-                .addGap(0, 69, Short.MAX_VALUE))
+                .addGap(0, 54, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -131,15 +131,29 @@ public class LoginPage extends javax.swing.JFrame {
     
     // <editor-fold defaultstate="collapsed" desc="Events">    
     private void LoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LoginActionPerformed
+        //Lancement d'un thread qui va lancé la connexion en parralèle.
+        ThreadConnexion tconn = new ThreadConnexion(this);
+        tconn.start();
+
+        //Changement du texte pour prévenir l'utilisateur.
+        Login.setText("Connexion...");
+        Login.setEnabled(false);
+        this.KO.setEnabled(false);
+        this.jComboBox1.setEnabled(false);
+        this.Password.setEditable(false);
+        this.login.setEditable(false);
+    }//GEN-LAST:event_LoginActionPerformed
+
+    public void doConnexionLogic(){
         //Reception Input
         String host;
         String prot;
         
         String s = (String) jComboBox1.getSelectedItem();
         String[] p = s.split(" ");
-        host = p[0];
 
-        switch(host) {
+        //Check First Token
+        switch(p[0]) {
             case "Outlook":
             host = "smtp-mail.outlook.com";
             break;
@@ -148,47 +162,39 @@ public class LoginPage extends javax.swing.JFrame {
             host = "smtp.gmail.com";
         }
         
+        //Second Token == protocol
         prot = p[1];
+        
+        //Creation session ClientMail
         ClientMail session = null;
         try {
             session = new ClientMail(host, prot, login.getText(), Password.getText());
         }
-        catch (MessagingException ex) {
+        catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Erreur: " + ex.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
-        }
-        catch (Exception ex){
             System.out.println(ex.toString() + "Host: " + host + ", prot: " + prot + ", login" + login.getText() + ", Password" + Password.getText());
         }
 
         
+        //Instanciation HomePage (en passant en param session)
+        HomePage window = null;
         try {
-            session.GetListMail();
-        } catch (MessagingException ex) {
-            Logger.getLogger(LoginPage.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(LoginPage.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-        
-        /*
-            //Instanciation HomePage
-            HomePage window = null;
-            try {
             window = new HomePage(session);
-            } catch (MessagingException ex) {
+        } catch (MessagingException ex) {
             JOptionPane.showMessageDialog(this, "Erreur: " + ex.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
             return;
-            }
-            
-            window.setTitle(this.login.getText());
-            session.setIdent(window.getTitle());
-            window.StartThreadRefresh();
-            window.setVisible(true);
-            
-            this.dispose();
-        */
-    }//GEN-LAST:event_LoginActionPerformed
-
+        }
+        
+        //Titre de la page avec le nom du login
+        window.setTitle(this.login.getText());
+        session.setIdent(this.login.getText());
+        
+        //Changement de Page
+        this.setVisible(false);
+        window.setVisible(true);
+        this.dispose();
+    }
+    
     private void KOActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_KOActionPerformed
         System.exit(0);
     }//GEN-LAST:event_KOActionPerformed

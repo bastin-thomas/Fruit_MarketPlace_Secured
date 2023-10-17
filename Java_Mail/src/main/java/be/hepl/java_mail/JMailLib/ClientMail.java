@@ -6,6 +6,7 @@ package be.hepl.java_mail.JMailLib;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Properties;
 import javax.mail.Authenticator;
 import javax.mail.Folder;
@@ -33,7 +34,7 @@ public class ClientMail {
     
     // <editor-fold defaultstate="collapsed" desc="Constructor">
     public ClientMail(String serverHost, String protocol, String ident, String password) throws NoSuchProviderException, MessagingException{
-        String ReceptionServer = null;
+        String ReceptionServer = "";
         String port = "-1";
         
         //Initialisation de la configuration de la connexion avec le serveur mail
@@ -72,6 +73,8 @@ public class ClientMail {
             if(protocol.equalsIgnoreCase("pop3")){
                 ReceptionServer = "pop.gmail.com";
                 port = "995";
+                              
+                ident = "recent:" + ident;
             }
             else if(protocol.equalsIgnoreCase("imap")){
                 ReceptionServer = "imap.gmail.com";
@@ -109,12 +112,7 @@ public class ClientMail {
 
         
         //Creation d'un object Authenticator (classe anonyme)
-        Authenticator conn = new javax.mail.Authenticator() {
-            @Override
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(ident, password);
-            }
-        };
+        Authenticator conn = new MyAuthenticator(ident, password);
         
         this.ident = ident;
         
@@ -179,7 +177,6 @@ public class ClientMail {
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Methods">
-    
     /**
      * Retourne la liste des messages chargé et structuré
      * @return
@@ -190,22 +187,20 @@ public class ClientMail {
         Message[] msg = null;
         ArrayList<Email> list = new ArrayList<>();
         
-        _folder.close(false);
+        _folder.close(true);
         _folder = _store.getFolder("INBOX");
         _folder.open(Folder.READ_ONLY);
                 
-        System.out.println("Obtention des messages");
         msg = _folder.getMessages();
         
         //Loop on array to init new Email();
         for(Message m : msg){
             //Add for each elements a new Email based on message
             Email tmp = new Email((MimeMessage) m);
-            
-            System.out.println(tmp);
-            
             list.add(tmp);
         }
+        
+        Collections.reverse(list);
         
         return list;
     }
@@ -215,7 +210,7 @@ public class ClientMail {
     }
     
     public void Close() throws MessagingException{
-        _folder.close(false);
+        _folder.close(true);
         _store.close();
     }
 

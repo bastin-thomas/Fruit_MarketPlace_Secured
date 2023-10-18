@@ -226,7 +226,4 @@ public class ClientMail {
     }
 
     // </editor-fold>
-    
-    // <editor-fold defaultstate="collapsed" desc="Events">
-    // </editor-fold>
 }

@@ -136,14 +136,27 @@ public class LoginPage extends javax.swing.JFrame {
         tconn.start();
 
         //Changement du texte pour prévenir l'utilisateur.
+        FreezeLogin();
+    }//GEN-LAST:event_LoginActionPerformed
+    
+    public void FreezeLogin(){
         Login.setText("Connexion...");
         Login.setEnabled(false);
         this.KO.setEnabled(false);
         this.jComboBox1.setEnabled(false);
         this.Password.setEditable(false);
         this.login.setEditable(false);
-    }//GEN-LAST:event_LoginActionPerformed
-
+    }
+    
+    public void UnFreezeLogin(){
+        Login.setText("Login");
+        Login.setEnabled(true);
+        this.KO.setEnabled(true);
+        this.jComboBox1.setEnabled(true);
+        this.Password.setEditable(true);
+        this.login.setEditable(true);
+    }
+    
     public void doConnexionLogic(){
         //Reception Input
         String host;
@@ -173,6 +186,8 @@ public class LoginPage extends javax.swing.JFrame {
         catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Erreur: " + ex.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
             System.out.println(ex.toString() + "Host: " + host + ", prot: " + prot + ", login" + login.getText() + ", Password" + Password.getText());
+            UnFreezeLogin();
+            return;
         }
 
         
@@ -182,6 +197,7 @@ public class LoginPage extends javax.swing.JFrame {
             window = new HomePage(session);
         } catch (MessagingException ex) {
             JOptionPane.showMessageDialog(this, "Erreur: " + ex.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
+            UnFreezeLogin();
             return;
         }
         

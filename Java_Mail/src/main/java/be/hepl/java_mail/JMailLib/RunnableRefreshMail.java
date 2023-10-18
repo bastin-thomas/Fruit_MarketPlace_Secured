@@ -13,13 +13,13 @@ import javax.mail.MessagingException;
  *
  * @author Arkios
  */
-public class ThreadRefreshMail implements Runnable {
+public class RunnableRefreshMail implements Runnable {
     // <editor-fold defaultstate="collapsed" desc="Properties">
         private HomePage _home;
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Constructors">
-        public ThreadRefreshMail(HomePage Home) {
+        public RunnableRefreshMail(HomePage Home) {
             _home = Home;
         }
     // </editor-fold>
@@ -30,7 +30,7 @@ public class ThreadRefreshMail implements Runnable {
                 System.out.println("TryRefreshMail:");
                 this._home.onRefreshMail();
             } catch (MessagingException ex) {
-                Logger.getLogger(ThreadRefreshMail.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(RunnableRefreshMail.class.getName()).log(Level.SEVERE, null, ex);
             }
     }
 }

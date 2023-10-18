@@ -91,12 +91,10 @@ public class Email {
      */
     private void setTo(Address[] _to) {
         ArrayList<String> tmp = new ArrayList<>();
-        
         if(_to == null){
             this._to = tmp;
             return;
         }
-        
         
         for(Address row : _to){
             tmp.add(((InternetAddress)row).getAddress());

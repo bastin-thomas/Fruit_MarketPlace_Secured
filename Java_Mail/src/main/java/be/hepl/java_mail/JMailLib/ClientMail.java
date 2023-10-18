@@ -31,7 +31,7 @@ public class ClientMail {
     private Session _session;
     private Store _store;
     private Folder _folder;
-    private Transport _transport;
+    
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Constructor">

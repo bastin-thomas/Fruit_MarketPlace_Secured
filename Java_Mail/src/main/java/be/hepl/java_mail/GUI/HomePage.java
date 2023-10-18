@@ -5,14 +5,14 @@
  */
 package be.hepl.java_mail.GUI;
 
-import javax.mail.Message;
 import javax.mail.MessagingException;
 import be.hepl.java_mail.JMailLib.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -23,8 +23,11 @@ import javax.swing.table.DefaultTableModel;
 public final class HomePage extends javax.swing.JFrame {
        
     // <editor-fold defaultstate="collapsed" desc="My Properties">
+    public final int CLOCKTICK = 30;
     private final ClientMail _session;
     private ArrayList<Email> _mailList;
+    private ScheduledExecutorService _clockService;
+    private int _lastCount;
     //private ThreadMail clock;
     // </editor-fold>
     
@@ -38,19 +41,21 @@ public final class HomePage extends javax.swing.JFrame {
         initComponents();
         this._session = session;
         
-        //clock = new ThreadMail(this, 5);
-        
-        this.onRefreshMail();
+        _lastCount = 0;
+        this.StartClock();
     }
     // </editor-fold>
     
-    // <editor-fold defaultstate="collapsed" desc="Threads Methods">
-    public void StartThreadRefresh(){
-        //clock.start();
-    }
-    
-    public void onRefreshMail(){    
-        //TODO: Check if NewEmail
+    public void onRefreshMail() throws MessagingException{
+        int currCount = _session.GetMessageCount();
+        System.out.println("LastCount: " + _lastCount);
+        System.out.println("GetMessageCount: " + currCount);
+        
+        //If no change of message, then return;
+        if(currCount <= _lastCount)
+        {
+            return;
+        }
         
         try {
             //Recuperation de la liste de Mail
@@ -72,16 +77,16 @@ public final class HomePage extends javax.swing.JFrame {
             //Mise a jour du modèle avec les nouvelles information
             Mail_Selector.setModel(dataModel);
             
-        } catch (MessagingException | IOException ex) {
+        } catch (IOException ex) {
             System.out.println(ex.getMessage());
             JOptionPane.showMessageDialog(this, "Erreur: " + ex.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
         }
+        
+        _lastCount = _session.GetMessageCount();
     }
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Generated Code">
-    
-    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -203,6 +208,7 @@ public final class HomePage extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Events">
     private void QuitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_QuitActionPerformed
         try {
+            _clockService.shutdown();
             _session.Close();
         } catch (MessagingException ex) {
             JOptionPane.showMessageDialog(this, "Erreur: " + ex.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
@@ -216,6 +222,8 @@ public final class HomePage extends javax.swing.JFrame {
     }//GEN-LAST:event_QuitActionPerformed
 
     private void Open_MailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Open_MailActionPerformed
+        _clockService.shutdown();
+        
         int index;
         if((index = Mail_Selector.getSelectedRow()) == -1){
             JOptionPane.showMessageDialog(this, "Erreur: " + "Vous n'avez pas sélectionné de mail a ouvrir", "ERROR", JOptionPane.ERROR_MESSAGE);
@@ -227,25 +235,24 @@ public final class HomePage extends javax.swing.JFrame {
         
         OpenMail window = null;
         try {
-            window = new OpenMail(mail);
+            window = new OpenMail(mail, this);
         } catch (MessagingException | IOException ex) {
             JOptionPane.showMessageDialog(this, "Erreur: " + ex.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
         }
-        
         window.setVisible(true);
     }//GEN-LAST:event_Open_MailActionPerformed
 
     private void New_MailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_New_MailActionPerformed
-        /*
+        _clockService.shutdown();
+        
         NewMail window;
         try {
-            window = new NewMail(mail);
+            window = new NewMail(_session, this);
         } catch (MessagingException ex) {
             JOptionPane.showMessageDialog(this, "Erreur: " + ex.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
             return;
         }
         window.setVisible(true);
-        */
     }//GEN-LAST:event_New_MailActionPerformed
 
     private void Respond_MailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Respond_MailActionPerformed
@@ -263,5 +270,11 @@ public final class HomePage extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
+
+    void StartClock() {
+        _clockService = Executors.newSingleThreadScheduledExecutor();
+        //LaunchThread "ThreadRefreshMail" with a reference on the page. Will exectute the runnable every period;
+        _clockService.scheduleAtFixedRate(new ThreadRefreshMail(this), 0,CLOCKTICK,TimeUnit.SECONDS);
+    }
     // </editor-fold>
 }

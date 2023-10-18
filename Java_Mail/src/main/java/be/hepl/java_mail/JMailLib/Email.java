@@ -12,6 +12,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import javax.mail.Address;
+import javax.mail.Header;
 import javax.mail.Message.RecipientType;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
@@ -35,7 +36,7 @@ public class Email {
     private ArrayList<String> _CC;
     private String _subject;
     private String _message;
-    private ArrayList<String> _headers;
+    private ArrayList<Header> _headers;
     private ArrayList<String> _filePaths;    
     
     private MimeMessage source;
@@ -66,7 +67,7 @@ public class Email {
         setSubject(message.getSubject());
         setMessage(message);
         setFilePaths(message);
-        setHeaders(message.getAllHeaderLines());
+        setHeaders(message.getAllHeaders());
         
         source = message;
     }        
@@ -225,10 +226,10 @@ public class Email {
      * @param _headers 
      */
     private void setHeaders(Enumeration _headers) throws UnsupportedEncodingException {
-        ArrayList<String> tmp = new ArrayList<>();
+        ArrayList<Header> tmp = new ArrayList<>();
         
         while (_headers.hasMoreElements()) {
-            tmp.add(MimeUtility.decodeText((String)_headers.nextElement()));
+            tmp.add((Header)_headers.nextElement());
         }
         
         this._headers = tmp;
@@ -295,7 +296,7 @@ public class Email {
             return _message;
         }
 
-        public ArrayList<String> getHeaders() {
+        public ArrayList<Header> getHeaders() {
             return _headers;
         }
 
@@ -395,8 +396,12 @@ public class Email {
         toreturn += "\n";
         
         toreturn += "      Headers: \n";
-        for(String s : _headers){
-            toreturn += "" + s + "\n";
+        for(Header h : _headers){
+            try {
+                toreturn += "Name: " + h.getName() + ", Value: " + MimeUtility.encodeText(h.getValue()) + "\n";
+            } catch (UnsupportedEncodingException ex) {
+                toreturn += "Name: " + h.getName() + ", ValueUndecoded: " + h.getValue() + "\n";
+            }
         }
         toreturn += "================================================ FIN ==================================================\n\n\n";
         

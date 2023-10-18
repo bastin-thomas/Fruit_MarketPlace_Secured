@@ -4,16 +4,10 @@
  */
 package be.hepl.java_mail.JMailLib;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.List;
 
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
@@ -22,9 +16,6 @@ import javax.mail.Address;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
-import javax.mail.Part;
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeUtility;
@@ -36,41 +27,48 @@ import javax.mail.internet.MimeUtility;
 public class UtilityLib {
     
     /*Envoi de message texte basique sans piece jointe*/
-    public static void createMessageSimple(MimeMessage msg, Address[] To, Address[] Cc, String Subject, String Text) throws MessagingException{
+    public static void createMessageSimple(MimeMessage mail, Address[] To, Address[] Cc, String Subject, String Text) throws MessagingException, UnsupportedEncodingException{
             System.out.println("Création Message Simple");
-            msg.setFrom();
+            mail.setFrom();
             
-            msg.setRecipients(Message.RecipientType.TO, To);
-            msg.setRecipients(Message.RecipientType.CC, Cc);
+            //Put the To List into the MimeMessage Object
+            mail.setRecipients(Message.RecipientType.TO, To);
             
-            msg.setSubject(Subject); 
-            msg.setText (Text);
+            //Put the Cc List into the MimeMessage Object
+            mail.setRecipients(Message.RecipientType.CC, Cc);
+            
+            //Define Object
+            mail.setSubject(Subject);
+            
+            //Define MainMessage
+            mail.setText(MimeUtility.encodeText(Text));
     }
 
     
     /*Envoi d'un message avec piece jointe multiple et document texte*/
-    public static void createMessageMultiPart(MimeMessage msg, Multipart Multip, Address[] To, Address[] Cc, String Subject, String Text) throws MessagingException{
+    public static void createMessageMultiPart(MimeMessage mail, Multipart Multip, Address[] To, Address[] Cc, String Subject, String Text) throws MessagingException, UnsupportedEncodingException{
         
-        msg.setFrom();
+        mail.setFrom();
         
-        msg.setRecipients(Message.RecipientType.TO, To);
-        msg.setRecipients(Message.RecipientType.CC, Cc);
+        mail.setRecipients(Message.RecipientType.TO, To);
+        mail.setRecipients(Message.RecipientType.CC, Cc);
 
-        msg.setSubject(Subject);
+        mail.setSubject(Subject);
         
         System.out.println("Création Message MultiPart");
             //Ajout du Texte comme premier composant
             MimeBodyPart msgBP = new MimeBodyPart(); 
-            msgBP.setText(Text);
+            msgBP.setText(MimeUtility.encodeText(Text));
             Multip.addBodyPart(msgBP);
             
-            msg.setContent(Multip);
+            //mail.setContent(Multip);
     }
     
     /*Ajoute les fichier joints au message principal*/
-    public static void setFilePart(Multipart msg, String FilePath, ArrayList<String> FileList) throws IOException, MessagingException{
-            String[] Names = FilePath.split("/");
+    public static void setFilePart(Multipart Multip, String FilePath, ArrayList<String> FileList) throws IOException, MessagingException{
+            String[] Names = FilePath.split("\\\\");
             String Name = Names[Names.length - 1];
+            
             MimeBodyPart BodyPart = new MimeBodyPart();
             
             //Idiqué le type de multipart
@@ -78,21 +76,8 @@ public class UtilityLib {
             BodyPart.setDataHandler (new DataHandler(new FileDataSource (FilePath)));
             BodyPart.setFileName(Name);
             
-            msg.addBodyPart(BodyPart);
+            Multip.addBodyPart(BodyPart);
             
             FileList.add(Name);
-    }
-    
-    public static Address[] convertAddr(ArrayList<String> vec) throws AddressException{
-        ArrayList<Address> Addresses = new ArrayList<>();
-        
-        for (String tmp : vec) {
-            if(!tmp.equals("")){
-                Addresses.add(new InternetAddress(tmp));
-            }
-        }
-        
-        Object[] tmp = Addresses.toArray();
-        return Arrays.copyOf(tmp, tmp.length, Address[].class);
     }
 }

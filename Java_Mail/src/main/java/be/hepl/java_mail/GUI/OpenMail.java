@@ -6,13 +6,8 @@
 package be.hepl.java_mail.GUI;
 
 import be.hepl.java_mail.JMailLib.Email;
-import be.hepl.java_mail.JMailLib.UtilityLib;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFileChooser;
@@ -21,21 +16,23 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.filechooser.FileSystemView;
 
 /**
- *
+ * 
  * @author student
  */
 public class OpenMail extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="My Properties">
     private final Email mail;
+    private final HomePage _page;
     // </editor-fold>
     
-    
+    // <editor-fold defaultstate="collapsed" desc="Constructor">
     /**
      * Creates new form OpenMail
      */
-    public OpenMail(Email m) throws MessagingException, IOException {        
+    public OpenMail(Email m, HomePage page) throws MessagingException, IOException {        
         initComponents();
         mail = m;
+        _page = page;
         
         if(mail == null){this.dispose();}
         
@@ -65,7 +62,9 @@ public class OpenMail extends javax.swing.JFrame {
             jComboBox1.setEnabled(true);
         }
     }
+    // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -101,6 +100,11 @@ public class OpenMail extends javax.swing.JFrame {
         jTextField1.setText("jTextField1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosed(java.awt.event.WindowEvent evt) {
+                formWindowClosed(evt);
+            }
+        });
 
         jLabel1.setText("From :");
 
@@ -236,7 +240,9 @@ public class OpenMail extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
+    // </editor-fold>
+    
+    // <editor-fold defaultstate="collapsed" desc="Events">
     private void SaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SaveActionPerformed
         String FileName = (String) jComboBox1.getSelectedItem();
         
@@ -276,21 +282,26 @@ public class OpenMail extends javax.swing.JFrame {
         
         System.out.println("Enregistrement Réussi: " + Path);        
     }//GEN-LAST:event_SaveActionPerformed
-
+    
     private void MoreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MoreActionPerformed
-        /*
         OpenMoreInfoMail window;
         try {
-            window = new OpenMoreInfoMail(this, true, message);
+            window = new OpenMoreInfoMail(this, true, this.mail.getHeaders(), this.mail.getSubject());
         } catch (MessagingException ex) {
             JOptionPane.showMessageDialog(this, "Erreur: " + ex.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        
         window.setVisible(true);
-        */
     }//GEN-LAST:event_MoreActionPerformed
 
+    private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
+        _page.StartClock();
+    }//GEN-LAST:event_formWindowClosed
+    
+    
+    
+    // </editor-fold>
+    
     // <editor-fold defaultstate="collapsed" desc="DefaultProperties">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextPane Cc;

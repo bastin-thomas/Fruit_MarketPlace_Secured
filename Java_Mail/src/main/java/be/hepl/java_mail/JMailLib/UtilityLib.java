@@ -31,7 +31,6 @@ public class UtilityLib {
             System.out.println("Création Message Simple");
             
             mail.addHeader("Content-type", "text/plain; charset=UTF-8");
-            mail.addHeader("Content-Transfer-Encoding", "base64");
             
             mail.setFrom();
             

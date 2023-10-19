@@ -42,6 +42,7 @@ public class UtilityLib {
             
             //Define MainMessage
             mail.setText(MimeUtility.encodeText(Text));
+            mail.setContent(null);
     }
 
     

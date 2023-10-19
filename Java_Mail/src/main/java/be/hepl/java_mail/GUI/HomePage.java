@@ -274,8 +274,8 @@ public final class HomePage extends javax.swing.JFrame {
 
     void StartClock() {
         _clockService = Executors.newSingleThreadScheduledExecutor();
-        //LaunchThread "ThreadRefreshMail" with a reference on the page. Will exectute the runnable every period;
-        _clockService.scheduleAtFixedRate(new ThreadRefreshMail(this), 0,CLOCKTICK,TimeUnit.SECONDS);
+        //LaunchThread "RunnableRefreshMail" with a reference on the page. Will exectute the runnable every period;
+        _clockService.scheduleAtFixedRate(new RunnableRefreshMail(this), 0,CLOCKTICK,TimeUnit.SECONDS);
     }
     // </editor-fold>
 }

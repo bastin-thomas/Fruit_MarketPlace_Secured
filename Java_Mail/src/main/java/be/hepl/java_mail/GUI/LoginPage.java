@@ -5,7 +5,7 @@
 package be.hepl.java_mail.GUI;
 
 import be.hepl.java_mail.JMailLib.ClientMail;
-import be.hepl.java_mail.JMailLib.ThreadConnexion;
+import be.hepl.java_mail.JMailLib.RunnableConnexion;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.mail.MessagingException;
@@ -132,8 +132,8 @@ public class LoginPage extends javax.swing.JFrame {
     
     // <editor-fold defaultstate="collapsed" desc="Events">    
     private void LoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LoginActionPerformed
-        //Lancement d'un thread qui va lancé la connexion en parralèle.
-        ThreadConnexion tconn = new ThreadConnexion(this);
+    //Lancement d'un thread qui va lancé la connexion en parralèle.
+        Thread tconn = new Thread(new RunnableConnexion(this));
         tconn.start();
 
         //Changement du texte pour prévenir l'utilisateur.

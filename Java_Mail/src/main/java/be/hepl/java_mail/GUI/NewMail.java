@@ -246,7 +246,7 @@ public class NewMail extends javax.swing.JFrame {
             i++;
         }
         
-        if(!isYourSelfFound){
+        if(isYourSelfFound == false){
             mail.setHeader("X-Sent-YourSelf", "yes"); //Small Header to tag the fact it's a sended email so I can not read it in pop3
         }
         
@@ -259,10 +259,10 @@ public class NewMail extends javax.swing.JFrame {
         //Add New File        
         JFileChooser fc = new JFileChooser((FileSystemView.getFileSystemView().getHomeDirectory() + "/Bureau/"));
         fc.setMultiSelectionEnabled(false);
-        fc.showOpenDialog(this);
+        int retval = fc.showOpenDialog(this);
         
         Add.setEnabled(false);
-        if(JFileChooser.APPROVE_OPTION == 0){
+        if(JFileChooser.APPROVE_OPTION == retval){
             //File Path to Save
             String Path = fc.getSelectedFile().getAbsolutePath();
             

@@ -119,7 +119,7 @@ public class ClientMail {
         Authenticator conn = new MyAuthenticator(ident, password);
         
         this.ident = ident;
-        
+          
         //Creation d'un objet session basé sur les props et l'authenticator.
         System.out.println("Session Created");
         _session = Session.getInstance(props, conn);

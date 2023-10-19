@@ -60,6 +60,7 @@ public class UtilityLib {
             //Ajout du Texte comme premier composant
             MimeBodyPart msgBP = new MimeBodyPart(); 
             msgBP.setText(MimeUtility.encodeText(Text));
+            
             Multip.addBodyPart(msgBP);
             
             //mail.setContent(Multip);
@@ -72,7 +73,7 @@ public class UtilityLib {
             
             MimeBodyPart BodyPart = new MimeBodyPart();
             
-            //Idiqué le type de multipart
+            //Indiqué le type de multipart
             BodyPart.attachFile(new File(FilePath));            
             BodyPart.setDataHandler (new DataHandler(new FileDataSource (FilePath)));
             BodyPart.setFileName(Name);

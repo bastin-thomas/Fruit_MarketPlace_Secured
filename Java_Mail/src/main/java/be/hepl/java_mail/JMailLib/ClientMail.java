@@ -198,9 +198,9 @@ public class ClientMail {
         
         //Loop on array to init new Email();
         for(Message m : msg){
-            if(m.getHeader("X-Sent-YourSelf") != null){
-                continue;
-            }
+            //if(m.getHeader("X-Sent-YourSelf") != null){
+            //    continue;
+            //}
             
             //Add for each elements a new Email based on message
             Email tmp = new Email((MimeMessage) m);

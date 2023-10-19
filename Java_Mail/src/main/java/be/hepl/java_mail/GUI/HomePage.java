@@ -106,6 +106,7 @@ public final class HomePage extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Mail Agent");
+        setMinimumSize(new java.awt.Dimension(894, 515));
 
         Mail_Selector.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {

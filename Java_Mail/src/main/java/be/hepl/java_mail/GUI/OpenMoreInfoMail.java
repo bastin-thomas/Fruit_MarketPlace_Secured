@@ -7,13 +7,13 @@ package be.hepl.java_mail.GUI;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.mail.Header;
-import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeUtility;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 
 /**
  *
@@ -36,25 +36,21 @@ public class OpenMoreInfoMail extends javax.swing.JDialog {
         
         this.setTitle(subject);
         
-        //Affichage des headers:
-        String txt = "";
-        int i = 1;
-        for(Header h : headers){
-            txt += "======================= HEADER "+ i +" ============================\n";
-            
-            try {
-                txt += h.getName() + " =\n  ";
-                txt += MimeUtility.decodeText(h.getValue()) + "\n";
-            } catch (UnsupportedEncodingException ex) {
-                txt += "Not a String Header";
-                Logger.getLogger(OpenMoreInfoMail.class.getName()).log(Level.SEVERE, null, ex);
-            }           
-            
-            txt += "======================= FIN HEADER "+ i +" ============================\n\n\n\n";
-            i++;
+        
+        //Recuperation du modèle par défaut
+        DefaultMutableTreeNode rootNode = (DefaultMutableTreeNode) jTree1.getModel().getRoot(); // Assuming 'tree' is your JTree
+        
+        //Ajout des headers (node)
+        for(Header h : headers)
+        {
+            DefaultMutableTreeNode node = new DefaultMutableTreeNode(h.getName());
+            node.add(new DefaultMutableTreeNode(h.getValue()));
+            rootNode.add(node);
         }
         
-        this.headers.setText(txt);
+        // Update the tree model to reflect the changes
+        DefaultTreeModel model = (DefaultTreeModel) jTree1.getModel();
+        model.nodeStructureChanged(rootNode);
     }
     // </editor-fold>    
         
@@ -71,8 +67,8 @@ public class OpenMoreInfoMail extends javax.swing.JDialog {
         jScrollPane2 = new javax.swing.JScrollPane();
         jTable2 = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        headers = new javax.swing.JTextArea();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        jTree1 = new javax.swing.JTree();
 
         jTable2.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -88,15 +84,14 @@ public class OpenMoreInfoMail extends javax.swing.JDialog {
         jScrollPane2.setViewportView(jTable2);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setMinimumSize(new java.awt.Dimension(768, 611));
 
         jLabel1.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
         jLabel1.setText("Headers:");
 
-        headers.setColumns(20);
-        headers.setLineWrap(true);
-        headers.setRows(5);
-        headers.setWrapStyleWord(true);
-        jScrollPane1.setViewportView(headers);
+        javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("Headers");
+        jTree1.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
+        jScrollPane3.setViewportView(jTree1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -105,10 +100,10 @@ public class OpenMoreInfoMail extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 756, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(0, 656, Short.MAX_VALUE))
+                    .addComponent(jScrollPane3))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -117,7 +112,7 @@ public class OpenMoreInfoMail extends javax.swing.JDialog {
                 .addContainerGap()
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 590, Short.MAX_VALUE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 566, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -127,11 +122,11 @@ public class OpenMoreInfoMail extends javax.swing.JDialog {
 
     // <editor-fold defaultstate="collapsed" desc="Property">
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextArea headers;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTable jTable2;
+    private javax.swing.JTree jTree1;
     // End of variables declaration//GEN-END:variables
     // </editor-fold>
 }

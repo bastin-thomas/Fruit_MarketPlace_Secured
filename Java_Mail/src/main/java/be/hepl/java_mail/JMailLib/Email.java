@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import javax.mail.Address;
 import javax.mail.Header;
@@ -229,6 +230,8 @@ public class Email {
         while (_headers.hasMoreElements()) {
             tmp.add((Header)_headers.nextElement());
         }
+        
+        Collections.reverse(tmp);
         
         this._headers = tmp;
     }

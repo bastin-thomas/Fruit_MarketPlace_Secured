@@ -13,10 +13,8 @@ import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.NoSuchProviderException;
-import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Store;
-import javax.mail.Transport;
 import javax.mail.internet.MimeMessage;
 
 /**
@@ -55,6 +53,7 @@ public class ClientMail {
         
         props.put("file.encoding", charset);        
         props.put("mail.mime.charset", "utf-8");
+        props.put("mail.charset", "utf-8");
         
         
         //Config for GMAIL

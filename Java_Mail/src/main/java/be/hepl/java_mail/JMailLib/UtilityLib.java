@@ -44,7 +44,6 @@ public class UtilityLib {
             mail.setText(MimeUtility.encodeText(Text));
             mail.setContent(null);
     }
-
     
     /*Envoi d'un message avec piece jointe multiple et document texte*/
     public static void createMessageMultiPart(MimeMessage mail, Multipart Multip, Address[] To, Address[] Cc, String Subject, String Text) throws MessagingException, UnsupportedEncodingException{

@@ -6,6 +6,8 @@
     <version>1.2</version>
     <packaging>jar</packaging>
     
+        
+    
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <exec.mainClass>be.hepl.java_mail.GUI.LoginPage</exec.mainClass>
@@ -33,4 +35,25 @@
             <type>jar</type>
         </dependency>
     </dependencies>
+    
+    
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.0.2</version>
+                                
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>be.hepl.java_mail.GUI.LoginPage</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    
+    
 </project>

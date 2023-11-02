@@ -106,6 +106,7 @@ public final class HomePage extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Mail Agent");
+        setMinimumSize(new java.awt.Dimension(894, 515));
 
         Mail_Selector.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -260,6 +261,12 @@ public final class HomePage extends javax.swing.JFrame {
     }//GEN-LAST:event_Respond_MailActionPerformed
     // </editor-fold>
     
+    void StartClock() {
+        _clockService = Executors.newSingleThreadScheduledExecutor();
+        //LaunchThread "RunnableRefreshMail" with a reference on the page. Will exectute the runnable every period;
+        _clockService.scheduleAtFixedRate(new RunnableRefreshMail(this), 0,CLOCKTICK, TimeUnit.SECONDS);
+    }
+    
     // <editor-fold defaultstate="collapsed" desc="Default Properties">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable Mail_Selector;
@@ -271,10 +278,5 @@ public final class HomePage extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 
-    void StartClock() {
-        _clockService = Executors.newSingleThreadScheduledExecutor();
-        //LaunchThread "RunnableRefreshMail" with a reference on the page. Will exectute the runnable every period;
-        _clockService.scheduleAtFixedRate(new RunnableRefreshMail(this), 0,CLOCKTICK,TimeUnit.SECONDS);
-    }
     // </editor-fold>
 }

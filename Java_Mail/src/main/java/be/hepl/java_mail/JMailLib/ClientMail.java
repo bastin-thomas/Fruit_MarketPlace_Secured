@@ -13,10 +13,8 @@ import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.NoSuchProviderException;
-import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Store;
-import javax.mail.Transport;
 import javax.mail.internet.MimeMessage;
 
 /**
@@ -55,6 +53,7 @@ public class ClientMail {
         
         props.put("file.encoding", charset);        
         props.put("mail.mime.charset", "utf-8");
+        props.put("mail.charset", "utf-8");
         
         
         //Config for GMAIL
@@ -119,7 +118,7 @@ public class ClientMail {
         Authenticator conn = new MyAuthenticator(ident, password);
         
         this.ident = ident;
-        
+          
         //Creation d'un objet session basé sur les props et l'authenticator.
         System.out.println("Session Created");
         _session = Session.getInstance(props, conn);
@@ -199,9 +198,9 @@ public class ClientMail {
         
         //Loop on array to init new Email();
         for(Message m : msg){
-            if(m.getHeader("X-Sent-YourSelf") != null){
-                continue;
-            }
+            //if(m.getHeader("X-Sent-YourSelf") != null){
+            //    continue;
+            //}
             
             //Add for each elements a new Email based on message
             Email tmp = new Email((MimeMessage) m);

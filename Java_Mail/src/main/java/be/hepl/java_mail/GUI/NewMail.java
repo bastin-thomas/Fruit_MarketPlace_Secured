@@ -94,26 +94,21 @@ public class NewMail extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("New Email");
+        setMinimumSize(new java.awt.Dimension(604, 642));
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosed(java.awt.event.WindowEvent evt) {
                 formWindowClosed(evt);
             }
         });
-        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel1.setText("From :");
-        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 15, -1, 20));
 
         jLabel2.setText("To :");
-        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 50, 30, 20));
 
         jLabel3.setText("Cc :");
-        getContentPane().add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 85, -1, 20));
 
         jScrollPane2.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         jScrollPane2.setViewportView(Message1);
-
-        getContentPane().add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(12, 177, 579, 341));
 
         Send.setText("Envoyer");
         Send.addActionListener(new java.awt.event.ActionListener() {
@@ -121,7 +116,6 @@ public class NewMail extends javax.swing.JFrame {
                 SendActionPerformed(evt);
             }
         });
-        getContentPane().add(Send, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 590, 161, 41));
 
         KO.setText("Annuler");
         KO.addActionListener(new java.awt.event.ActionListener() {
@@ -129,17 +123,11 @@ public class NewMail extends javax.swing.JFrame {
                 KOActionPerformed(evt);
             }
         });
-        getContentPane().add(KO, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 590, 148, 41));
 
         From.setEditable(false);
         From.setFocusable(false);
-        getContentPane().add(From, new org.netbeans.lib.awtextra.AbsoluteConstraints(121, 12, 470, 29));
-        getContentPane().add(To, new org.netbeans.lib.awtextra.AbsoluteConstraints(121, 47, 470, 29));
-        getContentPane().add(Cc, new org.netbeans.lib.awtextra.AbsoluteConstraints(121, 82, 470, 29));
-        getContentPane().add(Subject, new org.netbeans.lib.awtextra.AbsoluteConstraints(12, 136, 579, 35));
 
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "No Attachement" }));
-        getContentPane().add(jComboBox1, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 530, 450, 30));
 
         Add.setText("Add File");
         Add.addActionListener(new java.awt.event.ActionListener() {
@@ -147,7 +135,82 @@ public class NewMail extends javax.swing.JFrame {
                 AddActionPerformed(evt);
             }
         });
-        getContentPane().add(Add, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 530, 100, 30));
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addComponent(Add, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(10, 10, 10)
+                .addComponent(jComboBox1, 0, 450, Short.MAX_VALUE)
+                .addGap(24, 24, 24))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(120, 120, 120)
+                .addComponent(KO, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(62, 62, 62)
+                .addComponent(Send, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(12, 12, 12)
+                        .addComponent(jScrollPane2))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(12, 12, 12)
+                        .addComponent(Subject))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(90, 90, 90)
+                        .addComponent(jLabel3)
+                        .addGap(11, 11, 11)
+                        .addComponent(Cc))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(70, 70, 70)
+                        .addComponent(jLabel1)
+                        .addGap(17, 17, 17)
+                        .addComponent(From))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(90, 90, 90)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(1, 1, 1)
+                        .addComponent(To)))
+                .addGap(13, 13, 13))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(12, 12, 12)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(3, 3, 3)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(From, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(6, 6, 6)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(3, 3, 3)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(To, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(6, 6, 6)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(3, 3, 3)
+                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(Cc, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(25, 25, 25)
+                .addComponent(Subject, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(6, 6, 6)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 341, Short.MAX_VALUE)
+                .addGap(12, 12, 12)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(Add, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(30, 30, 30)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(KO, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(Send, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(11, 11, 11))
+        );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -246,7 +309,7 @@ public class NewMail extends javax.swing.JFrame {
             i++;
         }
         
-        if(!isYourSelfFound){
+        if(isYourSelfFound == false){
             mail.setHeader("X-Sent-YourSelf", "yes"); //Small Header to tag the fact it's a sended email so I can not read it in pop3
         }
         
@@ -259,10 +322,10 @@ public class NewMail extends javax.swing.JFrame {
         //Add New File        
         JFileChooser fc = new JFileChooser((FileSystemView.getFileSystemView().getHomeDirectory() + "/Bureau/"));
         fc.setMultiSelectionEnabled(false);
-        fc.showOpenDialog(this);
+        int retval = fc.showOpenDialog(this);
         
         Add.setEnabled(false);
-        if(JFileChooser.APPROVE_OPTION == 0){
+        if(JFileChooser.APPROVE_OPTION == retval){
             //File Path to Save
             String Path = fc.getSelectedFile().getAbsolutePath();
             

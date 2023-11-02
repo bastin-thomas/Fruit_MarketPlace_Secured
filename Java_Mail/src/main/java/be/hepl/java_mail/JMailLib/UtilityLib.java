@@ -29,6 +29,9 @@ public class UtilityLib {
     /*Envoi de message texte basique sans piece jointe*/
     public static void createMessageSimple(MimeMessage mail, Address[] To, Address[] Cc, String Subject, String Text) throws MessagingException, UnsupportedEncodingException{
             System.out.println("Création Message Simple");
+            
+            mail.addHeader("Content-type", "text/plain; charset=UTF-8");
+            
             mail.setFrom();
             
             //Put the To List into the MimeMessage Object
@@ -41,8 +44,7 @@ public class UtilityLib {
             mail.setSubject(Subject);
             
             //Define MainMessage
-            mail.setText(MimeUtility.encodeText(Text));
-            mail.setContent(null);
+            ((Message)mail).setContent(MimeUtility.encodeText(Text), "text/plain");
     }
     
     /*Envoi d'un message avec piece jointe multiple et document texte*/
@@ -59,9 +61,8 @@ public class UtilityLib {
             //Ajout du Texte comme premier composant
             MimeBodyPart msgBP = new MimeBodyPart(); 
             msgBP.setText(MimeUtility.encodeText(Text));
-            Multip.addBodyPart(msgBP);
             
-            //mail.setContent(Multip);
+            Multip.addBodyPart(msgBP);
     }
     
     /*Ajoute les fichier joints au message principal*/
@@ -71,7 +72,7 @@ public class UtilityLib {
             
             MimeBodyPart BodyPart = new MimeBodyPart();
             
-            //Idiqué le type de multipart
+            //Indiqué le type de multipart
             BodyPart.attachFile(new File(FilePath));            
             BodyPart.setDataHandler (new DataHandler(new FileDataSource (FilePath)));
             BodyPart.setFileName(Name);

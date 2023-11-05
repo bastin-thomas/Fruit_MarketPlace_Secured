@@ -569,3 +569,4 @@ FodyWeavers.xsd
 *.txt
 /Java_Mail_Client/nbproject/private/
 /Java_Mail/target/
+/Java_C-Client/target/

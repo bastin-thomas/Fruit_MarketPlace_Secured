@@ -9,6 +9,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>18</maven.compiler.source>
         <maven.compiler.target>18</maven.compiler.target>
-        <exec.mainClass>be.hepl.java_c.client.Java_CClient</exec.mainClass>
+        <exec.mainClass>be.hepl.java_c.client.GUI.LoginPage</exec.mainClass>
     </properties>
 </project>

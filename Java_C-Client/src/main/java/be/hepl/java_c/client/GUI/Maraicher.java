@@ -4,11 +4,20 @@
  */
 package be.hepl.java_c.client.GUI;
 
+import be.hepl.java_c.client.Utils.MarketModel.Achats;
 import be.hepl.java_c.client.Utils.MarketModel.Articles;
+import be.hepl.java_c.client.Utils.MarketModel.CaddieRows;
 import be.hepl.java_c.client.Utils.MarketModel.Protocol;
 import java.awt.Image;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
+import javax.swing.SpinnerModel;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -19,7 +28,13 @@ public class Maraicher extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="My Properties">
     private final Protocol csocket;
     private final LoginPage login;
+    
+    private final String loginId;
+    
     private int currentArticle;
+    
+    private ArrayList<CaddieRows> caddie;
+    private float totalPrice;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Constructor">
@@ -28,18 +43,22 @@ public class Maraicher extends javax.swing.JFrame {
      *
      * @param socket
      */
-    public Maraicher(LoginPage parent, Protocol socket) {
+    public Maraicher(LoginPage parent, Protocol socket, String LoginId) {
         initComponents();
         csocket = socket;
         login = parent;
+        loginId = LoginId;
 
         currentArticle = 0;
         this.GoRight_ButtonActionPerformed(null);
+        
+        caddie = new ArrayList<>();
+        totalPrice = (float) 0.0;
+        this.RefreshCaddie();
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Methods">
-    
     /*** 
      * Get the data of a specific article from Server and refresh the ui
      * @param index 
@@ -63,6 +82,54 @@ public class Maraicher extends javax.swing.JFrame {
         this.Name_TextField.setText(art.getIntitule());
         this.UnitPrice_TextField.setText("" + art.getPrix());
         this.Stock_TextField.setText("" + art.getStock());
+    }
+    
+    private void RefreshCaddie(){
+        caddie.clear();
+        
+        //Refresh Caddie
+        try{
+            caddie = csocket.SendCaddie();
+        }catch(Exception ex){
+            switch (ex.getMessage()) {
+                case "ENDCONNEXION":
+                    JOptionPane.showMessageDialog(this, "Connexion Error during transmission of Data", "Error", JOptionPane.ERROR_MESSAGE);
+                    this.OnWindowClosing(null);
+                    return;
+                    
+                case "PARAMS_FORMAT_ERROR":
+                    JOptionPane.showMessageDialog(this, "The format received was not intended", "Error", JOptionPane.ERROR_MESSAGE);
+                    break;
+                    
+                default:
+                    JOptionPane.showMessageDialog(this, "Unkown Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    break;
+            }
+        }
+        
+        //Set Caddie to model
+        this.totalPrice = 0;
+        DefaultTableModel dataModel = (DefaultTableModel) this.Caddie_Table.getModel();
+        dataModel.setRowCount(0);
+            
+        //Recuperation des données et injection dans le modèle
+        for(CaddieRows tmp : caddie){
+            Vector<String> row = new Vector<>();
+            row.add("" + tmp.getIntitule());
+            row.add("" + tmp.getQuantitee());
+            row.add("" + tmp.getPrix());
+            
+            totalPrice += tmp.getPrix() * ((float)tmp.getQuantitee());
+            
+            dataModel.addRow(row);
+        }
+        
+        //Mise a jour du modèle avec les nouvelles information
+        this.Caddie_Table.setModel(dataModel);
+        
+        DecimalFormat df = new DecimalFormat();
+        df.setMaximumFractionDigits(2);
+        this.Total_TextField.setText("" + df.format(totalPrice));
     }
     // </editor-fold>
 
@@ -93,8 +160,8 @@ public class Maraicher extends javax.swing.JFrame {
         Buy_Button = new javax.swing.JButton();
         Basket_Panel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
-        jTextField1 = new javax.swing.JTextField();
+        Caddie_Table = new javax.swing.JTable();
+        Total_TextField = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         Delete_Button = new javax.swing.JButton();
         Delete_All_Button = new javax.swing.JButton();
@@ -149,7 +216,9 @@ public class Maraicher extends javax.swing.JFrame {
             }
         });
 
-        Buy_Button.setText("BUY");
+        Quantity_Spinner.setModel(new javax.swing.SpinnerNumberModel(0, 0, 50, 1));
+
+        Buy_Button.setText("ADD TO BASKET");
         Buy_Button.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 Buy_ButtonActionPerformed(evt);
@@ -230,30 +299,64 @@ public class Maraicher extends javax.swing.JFrame {
                 .addGap(17, 17, 17))
         );
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        Caddie_Table.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "Name", "Quantity", "Unit Price"
             }
-        ));
-        jScrollPane1.setViewportView(jTable1);
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false
+            };
 
-        jTextField1.setText("0");
-        jTextField1.setFocusable(false);
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        Caddie_Table.setRowSelectionAllowed(false);
+        Caddie_Table.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        Caddie_Table.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        Caddie_Table.getTableHeader().setReorderingAllowed(false);
+        jScrollPane1.setViewportView(Caddie_Table);
+
+        Total_TextField.setText("0");
+        Total_TextField.setFocusable(false);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
         jLabel1.setText("Total:");
 
         Delete_Button.setText("Delete");
+        Delete_Button.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                Delete_ButtonActionPerformed(evt);
+            }
+        });
 
         Delete_All_Button.setText("Delete All");
+        Delete_All_Button.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                Delete_All_ButtonActionPerformed(evt);
+            }
+        });
 
         Confirm_Button.setText("Confirm");
+        Confirm_Button.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                Confirm_ButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout Basket_PanelLayout = new javax.swing.GroupLayout(Basket_Panel);
         Basket_Panel.setLayout(Basket_PanelLayout);
@@ -267,7 +370,7 @@ public class Maraicher extends javax.swing.JFrame {
                 .addGap(433, 433, 433)
                 .addComponent(jLabel1)
                 .addGap(18, 18, 18)
-                .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 76, Short.MAX_VALUE))
+                .addComponent(Total_TextField, javax.swing.GroupLayout.DEFAULT_SIZE, 76, Short.MAX_VALUE))
             .addGroup(Basket_PanelLayout.createSequentialGroup()
                 .addComponent(Delete_Button)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -282,7 +385,7 @@ public class Maraicher extends javax.swing.JFrame {
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 387, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(Basket_PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(Total_TextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1))
                 .addGap(30, 30, 30)
                 .addGroup(Basket_PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -300,10 +403,10 @@ public class Maraicher extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(Shop_Label)
-                    .addComponent(Shop_Panel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
+                    .addComponent(Shop_Panel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(29, 29, 29)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(Basket_Panel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(Basket_Panel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(Basket_Label))
                 .addGap(29, 29, 29))
         );
@@ -339,22 +442,18 @@ public class Maraicher extends javax.swing.JFrame {
             
         } catch (Exception ex) {
             switch (ex.getMessage()) {
-                case "ENDCONNEXION":
+                case "ENDCONNEXION" -> {
                     JOptionPane.showMessageDialog(this, "Connexion Error during transmission of Data", "Error", JOptionPane.ERROR_MESSAGE);
-                    break;
+                    this.OnWindowClosing(null);
+                    return;
+                }
 
-                case "NO_ARTICLE_FOUND":
-                    //Do Nothing (maybe just disable the button)
+                case "NO_ARTICLE_FOUND" -> //Do Nothing (maybe just disable the button)
                     this.GoRight_Button.setEnabled(false);
-                    break;
 
-                case "PARAMS_FORMAT_ERROR":
-                    JOptionPane.showMessageDialog(this, "The format received was not intended", "Error", JOptionPane.ERROR_MESSAGE);
-                    break;
+                case "PARAMS_FORMAT_ERROR" -> JOptionPane.showMessageDialog(this, "The format received was not intended", "Error", JOptionPane.ERROR_MESSAGE);
 
-                default:
-                    JOptionPane.showMessageDialog(this, "Unkown Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                    break;
+                default -> JOptionPane.showMessageDialog(this, "Unkown Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
     }//GEN-LAST:event_GoRight_ButtonActionPerformed
@@ -372,28 +471,49 @@ public class Maraicher extends javax.swing.JFrame {
             
         } catch (Exception ex) {
             switch (ex.getMessage()) {
-                case "ENDCONNEXION":
+                case "ENDCONNEXION" -> {
                     JOptionPane.showMessageDialog(this, "Connexion Error during transmission of Data", "Error", JOptionPane.ERROR_MESSAGE);
-                    break;
+                    this.OnWindowClosing(null);
+                    return;
+                }
 
-                case "NO_ARTICLE_FOUND":
-                    //Do Nothing (maybe just disable the button)
+                case "NO_ARTICLE_FOUND" -> //Do Nothing (maybe just disable the button)
                     this.GoLeft_Button.setEnabled(false);
-                    break;
 
-                case "PARAMS_FORMAT_ERROR":
-                    JOptionPane.showMessageDialog(this, "The format received was not intended", "Error", JOptionPane.ERROR_MESSAGE);
-                    break;
+                case "PARAMS_FORMAT_ERROR" -> JOptionPane.showMessageDialog(this, "The format received was not intended", "Error", JOptionPane.ERROR_MESSAGE);
 
-                default:
-                    JOptionPane.showMessageDialog(this, "Unkown Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                    break;
+                default -> JOptionPane.showMessageDialog(this, "Unkown Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
     }//GEN-LAST:event_GoLeft_ButtonActionPerformed
 
     private void Buy_ButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Buy_ButtonActionPerformed
+        //Check if integer
+        SpinnerModel model = this.Quantity_Spinner.getModel();
+        if(!(model.getValue() instanceof Integer))
+        {
+            System.out.println("Quantity Spinner not an integer");
+            return;  
+        }
         
+        //if int send request        
+        try{
+            Achats achat = csocket.SendAchat(this.currentArticle, (int) model.getValue());
+        } catch(Exception ex){            
+            switch (ex.getMessage()) {
+                case "ENDCONNEXION" -> {
+                    JOptionPane.showMessageDialog(this, "Connexion Error during transmission of Data", "Error", JOptionPane.ERROR_MESSAGE);
+                    this.OnWindowClosing(null);
+                    return;
+                }
+
+                case "PARAMS_FORMAT_ERROR" -> JOptionPane.showMessageDialog(this, "The format received was not intended", "Error", JOptionPane.ERROR_MESSAGE);
+                    
+                case "NO_MORE_STOCK" -> JOptionPane.showMessageDialog(this, "Can't get more in your basket. Because there is no such stock", "No More Stock", JOptionPane.WARNING_MESSAGE);
+                    
+                default -> JOptionPane.showMessageDialog(this, "Unkown Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
         
         try{
             RefreshArticle(currentArticle);
@@ -401,7 +521,8 @@ public class Maraicher extends javax.swing.JFrame {
             switch (ex.getMessage()) {
                 case "ENDCONNEXION":
                     JOptionPane.showMessageDialog(this, "Connexion Error during transmission of Data", "Error", JOptionPane.ERROR_MESSAGE);
-                    break;
+                    this.OnWindowClosing(null);
+                    return;
 
                 case "PARAMS_FORMAT_ERROR":
                     JOptionPane.showMessageDialog(this, "The format received was not intended", "Error", JOptionPane.ERROR_MESSAGE);
@@ -413,16 +534,106 @@ public class Maraicher extends javax.swing.JFrame {
                     break;
             }
         }
+        
+        RefreshCaddie();
     }//GEN-LAST:event_Buy_ButtonActionPerformed
 
+    
+    
     private void OnWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_OnWindowClosing
-        this.csocket.Close();
-
+        try {
+            csocket.SendCancelAll();
+            csocket.SendLogout();
+            csocket.Close();
+        } catch (Exception ex) {
+            Logger.getLogger(Maraicher.class.getName()).log(Level.SEVERE, null, ex);
+            return;
+        }
+            
         //Going Back to LoginPage
         this.setVisible(false);
         this.login.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_OnWindowClosing
+
+    
+    
+    
+    private void Delete_ButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Delete_ButtonActionPerformed
+        try{
+            int index = this.Caddie_Table.getSelectedRow();
+            int idArticle = caddie.get(index).getIdArticle();
+            csocket.SendCancel(idArticle);
+        } catch (Exception ex) {
+            switch(ex.getMessage()) {
+                case "ENDCONNEXION" -> {
+                    JOptionPane.showMessageDialog(this, "Connexion Error during transmission of Data", "Error", JOptionPane.ERROR_MESSAGE);
+                    this.OnWindowClosing(null);
+                    return;
+                }
+
+                case "PARAMS_FORMAT_ERROR" -> JOptionPane.showMessageDialog(this, "The format received was not intended", "Error", JOptionPane.ERROR_MESSAGE);
+                    
+                default -> JOptionPane.showMessageDialog(this, "Unkown Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+        
+        try {
+            RefreshCaddie();
+            RefreshArticle(currentArticle);
+        } catch (Exception ex) {
+            Logger.getLogger(Maraicher.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_Delete_ButtonActionPerformed
+
+    private void Delete_All_ButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Delete_All_ButtonActionPerformed
+        try {
+            csocket.SendCancelAll();
+        } catch (Exception ex) {
+            switch(ex.getMessage()) {
+                case "ENDCONNEXION" -> {
+                    JOptionPane.showMessageDialog(this, "Connexion Error during transmission of Data", "Error", JOptionPane.ERROR_MESSAGE);
+                    this.OnWindowClosing(null);
+                    return;
+                }
+
+                case "PARAMS_FORMAT_ERROR" -> JOptionPane.showMessageDialog(this, "The format received was not intended", "Error", JOptionPane.ERROR_MESSAGE);
+                    
+                default -> JOptionPane.showMessageDialog(this, "Unkown Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+        
+        try {
+            RefreshCaddie();
+            RefreshArticle(currentArticle);
+        } catch (Exception ex) {
+            Logger.getLogger(Maraicher.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_Delete_All_ButtonActionPerformed
+
+    private void Confirm_ButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Confirm_ButtonActionPerformed
+        try{
+            csocket.SendConfirmer(loginId);
+        }
+        catch(Exception ex){
+            switch(ex.getMessage()) {
+                case "ENDCONNEXION" -> {
+                    JOptionPane.showMessageDialog(this, "Connexion Error during transmission of Data", "Error", JOptionPane.ERROR_MESSAGE);
+                    this.OnWindowClosing(null);
+                    return;
+                }
+
+                case "PARAMS_FORMAT_ERROR" -> JOptionPane.showMessageDialog(this, "The format received was not intended", "Error", JOptionPane.ERROR_MESSAGE);
+                    
+                case "ERROR_BILL" -> JOptionPane.showMessageDialog(this, "The Bill cannot be created due to Server issues", "Error", JOptionPane.ERROR_MESSAGE);
+                    
+                default -> JOptionPane.showMessageDialog(this, "Unkown Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+        
+        JOptionPane.showMessageDialog(this, "La commande a bien été enregistrée.", "Success", JOptionPane.INFORMATION_MESSAGE);
+        RefreshCaddie();
+    }//GEN-LAST:event_Confirm_ButtonActionPerformed
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Generated Properties">    
@@ -431,6 +642,7 @@ public class Maraicher extends javax.swing.JFrame {
     private javax.swing.JPanel Basket_Panel;
     private javax.swing.JButton Buy_Button;
     private javax.swing.JPanel Buy_Panel;
+    private javax.swing.JTable Caddie_Table;
     private javax.swing.JButton Confirm_Button;
     private javax.swing.JButton Delete_All_Button;
     private javax.swing.JButton Delete_Button;
@@ -442,14 +654,13 @@ public class Maraicher extends javax.swing.JFrame {
     private javax.swing.JLabel Shop_Label;
     private javax.swing.JPanel Shop_Panel;
     private javax.swing.JTextField Stock_TextField;
+    private javax.swing.JTextField Total_TextField;
     private javax.swing.JTextField UnitPrice_TextField;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
     // End of variables declaration//GEN-END:variables
     // </editor-fold>
 }

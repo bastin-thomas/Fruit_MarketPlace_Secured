@@ -51,9 +51,7 @@ public class Articles {
         this.intitule = paramTokens[1];
         this.stock = Integer.parseInt(paramTokens[2]);
         this.prix = Float.parseFloat(paramTokens[3]);
-        this.image = paramTokens[4];
-        
-        
+        this.image = paramTokens[4];        
     }
     // </editor-fold>
     

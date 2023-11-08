@@ -186,6 +186,9 @@ public class LoginPage extends javax.swing.JFrame {
         SocketClient socket;
         Protocol prot;
         
+        String Login = "";
+        String Password = "";
+        
         //Connect to Server
         try {
             socket = new SocketClient(Config);
@@ -221,7 +224,9 @@ public class LoginPage extends javax.swing.JFrame {
         {
             //Try To Login
             try{
-                prot.SendLogin(this.Login_TextField.getText(), this.Password_TextField.getText());
+                Login = this.Login_TextField.getText();
+                Password = this.Password_TextField.getText();
+                prot.SendLogin(Login, Password);
             }
             catch(Exception ex){
                 switch(ex.getMessage())
@@ -243,7 +248,7 @@ public class LoginPage extends javax.swing.JFrame {
         }
         
         //Open Market Page, if good Login
-        Maraicher window = new Maraicher(this, prot);
+        Maraicher window = new Maraicher(this, prot, Login);
         window.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_Login_ButtonActionPerformed

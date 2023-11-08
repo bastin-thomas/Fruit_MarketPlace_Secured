@@ -30,4 +30,5 @@ public class Consts {
     
     public final static char SplitCommand = '@';
     public final static char SplitParameters = '#';
+    public final static char SplitList = '~';
 }

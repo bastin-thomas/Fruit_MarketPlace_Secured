@@ -4,6 +4,8 @@
  */
 package be.hepl.java_c.client.Utils.MarketModel;
 
+import be.hepl.java_c.client.Utils.Consts;
+
 /**
  *
  * @author Arkios
@@ -23,6 +25,15 @@ public class CaddieRows {
         this.intitule = intitule;
         this.quantitee = quantitee;
         this.prix = prix;
+    }
+
+    CaddieRows(String params) {
+        String[] paramTokens = params.split("" + Consts.SplitParameters);
+               
+        this.idArticle = Integer.parseInt(paramTokens[0]);
+        this.intitule = paramTokens[1];
+        this.quantitee = Integer.parseInt(paramTokens[2]);
+        this.prix = Float.parseFloat(paramTokens[3]);   
     }
     // </editor-fold>
     
@@ -104,6 +115,10 @@ public class CaddieRows {
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Methods">
+    @Override
+    public String toString() {
+        return "CaddieRows{" + "idArticle=" + idArticle + ", intitule=" + intitule + ", quantitee=" + quantitee + ", prix=" + prix + '}';
+    }
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Events">

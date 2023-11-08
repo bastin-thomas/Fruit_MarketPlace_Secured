@@ -7,6 +7,7 @@ package be.hepl.java_c.client.Utils.MarketModel;
 import be.hepl.java_c.client.Utils.Consts;
 import be.hepl.java_c.client.Utils.SocketClient;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -47,7 +48,6 @@ public class Protocol {
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Methods">
-
     /**
      * Send the login command to the server, and treat the received message
      * @param nom
@@ -85,6 +85,12 @@ public class Protocol {
         }
     }
     
+    /**
+     *
+     * @param nom
+     * @param mdp
+     * @throws Exception
+     */
     public void SendCreateLogin(String nom, String mdp) throws Exception{
         String message = "";
         
@@ -109,6 +115,12 @@ public class Protocol {
         }
     }
     
+    /**
+     * Send a request to the server to get Consult one article data
+     * @param idArticle
+     * @return
+     * @throws Exception
+     */
     public Articles SendConsult(int idArticle) throws Exception{
         String message = "";
         Articles article = null;
@@ -145,28 +157,181 @@ public class Protocol {
         return article;
     }
     
-    public void SendAchat(int idArticle, int quantitee){
+    /**
+     * Send a request to the server to put a product into the Caddie
+     * @param idArticle
+     * @param quantitee
+     * @return
+     * @throws Exception
+     */
+    public Achats SendAchat(int idArticle, int quantitee) throws Exception{
+        String message = "";
+        Achats achat = null;
         
+        //Send and wait for response
+        try{
+            csocket.SendCpp("ACHAT" + Consts.SplitCommand + idArticle + Consts.SplitParameters + quantitee);
+            message = csocket.ReceiveCpp();
+        }catch(IOException ex){
+            throw new Exception("ENDCONNEXION");
+        }
+        
+        //Split Commands name and parameters
+        String[] CommandsToken = message.split("" + Consts.SplitCommand);
+        if(message.equals("CRITICAL" + Consts.SplitCommand) || CommandsToken.length == 1){
+            throw new Exception("ENDCONNEXION");
+        }
+        
+        if(CommandsToken[1].equals("-1")){
+            throw new Exception("NO_ARTICLE_FOUND");
+        }
+        
+        try
+        {
+            achat = new Achats(CommandsToken[1]);
+        }
+        catch(NumberFormatException ex)
+        {
+            throw new Exception("PARAMS_FORMAT_ERROR");
+        }
+        
+        System.out.println(achat);
+        return achat;
     }
     
-    public void SendCaddie(){
+    /**
+     * Send a request to the server to get Caddie data
+     * @return
+     * @throws Exception
+     */
+    public ArrayList<CaddieRows> SendCaddie() throws Exception{
+        String message = "";
+        ArrayList<CaddieRows> caddie = new ArrayList<>();
         
+        
+        //Send and wait for response
+        try{
+            csocket.SendCpp("CADDIE" + Consts.SplitCommand);
+            message = csocket.ReceiveCpp();
+            System.out.println("Message Received: " + message);
+        }catch(IOException ex){
+            throw new Exception("ENDCONNEXION");
+        }
+        
+        //Split Commands name and parameters
+        String[] CommandsToken = message.split("" + Consts.SplitCommand);
+        if(message.equals("CRITICAL" + Consts.SplitCommand)){
+            throw new Exception("ENDCONNEXION");
+        }
+        
+        if(message.equals("CADDIE" + Consts.SplitCommand)){
+            return caddie;
+        }
+        
+        if(CommandsToken[1].equals("-1")){
+            throw new Exception("ERROR_OPERATION");
+        }
+        
+        
+        
+        try
+        {
+            String[] rowList = CommandsToken[1].split("" + Consts.SplitList);
+            
+            for(String tmp : rowList){                
+                caddie.add(new CaddieRows(tmp));
+            }
+        }
+        catch(NumberFormatException ex)
+        {
+            throw new Exception("PARAMS_FORMAT_ERROR");
+        }
+        
+        System.out.println("Caddie:");
+        for(CaddieRows row : caddie){
+            System.out.println(row);
+        }
+        
+        return caddie;
     }
     
-    public void SendCancel(int idArticle){
+    /**
+     * Send a request to the server to cancel a specific item from caddie
+     * @param idArticle
+     * @throws Exception
+     */
+    public void SendCancel(int idArticle) throws Exception{
+        String message = "";
         
+        //Send and wait for response
+        try{
+            csocket.SendCpp("CANCEL" + Consts.SplitCommand + idArticle + Consts.SplitParameters);
+            message = csocket.ReceiveCpp();
+        }catch(IOException ex){
+            throw new Exception("ENDCONNEXION");
+        }
+        
+        //Split Commands name and parameters
+        String[] CommandsToken = message.split("" + Consts.SplitCommand);
+        if(message.equals("CRITICAL" + Consts.SplitCommand)){
+            throw new Exception("ENDCONNEXION");
+        }
+        
+        if(!CommandsToken[1].equals("OK")){
+            throw new Exception("CANCEL_ERROR");
+        }
     }
     
-    public void SendCancelAll(){
+    /**
+     * Send a request to the server to remove all item from caddie
+     * @throws Exception
+     */
+    public void SendCancelAll() throws Exception{
+        String message = "";
         
+        //Send and wait for response
+        try{
+            csocket.SendCpp("CANCELALL" + Consts.SplitCommand);
+            message = csocket.ReceiveCpp();
+        }catch(IOException ex){
+            throw new Exception("ENDCONNEXION");
+        }
+        
+        //Split Commands name and parameters
+        String[] CommandsToken = message.split("" + Consts.SplitCommand);
+        if(message.equals("CRITICAL" + Consts.SplitCommand)){
+            throw new Exception("ENDCONNEXION");
+        }
+        
+        if(!CommandsToken[1].equals("OK")){
+            throw new Exception("CANCEL_ERROR");
+        }
     }
     
-    public void SendConfirmer(String nom){
+    public void SendConfirmer(String nom) throws Exception{
+        String message = "";
         
+        //Send and wait for response
+        try{
+            csocket.SendCpp("CONFIRMER" + Consts.SplitCommand + nom + Consts.SplitParameters);
+            message = csocket.ReceiveCpp();
+        }catch(IOException ex){
+            throw new Exception("ENDCONNEXION");
+        }
+        
+        //Split Commands name and parameters
+        String[] CommandsToken = message.split("" + Consts.SplitCommand);
+        if(message.equals("CRITICAL" + Consts.SplitCommand) || CommandsToken.length == 1){
+            throw new Exception("ENDCONNEXION");
+        }
+        
+        if(CommandsToken[1].equals("-1")){
+            throw new Exception("ERROR_BILL");
+        }
     }
     
-    public void SendLogout(){
-        
+    public void SendLogout() throws IOException{
+        csocket.SendCpp("LOGOUT" + Consts.SplitCommand);
     }
     
     /**

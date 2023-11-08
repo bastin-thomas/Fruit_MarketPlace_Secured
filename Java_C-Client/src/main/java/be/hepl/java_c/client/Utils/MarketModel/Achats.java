@@ -4,6 +4,8 @@
  */
 package be.hepl.java_c.client.Utils.MarketModel;
 
+import be.hepl.java_c.client.Utils.Consts;
+
 /**
  *
  * @author Arkios
@@ -20,6 +22,18 @@ public class Achats {
         this.idArticle = idArticle;
         this.quantitee = quantitee;
         this.prix = prix;
+    }
+
+    Achats(String params) throws Exception {
+        String[] paramTokens = params.split("" + Consts.SplitParameters);
+        
+        this.idArticle = Integer.parseInt(paramTokens[0]);
+        this.quantitee = Integer.parseInt(paramTokens[1]);
+        this.prix = Float.parseFloat(paramTokens[2]);
+        
+        if(this.quantitee <= 0){
+            throw new Exception("NO_MORE_STOCK");
+        }
     }
 
     // </editor-fold>
@@ -83,6 +97,10 @@ public class Achats {
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Methods">
+    @Override
+    public String toString() {
+        return "Achats{" + "idArticle=" + idArticle + ", quantitee=" + quantitee + ", prix=" + prix + '}';
+    }
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Events">

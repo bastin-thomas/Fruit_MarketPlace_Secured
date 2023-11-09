@@ -2,13 +2,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>be.hepl</groupId>
-    <artifactId>Java_C-Client</artifactId>
+    <artifactId>My_JDBC_Bean</artifactId>
     <version>1.0</version>
     <packaging>jar</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>18</maven.compiler.source>
-        <maven.compiler.target>18</maven.compiler.target>
-        <exec.mainClass>be.hepl.java_c.client.GUI.LoginPage</exec.mainClass>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <exec.mainClass>be.hepl.my_jdbc_bean.My_JDBC_Bean</exec.mainClass>
     </properties>
 </project>

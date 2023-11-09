@@ -11,4 +11,13 @@
         <maven.compiler.target>21</maven.compiler.target>
         <exec.mainClass>be.hepl.payement_server.Payement_Server</exec.mainClass>
     </properties>
+    
+    <dependencies>
+        <dependency>
+            <groupId>com.formdev</groupId>
+            <artifactId>flatlaf</artifactId>
+            <version>3.2.5</version>
+            <type>jar</type>
+        </dependency>
+    </dependencies>
 </project>

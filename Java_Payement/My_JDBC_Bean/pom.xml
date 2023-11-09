@@ -11,4 +11,17 @@
         <maven.compiler.target>21</maven.compiler.target>
         <exec.mainClass>be.hepl.my_jdbc_bean.My_JDBC_Bean</exec.mainClass>
     </properties>
+    
+    <dependencies>  
+        <dependency> 
+            <groupId>org.mariadb.jdbc</groupId>
+            <artifactId>mariadb-java-client</artifactId>
+            <version>3.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>Payement_Protocol</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
 </project>

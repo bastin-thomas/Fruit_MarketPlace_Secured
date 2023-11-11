@@ -18,7 +18,7 @@ public class Consts {
     
     
     public final static String ConfigIP = "Server_IP";
-    public final static String ConfigDefaultIP = "127.0.0.1";
+    public final static String ConfigDefaultIP = "10.59.22.26";
     
     public final static String ConfigPort = "Server_PORT";
     public final static String ConfigDefaultPort = "50001";

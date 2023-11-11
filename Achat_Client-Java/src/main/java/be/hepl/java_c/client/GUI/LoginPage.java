@@ -259,7 +259,7 @@ public class LoginPage extends javax.swing.JFrame {
     }//GEN-LAST:event_Cancel_ButtonActionPerformed
 
     private void OnWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_OnWindowClosing
-        
+        this.dispose();
     }//GEN-LAST:event_OnWindowClosing
     // </editor-fold>
     

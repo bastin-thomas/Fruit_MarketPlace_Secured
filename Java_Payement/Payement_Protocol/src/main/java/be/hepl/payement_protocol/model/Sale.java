@@ -4,6 +4,9 @@
  */
 package be.hepl.payement_protocol.model;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 /**
  *
  * @author Arkios
@@ -26,6 +29,12 @@ public class Sale {
         this.intitule = intitule;
         this.quantiteVendue = quantiteVendue;
         this.prixUnite = prixUnite;
+    }
+    
+    public Sale(ResultSet result) throws SQLException {
+        this.intitule = result.getString("intitule");
+        this.quantiteVendue = result.getInt("quantite");
+        this.prixUnite = result.getFloat("prixUnite");
     }
     // </editor-fold>
     

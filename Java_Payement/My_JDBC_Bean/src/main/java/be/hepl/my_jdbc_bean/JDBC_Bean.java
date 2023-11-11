@@ -85,7 +85,7 @@ public abstract class JDBC_Bean implements Serializable {
      */
     protected void insert(String table, String columns, String values) throws SQLException {
         Statement statement = db.createStatement();
-        String sql = "INSERT INTO " + table + "(" + columns + ") VALUES(" + values + ")";
+        String sql = "INSERT INTO " + table + " ( " + columns + " ) VALUES( " + values + " )";
         statement.executeUpdate(sql);
     }
     

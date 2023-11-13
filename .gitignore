@@ -572,3 +572,5 @@ FodyWeavers.xsd
 /Java_C-Client/target/
 /Achat_Client-Java/target/
 /Java_Payement/Payement_Client/target/
+/Generic_Server_TCP/target/
+/Java_Payement/Payement_Protocol/target/

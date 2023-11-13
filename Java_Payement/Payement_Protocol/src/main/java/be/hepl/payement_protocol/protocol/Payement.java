@@ -10,10 +10,17 @@ import be.hepl.generic_server_tcp.Protocol;
 import be.hepl.generic_server_tcp.Request;
 import be.hepl.generic_server_tcp.Response;
 import be.hepl.payement_protocol.Utils.DBPayement;
+import be.hepl.payement_protocol.model.Facture;
+import be.hepl.payement_protocol.model.Sale;
+import be.hepl.payement_protocol.protocol.request.GetFacturesRequest;
+import be.hepl.payement_protocol.protocol.request.GetSalesRequest;
 import be.hepl.payement_protocol.protocol.request.LoginRequest;
 import be.hepl.payement_protocol.protocol.request.LogoutRequest;
+import be.hepl.payement_protocol.protocol.response.GetFacturesResponse;
+import be.hepl.payement_protocol.protocol.response.GetSalesResponse;
 import be.hepl.payement_protocol.protocol.response.LoginResponse;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Level;
 
@@ -54,6 +61,16 @@ public class Payement implements Protocol
             return LoginRequestTreatment(loginRequest, socket);
         }
         
+        if(requete instanceof GetSalesRequest request)
+        {
+            return GetSalesRequestTreatment(request, socket);
+        }
+        
+        if(requete instanceof GetFacturesRequest request)
+        {
+            return GetFacturesRequestTreatment(request, socket);
+        }
+        
         if(requete instanceof LogoutRequest logoutRequest)
         {
             LogoutRequestTreatment(logoutRequest, socket);
@@ -63,7 +80,7 @@ public class Payement implements Protocol
     }
     
     /*
-    « Get Facture » idFacture         idFacture, date, montant, payé, Liste<article>   Permettrait de récupérer l’ensemble des articles 
+    « Get Sales » idFacture         Liste<article>   Permettrait de récupérer l’ensemble des articles 
                                                                                 concernant une facture dont on fournirait l’id au serveur.
     */
     
@@ -132,7 +149,56 @@ public class Payement implements Protocol
         }   
     }
     
+    private Response GetSalesRequestTreatment(GetSalesRequest request, Socket socket) {
+        ArrayList<Sale> Sales = new ArrayList<>();
+        String message = "";
+        String response = "";
+        
+        try {
+            Sales = db.GetSales(request.getIdFacture());
+        } catch (Exception ex) {
+            switch(ex.getMessage())
+            {
+                case "SQL_ERROR" -> {
+                    response = "SQL_ERROR";
+                    message = ex.getMessage();
+                }
+                
+                default ->{
+                    response = "UNKOWN";
+                    message = ex.getMessage();
+                }
+            }
+        }
+        
+        return new GetSalesResponse(Sales);
+    }
     
+    private Response GetFacturesRequestTreatment(GetFacturesRequest request, Socket socket) {
+        ArrayList<Facture> bills = new ArrayList<>();
+        String message = "";
+        String response = "";
+         
+        try {
+           bills  = db.GetFactures(request.getIdClient());
+        } catch (Exception ex) {
+            switch(ex.getMessage())
+            {
+                case "SQL_ERROR" -> {
+                    response = "SQL_ERROR";
+                    message = ex.getMessage();
+                }
+                
+                default ->{
+                    response = "UNKOWN";
+                    message = ex.getMessage();
+                }
+            }
+        }
+        
+        return new GetFacturesResponse(bills);
+    }
+
     
     /***
      * « Logout »

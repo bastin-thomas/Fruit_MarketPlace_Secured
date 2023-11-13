@@ -19,18 +19,18 @@ import be.hepl.generic_server_tcp.Request;
     */
 public class GetFacturesRequest implements Request{
     // <editor-fold defaultstate="collapsed" desc="Properties">
-    private final int idClient;
+    private final String idClient;
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Constructor">
-    public GetFacturesRequest(int idClient)
+    public GetFacturesRequest(String idClient)
     {
         this.idClient = idClient;
     }
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Getters and Setters">
-    public int getIdClient()
+    public String getIdClient()
     {
         return idClient;
     }

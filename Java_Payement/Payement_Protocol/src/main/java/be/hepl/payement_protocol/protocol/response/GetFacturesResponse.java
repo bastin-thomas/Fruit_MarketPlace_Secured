@@ -5,6 +5,8 @@
 package be.hepl.payement_protocol.protocol.response;
 
 import be.hepl.generic_server_tcp.Response;
+import be.hepl.payement_protocol.model.Facture;
+import java.util.ArrayList;
 
 /**
  *
@@ -12,20 +14,20 @@ import be.hepl.generic_server_tcp.Response;
  */
 public class GetFacturesResponse implements Response{
     // <editor-fold defaultstate="collapsed" desc="Properties">
-    private String idClient;
+    private ArrayList<Facture> bills;
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Constructor">
-    public GetFacturesResponse(String idClient)
+    public GetFacturesResponse(ArrayList<Facture> bills)
     {
-        this.idClient = idClient;
+        this.bills = bills;
     }
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Getters and Setters">
-    public String getIdClient()
+    public ArrayList<Facture> getBills()
     {
-        return idClient;
+        return bills;
     }
     // </editor-fold>
 }

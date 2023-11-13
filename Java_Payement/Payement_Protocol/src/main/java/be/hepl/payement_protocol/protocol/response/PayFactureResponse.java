@@ -8,26 +8,40 @@ import be.hepl.generic_server_tcp.Response;
 import be.hepl.payement_protocol.model.Facture;
 import java.util.ArrayList;
 
-/**
- *
- * @author Sirac
- */
+/*
+    « Pay Facture » idFacture, nom, num carte VISA          Oui ou non                      Le serveur se contente de vérifier
+                                                            (carte VISA invalide)           la validité du numéro de carte →
+                                                                                            si ok, on considère que le
+                                                                                            paiement est réalisé
+*/
 public class PayFactureResponse implements Response{
+    
     // <editor-fold defaultstate="collapsed" desc="Properties">
-    private ArrayList<Facture> bills;
+    private final boolean success;
+    private final String  cause;
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Constructor">
-    public PayFactureResponse(ArrayList<Facture> bills)
+    public PayFactureResponse(boolean success)
     {
-        this.bills = bills;
+        this.success = success;
+        this.cause = "";
+    }
+    
+    public PayFactureResponse(boolean success, String cause)
+    {
+        this.success = success;
+        this.cause = cause;
     }
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Getters and Setters">
-    public ArrayList<Facture> getBills()
-    {
-        return bills;
+    public boolean isSuccess() {
+        return success;
+    }
+
+    public String getCause() {
+        return cause;
     }
     // </editor-fold>
 }

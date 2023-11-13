@@ -14,13 +14,13 @@ import java.util.ArrayList;
  */
 
     /*
-    
-« Get Facture » idFacture    idFacture, date, montant, payé, Liste<article> Permettrait de récupérer l’ensemble des articles 
-                                                                            concernant une facture dont on fournirait l’id au serveur.
+    « Get Sales » idFacture                 Liste<article>      Permettrait de récupérer l’ensemble des articles 
+                                                                concernant une facture dont on fournirait l’id au serveur.
     */
 public class GetSalesRequest implements Request{
+    
     // <editor-fold defaultstate="collapsed" desc="Properties">
-    private int idFacture;
+    private final int idFacture;
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Constructor">

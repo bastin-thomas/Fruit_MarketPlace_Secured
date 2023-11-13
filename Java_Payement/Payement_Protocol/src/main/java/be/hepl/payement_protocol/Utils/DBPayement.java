@@ -74,7 +74,7 @@ public class DBPayement extends JDBC_Bean {
         ResultSet result;
         
         try {
-            result = select("password", "employees", "login="+login);
+            result = select("password", "employees", "login='"+login+"'");
         } catch (SQLException ex) {
             throw new Exception("SQL_ERROR", ex);
         }
@@ -109,7 +109,7 @@ public class DBPayement extends JDBC_Bean {
         try {
             result = select("articles.intitule AS intitule, ventes.quantité AS quantite, articles.prix AS prixUnite", 
                     "ventes INNER JOIN articles ON(articles.id = ventes.idArticle) ", 
-                        "ventes.idFacture"+idFacture);
+                        "ventes.idFacture="+idFacture);
         } catch (SQLException ex) {
             throw new Exception("SQL_ERROR", ex);
         }
@@ -174,8 +174,31 @@ public class DBPayement extends JDBC_Bean {
         
         return true;
     }
-    // </editor-fold>
     
-    // <editor-fold defaultstate="collapsed" desc="Events">
-    // </editor-fold>
+    /**
+     *
+     * @return client list
+     * @throws SQLException
+     * @throws Exception
+     */
+    public ArrayList<String> GetClientList() throws SQLException, Exception {
+        ArrayList<String> clients = new ArrayList<>();
+        ResultSet result;
+        
+        try {
+            result = select("login", 
+                              "accounts", 
+                                  "1=1");
+        } catch (SQLException ex) {
+            throw new Exception("SQL_ERROR", ex);
+        }
+        
+        while(result.next())
+        {
+            clients.add(result.getString("login"));
+        }
+        
+        return clients;
+    }
+    // </editor-fold>   
 }

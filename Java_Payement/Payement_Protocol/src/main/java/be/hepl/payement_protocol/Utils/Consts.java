@@ -13,7 +13,9 @@ public class Consts {
     /**
      * The path for the Config File
      */
-    public final static String ConfigFilePath = "Client.cfg";
+    public final static String ConfigFilePathClient = "Client.cfg";
+    public final static String ConfigFilePathServer = "Server.cfg";
+    
     public final static String ConfigFileComments = "Default configuration File";
     
     
@@ -23,7 +25,8 @@ public class Consts {
     public final static String ConfigPort = "Server_PORT";
     public final static String ConfigDefaultPort = "50002";
     
-    
+    public final static String DBString = "DB_URL_CONNEXION";
+    public final static String ConfigDefaultDBString = "jdbc:mariadb://192.168.1.19:3306/PourStudent?user=Student&password=PassStudent1_";
     
     public final static char EndOfRequest1 = '&';
     public final static char EndOfRequest2 = ')';

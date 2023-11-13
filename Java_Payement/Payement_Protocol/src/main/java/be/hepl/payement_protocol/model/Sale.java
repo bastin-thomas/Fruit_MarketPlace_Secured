@@ -98,8 +98,9 @@ public class Sale {
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Methods">
-    // </editor-fold>
-    
-    // <editor-fold defaultstate="collapsed" desc="Events">
+    @Override
+    public String toString() {
+        return "Sale{" + "intitule=" + intitule + ", quantiteVendue=" + quantiteVendue + ", prixUnite=" + prixUnite + '}';
+    }
     // </editor-fold>
 }

@@ -204,8 +204,9 @@ public class Facture implements Serializable
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Methods">
-    // </editor-fold>
-    
-    // <editor-fold defaultstate="collapsed" desc="Events">
+    @Override
+    public String toString() {
+        return "Facture{" + "Id=" + Id + ", idClient=" + idClient + ", date=" + date + ", prix=" + prix + ", payed=" + payed + ", sales=" + sales + '}';
+    }
     // </editor-fold>
 }

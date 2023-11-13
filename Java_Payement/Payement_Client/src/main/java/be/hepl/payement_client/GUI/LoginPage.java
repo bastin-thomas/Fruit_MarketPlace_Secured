@@ -4,6 +4,7 @@
  */
 package be.hepl.payement_client.GUI;
 
+import be.hepl.payement_client.Utils.ConfigFolderManager;
 import be.hepl.payement_protocol.Utils.Consts;
 import be.hepl.payement_client.Utils.SocketClient;
 import be.hepl.payement_protocol.protocol.Payement;
@@ -38,7 +39,7 @@ public class LoginPage extends javax.swing.JFrame {
         
         //Read the config File and put into props
         try {
-            Config = LoadProperties();
+            Config = ConfigFolderManager.LoadProperties();
         }
         catch (IOException ex) {
             Logger.getLogger(LoginPage.class.getName()).log(Level.SEVERE, null, ex);
@@ -49,33 +50,7 @@ public class LoginPage extends javax.swing.JFrame {
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Methods">
-    /**
-     * Load Config file into a Properties Object to be used later
-     * @return
-     * @throws IOException 
-     */
-    private Properties LoadProperties() throws IOException{
-        Properties config = new Properties();
-        File configFile = new File(Consts.ConfigFilePath);
-        
-        //If file not exist create default one
-        if(!configFile.exists()){
-            //InitDefault Values
-            config.setProperty(Consts.ConfigIP,Consts.ConfigDefaultIP);
-            config.setProperty(Consts.ConfigPort, Consts.ConfigDefaultPort);
-            
-            OutputStream output = new FileOutputStream(configFile);
-            config.store(output, Consts.ConfigFileComments);
-        }
-        else{
-            //If exist read Properties
-            InputStream input = new FileInputStream(configFile);
-            config.load(input);
-        }
-        
-        
-        return config;
-    }
+    
     // </editor-fold>
         
     // <editor-fold defaultstate="collapsed" desc="Generated Code">

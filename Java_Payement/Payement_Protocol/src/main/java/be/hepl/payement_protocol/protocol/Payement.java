@@ -10,19 +10,13 @@ import be.hepl.generic_server_tcp.Protocol;
 import be.hepl.generic_server_tcp.Request;
 import be.hepl.generic_server_tcp.Response;
 import be.hepl.payement_protocol.Utils.DBPayement;
-import be.hepl.payement_protocol.model.Facture;
-import be.hepl.payement_protocol.model.Sale;
-import be.hepl.payement_protocol.protocol.request.GetFacturesRequest;
-import be.hepl.payement_protocol.protocol.request.GetSalesRequest;
-import be.hepl.payement_protocol.protocol.request.LoginRequest;
-import be.hepl.payement_protocol.protocol.request.LogoutRequest;
-import be.hepl.payement_protocol.protocol.response.GetFacturesResponse;
-import be.hepl.payement_protocol.protocol.response.GetSalesResponse;
-import be.hepl.payement_protocol.protocol.response.LoginResponse;
+import be.hepl.payement_protocol.model.*;
+import be.hepl.payement_protocol.protocol.request.*;
+import be.hepl.payement_protocol.protocol.response.*;
+
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.logging.Level;
 
 /**
  *
@@ -33,7 +27,7 @@ public class Payement implements Protocol
     // <editor-fold defaultstate="collapsed" desc="Properties">
     public final DBPayement db;
     private final Logger logger;
-    private HashMap<String, Boolean> connectedClients;
+    private HashMap<String, Socket> connectedClients;
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Constructor">
@@ -52,53 +46,48 @@ public class Payement implements Protocol
     }
     // </editor-fold>
     
-    // <editor-fold defaultstate="collapsed" desc="Methods">
+    
     @Override
     public synchronized Response RequestTreatment(Request requete, Socket socket) throws EndConnectionException 
     {
+        if(connectedClients.containsValue(socket))
+        {
+            if(requete instanceof GetSalesRequest request)
+            {
+                return GetSalesRequestTreatment(request, socket);
+            }
+
+            if(requete instanceof GetFacturesRequest request)
+            {
+                return GetFacturesRequestTreatment(request, socket);
+            }
+            
+            if(requete instanceof PayFactureRequest request)
+            {
+                return PayFactureRequestTreatment(request, socket);
+            }
+            
+            if(requete instanceof GetClientsRequest request)
+            {
+                return GetClientsRequestTreatment(request, socket);
+            }
+
+            if(requete instanceof LogoutRequest logoutRequest)
+            {
+                LogoutRequestTreatment(logoutRequest, socket);
+            }
+        }
+        
         if(requete instanceof LoginRequest loginRequest)
         {
             return LoginRequestTreatment(loginRequest, socket);
         }
         
-        if(requete instanceof GetSalesRequest request)
-        {
-            return GetSalesRequestTreatment(request, socket);
-        }
-        
-        if(requete instanceof GetFacturesRequest request)
-        {
-            return GetFacturesRequestTreatment(request, socket);
-        }
-        
-        if(requete instanceof LogoutRequest logoutRequest)
-        {
-            LogoutRequestTreatment(logoutRequest, socket);
-        }
         
         return null;
     }
     
-    /*
-    « Get Sales » idFacture         Liste<article>   Permettrait de récupérer l’ensemble des articles 
-                                                                                concernant une facture dont on fournirait l’id au serveur.
-    */
-    
-    /*
-    « Get Factures » idClient         Liste des factures (idFacture, date, montant, payé)     On récupère simplement les
-                    (fournie par le client sur place)                                  factures du client dans la table
-                                                                                       factures (sans le contenu détaillé
-                                                                                       de la commande donc)
-    */
-    
-    /*
-    « Pay Facture » idFacture, nom, num carte VISA          Oui ou non                      Le serveur se contente de vérifier
-                                                                   (carte VISA invalide)    la validité du numéro de carte →
-                                                                                            si ok, on considère que le
-                                                                                            paiement est réalisé
-    */
-    
-    
+    // <editor-fold defaultstate="collapsed" desc="Protocol Treatment">
     /***
      * « Login »   Login, password       Oui ou non              Vérification du login et du mot
      *             (d’un employé)                                passe dans la table des employés
@@ -142,13 +131,19 @@ public class Payement implements Protocol
         
         
         if(logged){
-            connectedClients.put(loginRequest.getLogin(), true);
+            connectedClients.put(loginRequest.getLogin(), socket);
             return new LoginResponse(true);
         } else {
             return new LoginResponse(false, (response + ": " + message));
         }   
     }
     
+    
+    
+    /*
+    « Get Sales » idFacture                 Liste<article>      Permettrait de récupérer l’ensemble des articles 
+                                                                concernant une facture dont on fournirait l’id au serveur.
+    */
     private Response GetSalesRequestTreatment(GetSalesRequest request, Socket socket) {
         ArrayList<Sale> Sales = new ArrayList<>();
         String message = "";
@@ -174,6 +169,14 @@ public class Payement implements Protocol
         return new GetSalesResponse(Sales);
     }
     
+    
+    
+    /*
+    « Get Factures » idClient         Liste des factures (idFacture, date, montant, payé)     On récupère simplement les
+                    (fournie par le client sur place)                                  factures du client dans la table
+                                                                                       factures (sans le contenu détaillé
+                                                                                       de la commande donc)
+    */
     private Response GetFacturesRequestTreatment(GetFacturesRequest request, Socket socket) {
         ArrayList<Facture> bills = new ArrayList<>();
         String message = "";
@@ -198,7 +201,41 @@ public class Payement implements Protocol
         
         return new GetFacturesResponse(bills);
     }
-
+    
+    
+    
+    /*
+    « Pay Facture » idFacture, nom, num carte VISA          Oui ou non                      Le serveur se contente de vérifier
+                                                                   (carte VISA invalide)    la validité du numéro de carte →
+                                                                                            si ok, on considère que le
+                                                                                            paiement est réalisé
+    */
+    private Response PayFactureRequestTreatment(PayFactureRequest request, Socket socket) {
+        boolean valid = false;
+        String cause = "";
+        
+        //Check Visa Card
+        valid = CheckVisaCard(request.getVISA());
+        
+        if(valid)
+        {
+            try {
+                db.PayFacture(request.getIdFacture());
+            } catch (Exception ex) {
+                valid = false;
+                cause = ex.getMessage();
+            }
+        }
+        else
+        {
+            cause="CARD_INVALID";
+        }
+        
+        return new PayFactureResponse(valid, cause);
+    }
+    
+    
+    
     
     /***
      * « Logout »
@@ -207,12 +244,70 @@ public class Payement implements Protocol
      * @return 
      */
     private void LogoutRequestTreatment(LogoutRequest logoutRequest, Socket socket) {
-        if(connectedClients.get(logoutRequest.getLogin()) == true)
+        if(connectedClients.containsKey(logoutRequest.getLogin()) == true)
         {
             connectedClients.remove(logoutRequest.getLogin());
         }
         
     }
     
+    
+    
+    private Response GetClientsRequestTreatment(GetClientsRequest request, Socket socket) {
+        ArrayList<String> clients;
+        
+        try {
+           clients  = db.GetClientList();
+        } catch (Exception ex) {
+            clients = new ArrayList<>();
+        }
+        
+        return new GetClientsResponse(clients);
+    }
+    // </editor-fold>  
+    
+    // <editor-fold defaultstate="collapsed" desc="Utils Methods">
+    /***
+     * Check Visa Card using Lungth Algoritm
+     * https://www.ibm.com/docs/en/order-management-sw/9.3.0?topic=cpms-handling-credit-cards
+     * @param visa
+     * @return 
+     */
+    private boolean CheckVisaCard(String visa) {
+        int num = Integer.parseInt(visa);
+        ArrayList<Integer> digits = new ArrayList<>();
+        
+        while(num > 0)
+        {
+            digits.add(num%10);
+            num = num/10;
+        }
+        
+        //Double even value
+        for(int i = digits.size() ; i >= 0 ; i--)
+        {
+            //IF EVEN
+            if(i%2 == 0)
+            {
+                digits.set(i, digits.get(i)*2);
+            }
+        }
+        
+        
+        //sum all even doubled values or odd values
+        int checksum = 0;
+        for(Integer digit : digits)
+        {
+            if(digit>10)
+            {
+                checksum+=digit/10;
+                checksum+=digit%10;
+            }
+            checksum+=digit;
+        }
+        
+        //Check if equals to 0 on modulo 10
+        return (checksum % 10 == 0);
+    }
     // </editor-fold>
 }

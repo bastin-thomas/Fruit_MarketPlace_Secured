@@ -5,7 +5,7 @@
 package be.hepl.generic_server_tcp.PooledServer;
 
 import java.net.Socket;
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 /**
  *
@@ -14,13 +14,13 @@ import java.util.ArrayList;
 public class WaitingList {
     
     // <editor-fold defaultstate="collapsed" desc="Properties">
-    private final ArrayList<Socket> waitingList;
+    private final LinkedList<Socket> waitingList;
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Constructor">
     public WaitingList()
     {
-        waitingList = new ArrayList<>();
+        waitingList = new LinkedList<>();
     }
     // </editor-fold>
     

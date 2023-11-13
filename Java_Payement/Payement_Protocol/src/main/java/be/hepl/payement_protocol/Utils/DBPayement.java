@@ -2,45 +2,59 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package be.hepl.my_jdbc_bean;
+package be.hepl.payement_protocol.Utils;
 
+import be.hepl.generic_server_tcp.Logger;
+import be.hepl.my_jdbc_bean.JDBC_Bean;
 import be.hepl.payement_protocol.model.Facture;
 import be.hepl.payement_protocol.model.Sale;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.logging.Level;
 
 /**
  *
  * @author Arkios
  */
 public class DBPayement extends JDBC_Bean {
+    
     // <editor-fold defaultstate="collapsed" desc="Properties">
+    private final Logger logger;
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Constructor">
     /**
      *
-     * @throws ClassNotFoundException
-     * @throws SQLException
+     * @param logger
      */
-    public DBPayement() throws ClassNotFoundException, SQLException {
+    public DBPayement(Logger logger) {
         String urlconnexion = "jdbc:mariadb://localhost:3306/PourStudent?user=Student&password=PassStudent1_";
-        //Connect to the DB using a mysql string
-        this.setDb(DriverManager.getConnection(urlconnexion));
+        this.logger = logger;
+        
+        try {
+            //Connect to the DB using a mysql string
+            this.setDb(DriverManager.getConnection(urlconnexion));
+        } catch (SQLException ex) {
+            logger.Trace("Impossible to connect to DB server: " + ex.getMessage());
+        }
     }
     
     
     /**
      *
      * @param urlconnexion
-     * @throws ClassNotFoundException
-     * @throws SQLException
+     * @param logger
      */
-    public DBPayement(String urlconnexion) throws ClassNotFoundException, SQLException {
-        //Connect to the DB using a mysql string
-        this.setDb(DriverManager.getConnection(urlconnexion));
+    public DBPayement(String urlconnexion, Logger logger){
+        this.logger = logger;
+        try {
+            //Connect to the DB using a mysql string
+            this.setDb(DriverManager.getConnection(urlconnexion));
+        } catch (SQLException ex) {
+            logger.Trace("Impossible to connect to DB server: " + ex.getMessage());
+        }
     }
     // </editor-fold>
     
@@ -119,7 +133,7 @@ public class DBPayement extends JDBC_Bean {
      * @return
      * @throws Exception
      */
-    public ArrayList<Facture> GetFactures(int idClient) throws Exception{
+    public ArrayList<Facture> GetFactures(String idClient) throws Exception{
         ArrayList<Facture> bills = new ArrayList<>();
         ResultSet result;
         

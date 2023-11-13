@@ -18,7 +18,6 @@ import java.util.logging.Logger;
 public class Protocol {
     // <editor-fold defaultstate="collapsed" desc="Properties">
     private SocketClient csocket;
-    
     // </editor-fold>    
     
     // <editor-fold defaultstate="collapsed" desc="Constructor">
@@ -346,8 +345,5 @@ public class Protocol {
             System.exit(120);
         }
     }
-    // </editor-fold>
-    
-    // <editor-fold defaultstate="collapsed" desc="Events">
     // </editor-fold>
 }

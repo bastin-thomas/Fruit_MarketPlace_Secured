@@ -9,12 +9,13 @@ import be.hepl.generic_server_tcp.Logger;
 import be.hepl.generic_server_tcp.Protocol;
 import be.hepl.generic_server_tcp.Request;
 import be.hepl.generic_server_tcp.Response;
+import be.hepl.payement_protocol.Utils.DBPayement;
 import be.hepl.payement_protocol.protocol.request.LoginRequest;
 import be.hepl.payement_protocol.protocol.request.LogoutRequest;
 import be.hepl.payement_protocol.protocol.response.LoginResponse;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.logging.Level;
 
 /**
  *
@@ -22,17 +23,18 @@ import java.util.HashMap;
  */
 public class Payement implements Protocol 
 {
-    
     // <editor-fold defaultstate="collapsed" desc="Properties">
+    public final DBPayement db;
     private final Logger logger;
     private HashMap<String, Boolean> connectedClients;
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Constructor">
-    public Payement(Logger log)
+    public Payement(Logger log, be.hepl.payement_protocol.Utils.DBPayement db)
     {
         logger = log;
         connectedClients = new HashMap<>();
+        this.db = db;
     }
     // </editor-fold>
     
@@ -54,14 +56,11 @@ public class Payement implements Protocol
         
         if(requete instanceof LogoutRequest logoutRequest)
         {
-            return LogoutRequestTreatment(logoutRequest, socket);
+            LogoutRequestTreatment(logoutRequest, socket);
         }
-        
         
         return null;
     }
-    // </editor-fold>
-    
     
     /*
     « Get Facture » idFacture       idFacture, date, montant, payé, Liste<article>          Permettrait de récupérer l’ensemble des articles 
@@ -92,11 +91,46 @@ public class Payement implements Protocol
      * @return 
      */
     private Response LoginRequestTreatment(LoginRequest loginRequest, Socket socket) {
-        connectedClients.put(loginRequest.getLogin(), true);
+        boolean logged = false;
+        String message = "";
+        String response = "";
         
-        return new LoginResponse(true);
+        
+        try {
+            logged = db.Login(loginRequest.getLogin(), loginRequest.getPassword());
+        } catch (Exception ex) {
+            switch(ex.getMessage())
+            {
+                case "SQL_ERROR" -> {
+                    response = "SQL_ERROR";
+                    message = ex.getMessage();
+                }
+                
+                case "NO_LOGIN" -> {
+                    response = "NO_LOGIN";
+                    message = ex.getMessage();
+                }
+                
+                case "BAD_LOGIN" -> {
+                    response = "BAD_LOGIN";
+                    message = ex.getMessage();
+                }
+                
+                default ->{
+                    response = "UNKOWN";
+                    message = ex.getMessage();
+                }
+            }
+        }
+        
+        
+        if(logged){
+            connectedClients.put(loginRequest.getLogin(), true);
+            return new LoginResponse(true);
+        } else {
+            return new LoginResponse(false, (response + ": " + message));
+        }   
     }
-
     
     
     
@@ -106,7 +140,13 @@ public class Payement implements Protocol
      * @param socket
      * @return 
      */
-    private Response LogoutRequestTreatment(LogoutRequest logoutRequest, Socket socket) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    private void LogoutRequestTreatment(LogoutRequest logoutRequest, Socket socket) {
+        if(connectedClients.get(logoutRequest.getLogin()) == true)
+        {
+            connectedClients.remove(logoutRequest.getLogin());
+        }
+        
     }
+    
+    // </editor-fold>
 }

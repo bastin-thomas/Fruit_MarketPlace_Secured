@@ -197,8 +197,6 @@ public class LoginPage extends javax.swing.JFrame {
             return;
         }
         
-        
-        
      
         
         //Try To Login

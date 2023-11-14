@@ -35,7 +35,7 @@ public class BillPage extends javax.swing.JFrame {
         NomClient_Textfield = new javax.swing.JTextField();
         IdFacture = new javax.swing.JLabel();
         Payer_Button = new javax.swing.JButton();
-        Cancel_Button = new javax.swing.JButton();
+        Annuler_Button = new javax.swing.JButton();
         IdFacture_Label = new javax.swing.JLabel();
         IdFacture_Textfield = new javax.swing.JTextField();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -65,7 +65,7 @@ public class BillPage extends javax.swing.JFrame {
 
         Payer_Button.setText("Payer");
 
-        Cancel_Button.setText("Annuler");
+        Annuler_Button.setText("Annuler");
 
         IdFacture_Label.setText("Id facture :");
 
@@ -127,7 +127,7 @@ public class BillPage extends javax.swing.JFrame {
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(Payer_Button)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(Cancel_Button)))))
+                                .addComponent(Annuler_Button)))))
                 .addGap(35, 35, 35))
         );
         layout.setVerticalGroup(
@@ -148,7 +148,7 @@ public class BillPage extends javax.swing.JFrame {
                 .addComponent(PrixTotal_TextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(16, 16, 16)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(Cancel_Button)
+                    .addComponent(Annuler_Button)
                     .addComponent(Payer_Button))
                 .addGap(16, 16, 16))
         );
@@ -200,8 +200,8 @@ public class BillPage extends javax.swing.JFrame {
 
     // <editor-fold defaultstate="collapsed" desc="Generated Properties">
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton Annuler_Button;
     private javax.swing.JTable Bill_Table;
-    private javax.swing.JButton Cancel_Button;
     private javax.swing.JTextField Date_Textfield;
     private javax.swing.JLabel IdFacture;
     private javax.swing.JLabel IdFacture_Label;

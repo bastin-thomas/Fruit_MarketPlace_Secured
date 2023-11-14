@@ -4,13 +4,16 @@
  */
 package be.hepl.payement_client.GUI;
 
+import be.hepl.generic_server_tcp.Protocol;
+
 /**
  *
  * @author Sirac
  */
 public class FacturePage extends javax.swing.JFrame {
-    
+
     // <editor-fold defaultstate="collapsed" desc="My Properties">
+    
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Constructors">
@@ -65,10 +68,16 @@ public class FacturePage extends javax.swing.JFrame {
         });
         Factures_Table.setColumnSelectionAllowed(true);
         Factures_Table.getTableHeader().setReorderingAllowed(false);
+        Factures_Table.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                Factures_TableMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(Factures_Table);
         Factures_Table.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 
         Client_ComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        Client_ComboBox.setToolTipText("Search");
         Client_ComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 Client_ComboBoxActionPerformed(evt);
@@ -105,8 +114,13 @@ public class FacturePage extends javax.swing.JFrame {
     
     // <editor-fold defaultstate="collapsed" desc="Events">
     private void Client_ComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Client_ComboBoxActionPerformed
-        // TODO add your handling code here:
+        // TODO add code for search client
     }//GEN-LAST:event_Client_ComboBoxActionPerformed
+
+    private void Factures_TableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_Factures_TableMouseClicked
+        this.dispose();
+        
+    }//GEN-LAST:event_Factures_TableMouseClicked
 
     // </editor-fold>
     

@@ -31,11 +31,13 @@ import javax.swing.table.DefaultTableModel;
  * @author Arkios
  */
 public class Payement_Server extends javax.swing.JFrame implements Logger {
+    
     // <editor-fold defaultstate="collapsed" desc="My Properties">
     private boolean isLaunched;
     private ListenThreadPooled serverThread;
-    private Properties config;
+    private final Properties config;
     // </editor-fold>
+    
     
     // <editor-fold defaultstate="collapsed" desc="Constructor">
     /**
@@ -62,8 +64,8 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
     }
     // </editor-fold>
     
+    
     // <editor-fold defaultstate="collapsed" desc="Methods">
-
     /**
      *
      * @param message
@@ -87,10 +89,11 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
     {
         DefaultTableModel modele = (DefaultTableModel) logs_table.getModel();
         modele.setRowCount(0);
-
     }
     
-    
+    /**
+     *
+     */
     public synchronized void FreezeUI()
     {
         this.Start_Stop_Button.setText("STOP");
@@ -100,6 +103,9 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
         this.RemoveLogs();
     }
     
+    /**
+     *
+     */
     public synchronized void UnFreezeUI()
     {
         this.Start_Stop_Button.setText("START");
@@ -291,7 +297,7 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
             Protocol protocol = new Payement(this, db);
             int port = (int) this.Port_Spinner.getModel().getValue();
             int poolSize = (int) this.Pool_Spinner.getModel().getValue();
-
+            
             try {
                 FreezeUI();
                 serverThread = new ListenThreadPooled(port, protocol, this, poolSize);
@@ -312,7 +318,6 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
         }
     }//GEN-LAST:event_Start_Stop_ButtonActionPerformed
     
-    
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         int port = (int) this.Port_Spinner.getModel().getValue();
         config.setProperty(Consts.ConfigPort, ""+port);
@@ -326,7 +331,7 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
         ConfigFolderManager.SaveProperties(config);
     }//GEN-LAST:event_formWindowClosing
     // </editor-fold>
-
+    
     // <editor-fold defaultstate="collapsed" desc="Main">
     /**
      * @param args the command line arguments

@@ -25,8 +25,11 @@ public class Consts {
     public final static String ConfigPort = "Server_PORT";
     public final static String ConfigDefaultPort = "50002";
     
-    public final static String DBString = "DB_URL_CONNEXION";
+    public final static String ConfigDBString = "DB_URL_CONNEXION";
     public final static String ConfigDefaultDBString = "jdbc:mariadb://192.168.1.19:3306/PourStudent?user=Student&password=PassStudent1_";
+    
+    public final static String ConfigPoolSize = "POOL_SIZE";
+    public final static String ConfigDefaultPoolSize = "10";
     
     public final static char EndOfRequest1 = '&';
     public final static char EndOfRequest2 = ')';

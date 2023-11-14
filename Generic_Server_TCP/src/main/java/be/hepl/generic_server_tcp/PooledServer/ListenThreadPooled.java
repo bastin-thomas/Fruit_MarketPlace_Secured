@@ -10,6 +10,7 @@ import be.hepl.generic_server_tcp.Protocol;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
+import java.util.logging.Level;
 
 /**
  *
@@ -55,23 +56,24 @@ public class ListenThreadPooled extends ListenThread {
         while(!this.isInterrupted()){
             Socket serviceSocket;
             try{
-                listenSocket.setSoTimeout(2000);
+                listenSocket.setSoTimeout(1000);
                 serviceSocket = listenSocket.accept();
                 logger.Trace("Connexion acceptée, mise en file d'attente.");
                 waitingConnexions.addConnexion(serviceSocket);
             }
             catch (SocketTimeoutException ex)
             {
-            // Pour vérifier si le thread a été interrompu
+                // Pour vérifier si le thread a été interrompu
             }
             catch (IOException ex)
             {
-            logger.Trace("Erreur I/O");
+                logger.Trace("Erreur I/O");
             }
         }
         
-        logger.Trace("TH Serveur (Pool) interrompu.");
         pool.interrupt();
+        this.close();
+        logger.Trace("TH Serveur (Pool) se termine.");
     }
     // </editor-fold>
 }

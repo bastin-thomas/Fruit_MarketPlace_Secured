@@ -8,6 +8,7 @@ import be.hepl.generic_server_tcp.Logger;
 import be.hepl.generic_server_tcp.Protocol;
 import be.hepl.generic_server_tcp.ServiceThread;
 import java.io.IOException;
+import java.util.logging.Level;
 
 /**
  *
@@ -39,12 +40,13 @@ public class ServiceThreadPooled extends ServiceThread {
                 serviceSocket = waitingConnexions.getConnexion();
                 logger.Trace("Connexion prise en charge.");
                 
-                super.start();
+                super.run();
             } catch (InterruptedException ex) {                
                 logger.Trace("Demande d'interruption...");
                 interrompu = true;
             }
         }
+        
         logger.Trace("TH Client (Pool) se termine.");
     }
 

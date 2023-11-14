@@ -50,26 +50,28 @@ public class Payement implements Protocol
     @Override
     public synchronized Response RequestTreatment(Request requete, Socket socket) throws EndConnectionException 
     {
+        Response rep = null;
         if(connectedClients.containsValue(socket))
         {
+            
             if(requete instanceof GetSalesRequest request)
             {
-                return GetSalesRequestTreatment(request, socket);
+                rep = GetSalesRequestTreatment(request, socket);
             }
 
             if(requete instanceof GetFacturesRequest request)
             {
-                return GetFacturesRequestTreatment(request, socket);
+                rep = GetFacturesRequestTreatment(request, socket);
             }
             
             if(requete instanceof PayFactureRequest request)
             {
-                return PayFactureRequestTreatment(request, socket);
+                rep = PayFactureRequestTreatment(request, socket);
             }
             
             if(requete instanceof GetClientsRequest request)
             {
-                return GetClientsRequestTreatment(request, socket);
+                rep = GetClientsRequestTreatment(request, socket);
             }
 
             if(requete instanceof LogoutRequest logoutRequest)
@@ -80,11 +82,12 @@ public class Payement implements Protocol
         
         if(requete instanceof LoginRequest loginRequest)
         {
-            return LoginRequestTreatment(loginRequest, socket);
+            rep = LoginRequestTreatment(loginRequest, socket);
         }
         
+        if(!socket.isConnected()) throw new EndConnectionException(rep);
         
-        return null;
+        return rep;
     }
     
     // <editor-fold defaultstate="collapsed" desc="Protocol Treatment">
@@ -248,7 +251,6 @@ public class Payement implements Protocol
         {
             connectedClients.remove(logoutRequest.getLogin());
         }
-        
     }
     
     

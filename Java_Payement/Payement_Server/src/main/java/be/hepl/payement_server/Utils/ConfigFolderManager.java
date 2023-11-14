@@ -26,9 +26,9 @@ public class ConfigFolderManager {
         Properties config = new Properties();
         File configFile = new File(Consts.ConfigFilePathServer);
         
-        //InitDefault Values
+        config.setProperty(Consts.ConfigPoolSize,Consts.ConfigDefaultPoolSize);
+        config.setProperty(Consts.ConfigDBString,Consts.ConfigDefaultDBString);
         config.setProperty(Consts.ConfigPort, Consts.ConfigDefaultPort);
-        config.setProperty(Consts.DBString,Consts.ConfigDefaultDBString);
         
         try {
             //If file not exist create default one
@@ -44,6 +44,34 @@ public class ConfigFolderManager {
             }
         } catch(IOException ex) {}
         
+        if(!config.containsKey(Consts.ConfigPoolSize))
+        {
+            config.setProperty(Consts.ConfigPoolSize,Consts.ConfigDefaultPoolSize);
+        }
+                
+        if(!config.containsKey(Consts.ConfigDBString))
+        {
+            config.setProperty(Consts.ConfigDBString,Consts.ConfigDefaultDBString);
+        }
+                
+        if(!config.containsKey(Consts.ConfigPort))
+        {
+            config.setProperty(Consts.ConfigPort, Consts.ConfigDefaultPort);
+        }
+        
         return config;
+    }
+    
+    
+    public static void SaveProperties(Properties prop)
+    {
+        File configFile = new File(Consts.ConfigFilePathServer);
+        OutputStream output = null;
+        try {
+            output = new FileOutputStream(configFile);
+            prop.store(output, "Custom Config File");
+        } catch (IOException ex) {
+                System.out.println("FATAL ERROR WHILE SAVING TO PROPERTIES FILE: " + ex.getMessage());
+        }
     }
 }

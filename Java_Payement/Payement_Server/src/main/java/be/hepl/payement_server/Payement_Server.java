@@ -5,9 +5,18 @@
 package be.hepl.payement_server;
 
 import be.hepl.payement_server.Utils.ConfigFolderManager;
+
 import be.hepl.generic_server_tcp.Logger;
+import be.hepl.generic_server_tcp.PooledServer.ListenThreadPooled;
+import be.hepl.generic_server_tcp.Protocol;
+
 import be.hepl.payement_protocol.Utils.Consts;
+import be.hepl.payement_protocol.Utils.DBPayement;
+import be.hepl.payement_protocol.protocol.Payement;
+
 import com.formdev.flatlaf.FlatLightLaf;
+import java.io.IOException;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -24,6 +33,7 @@ import javax.swing.table.DefaultTableModel;
 public class Payement_Server extends javax.swing.JFrame implements Logger {
     // <editor-fold defaultstate="collapsed" desc="My Properties">
     private boolean isLaunched;
+    private ListenThreadPooled serverThread;
     private Properties config;
     // </editor-fold>
     
@@ -35,6 +45,8 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
         initComponents();
         isLaunched = false;
         
+        ((DefaultTableModel) logs_table.getModel()).setRowCount(0);
+        
         //Get Config From File
         config = ConfigFolderManager.LoadProperties();
         
@@ -43,13 +55,21 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
         model.setValue(Integer.valueOf(config.getProperty(Consts.ConfigPort)));
         
         //Set DB URL
-        DBurl_TextField.setText(config.getProperty(Consts.DBString));
+        DBurl_TextField.setText(config.getProperty(Consts.ConfigDBString));
+        
+        SpinnerModel model1 = this.Pool_Spinner.getModel();
+        model1.setValue(Integer.valueOf(config.getProperty(Consts.ConfigPoolSize)));
     }
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Methods">
+
+    /**
+     *
+     * @param message
+     */
     @Override
-    public void Trace(String message) {
+    public synchronized void Trace(String message) {
         DefaultTableModel modele = (DefaultTableModel) logs_table.getModel();
         Vector<String> ligne = new Vector<>();
         
@@ -60,11 +80,33 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
         modele.insertRow(modele.getRowCount(),ligne);
     }
     
-    public void RemoveLogs()
+    /**
+     *
+     */
+    public synchronized void RemoveLogs()
     {
         DefaultTableModel modele = (DefaultTableModel) logs_table.getModel();
         modele.setRowCount(0);
 
+    }
+    
+    
+    public synchronized void FreezeUI()
+    {
+        this.Start_Stop_Button.setText("STOP");
+        this.DBurl_TextField.setEnabled(false);
+        this.Port_Spinner.setEnabled(false);
+        this.AbortButton.setEnabled(true);
+        this.RemoveLogs();
+    }
+    
+    public synchronized void UnFreezeUI()
+    {
+        this.Start_Stop_Button.setText("START");
+        this.DBurl_TextField.setEnabled(true);
+        this.Port_Spinner.setEnabled(true);
+        this.AbortButton.setEnabled(false);
+        this.RemoveLogs();
     }
     // </editor-fold>
     
@@ -89,8 +131,16 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
         logs_table = new javax.swing.JTable();
         jScrollPane1 = new javax.swing.JScrollPane();
         DBurl_TextField = new javax.swing.JTextField();
+        Pool_Spinner = new javax.swing.JSpinner();
+        Logs3 = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setMinimumSize(new java.awt.Dimension(808, 493));
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 48)); // NOI18N
         jLabel1.setText("Payement Server Manager");
@@ -98,6 +148,7 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
         AbortButton.setBackground(new java.awt.Color(204, 0, 0));
         AbortButton.setForeground(new java.awt.Color(0, 0, 0));
         AbortButton.setText("ABORT");
+        AbortButton.setEnabled(false);
         AbortButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 AbortButtonActionPerformed(evt);
@@ -150,6 +201,9 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
                 return canEdit [columnIndex];
             }
         });
+        logs_table.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        logs_table.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        logs_table.getTableHeader().setReorderingAllowed(false);
         jScrollPane2.setViewportView(logs_table);
 
         jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
@@ -160,6 +214,11 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
         DBurl_TextField.setText("url db");
         DBurl_TextField.setMaximumSize(new java.awt.Dimension(64, 22));
         jScrollPane1.setViewportView(DBurl_TextField);
+
+        Pool_Spinner.setModel(new javax.swing.SpinnerNumberModel(5, 1, 500, 1));
+
+        Logs3.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        Logs3.setText("Pool Size :");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -175,7 +234,9 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
                             .addComponent(AbortButton, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(Start_Stop_Button, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(Port_Spinner, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(Pool_Spinner, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(Logs3, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(Logs, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -203,8 +264,11 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(AbortButton, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 32, Short.MAX_VALUE))
+                        .addComponent(Logs3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(Pool_Spinner, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 24, Short.MAX_VALUE)
+                        .addComponent(AbortButton, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addGap(14, 14, 14))
         );
@@ -215,23 +279,52 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
     
     // <editor-fold defaultstate="collapsed" desc="Events">
     private void AbortButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AbortButtonActionPerformed
+        serverThread.close();
         System.exit(127);
     }//GEN-LAST:event_AbortButtonActionPerformed
-
+    
     private void Start_Stop_ButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Start_Stop_ButtonActionPerformed
         if(!isLaunched)
-        {
-            //Start the Server
-            
-            isLaunched = true;
+        {     
+            //Start the Server      
+            DBPayement db = new DBPayement(DBurl_TextField.getText(), this);
+            Protocol protocol = new Payement(this, db);
+            int port = (int) this.Port_Spinner.getModel().getValue();
+            int poolSize = (int) this.Pool_Spinner.getModel().getValue();
+
+            try {
+                FreezeUI();
+                serverThread = new ListenThreadPooled(port, protocol, this, poolSize);
+                serverThread.start();
+                isLaunched = true;
+                
+            } catch (IOException ex) {
+                this.Trace("Error creating ServerThread: " + ex.getMessage());
+            }
         }
         else
         {
             //Stop the Server
+            serverThread.interrupt();
             
             isLaunched = false;
+            UnFreezeUI();
         }
     }//GEN-LAST:event_Start_Stop_ButtonActionPerformed
+    
+    
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        int port = (int) this.Port_Spinner.getModel().getValue();
+        config.setProperty(Consts.ConfigPort, ""+port);
+        
+        int poolSize = (int) this.Pool_Spinner.getModel().getValue();
+        config.setProperty(Consts.ConfigPoolSize, ""+poolSize);
+        
+        String url = DBurl_TextField.getText();
+        config.setProperty(Consts.ConfigDBString, ""+url);
+                
+        ConfigFolderManager.SaveProperties(config);
+    }//GEN-LAST:event_formWindowClosing
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Main">
@@ -263,6 +356,8 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
     private javax.swing.JLabel Logs;
     private javax.swing.JLabel Logs1;
     private javax.swing.JLabel Logs2;
+    private javax.swing.JLabel Logs3;
+    private javax.swing.JSpinner Pool_Spinner;
     private javax.swing.JSpinner Port_Spinner;
     private javax.swing.JButton Start_Stop_Button;
     private javax.swing.JLabel jLabel1;
@@ -271,6 +366,4 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
     private javax.swing.JTable logs_table;
     // End of variables declaration//GEN-END:variables
     // </editor-fold>
-    
-    
 }

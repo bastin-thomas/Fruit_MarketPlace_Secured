@@ -21,27 +21,30 @@ public abstract class ListenThread extends Thread {
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Constructor">
-    public ListenThread(int port, Protocol protocole, Logger logger) throws IOException
+    public ListenThread(int port, Protocol protocole, Logger logger)
     {
         super("TH Serveur (port=" + port + ",protocole=" + protocole.getNom() + ")");
 
         this.port = port;
         this.protocole = protocole;
         this.logger = logger;
-
-        listenSocket = new ServerSocket(port);
+        
+        try{
+            listenSocket = new ServerSocket(port);
+        }
+        catch(IOException ex)
+        {
+            logger.Trace("Error Creation Socket: " + ex.getMessage());
+        }
     }
     
-    
-    public ListenThread(Protocol protocol, ThreadGroup group, Logger logger) throws IOException
+    public void close()
     {
-        super("TH Serveur ( protocole=" + protocol.getNom() + ")");
-
-        this.port = -1;
-        this.protocole = protocol;
-        this.logger = logger;
-
-        listenSocket = new ServerSocket(port);
+        try {
+            listenSocket.close();
+        } catch (IOException ex) {
+            logger.Trace(ex.getMessage());
+        }
     }
     // </editor-fold>
 }

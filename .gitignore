@@ -567,3 +567,12 @@ FodyWeavers.xsd
 
 *.cfg
 *.txt
+/Java_Mail_Client/nbproject/private/
+/Java_Mail/target/
+/Java_C-Client/target/
+/Achat_Client-Java/target/
+/Java_Payement/Payement_Client/target/
+/Generic_Server_TCP/target/
+/Java_Payement/Payement_Protocol/target/
+/Java_Payement/My_JDBC_Bean/target/
+/Java_Payement/Payement_Server/target/

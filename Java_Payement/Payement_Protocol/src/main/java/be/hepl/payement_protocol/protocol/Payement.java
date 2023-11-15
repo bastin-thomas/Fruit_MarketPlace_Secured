@@ -251,10 +251,11 @@ public class Payement implements Protocol
      * @param socket
      * @return 
      */
-    private void LogoutRequestTreatment(LogoutRequest logoutRequest, Socket socket) {
+    private void LogoutRequestTreatment(LogoutRequest logoutRequest, Socket socket) throws EndConnectionException {
         if(connectedClients.containsKey(logoutRequest.getLogin()) == true)
         {
             connectedClients.remove(logoutRequest.getLogin());
+            throw new EndConnectionException(null);
         }
     }
     

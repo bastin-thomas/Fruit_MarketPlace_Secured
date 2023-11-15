@@ -1,0 +1,330 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
+ */
+package be.hepl.payement_client.GUI;
+
+import be.hepl.payement_protocol.Utils.Gestion_Protocol_Client;
+import be.hepl.payement_protocol.model.Facture;
+import be.hepl.payement_protocol.model.Sale;
+import java.util.ArrayList;
+import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
+/**
+ *
+ * @author Sirac
+ */
+public class MainPage extends javax.swing.JFrame {
+    
+    // <editor-fold defaultstate="collapsed" desc="My Properties">
+    private final String Login;
+    private final Gestion_Protocol_Client GPC;
+    private final LoginPage parent;
+    
+    private ArrayList<String> clients;
+    private ArrayList<Facture> bills;
+    // </editor-fold>
+    
+    // <editor-fold defaultstate="collapsed" desc="Constructors">
+    public MainPage(String Login, Gestion_Protocol_Client GPC, LoginPage parent) throws Exception {
+        initComponents();
+        
+        this.Login = Login;
+        this.GPC = GPC;
+        this.parent = parent;
+        
+        //Change title with current employee logged
+        this.setTitle("Bill Management Page - " + Login);
+        bills = null;
+        clients = null;
+        
+        InitMainPage();
+        
+        /*
+        //Add the event Listener for Double Click on Jtable
+        mytable.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent mouseEvent) {
+                JTable table =(JTable) mouseEvent.getSource();
+                Point point = mouseEvent.getPoint();
+                int row = table.rowAtPoint(point);
+                if (mouseEvent.getClickCount() == 2 && table.getSelectedRow() != -1) {
+                    // your valueChanged overridden method 
+                }
+            }
+        });
+        */
+    }
+    
+    
+    private void InitMainPage() throws Exception
+    {
+        try {
+            //Get the current Client List
+            clients = GPC.SendGetClientsRequest();
+        } catch(Exception ex){
+            switch(ex.getMessage())
+            {
+                case "ENDCONNEXION" -> {
+                    JOptionPane.showMessageDialog(this, "Connexion Error during transmission of Data", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+                
+                case "UNEXPECTED_RESPONSE" -> {
+                    JOptionPane.showMessageDialog(this, "The response received was unexpected", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+                
+                default -> {
+                    JOptionPane.showMessageDialog(this, "Unkown Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+            throw ex;
+        }
+        
+        //Put it into the combobox
+        this.Client_Combo.setModel(new javax.swing.DefaultComboBoxModel<>(clients.toArray(new String[0])));
+
+        //Select first combo
+        this.Client_Combo.setSelectedIndex(0);
+
+        //Refresh UI
+        this.RefreshUI();
+    }
+    // </editor-fold>    
+    
+    // <editor-fold defaultstate="collapsed" desc="Methods">
+    public void RefreshUI() throws Exception
+    {
+        int index = this.Client_Combo.getSelectedIndex();
+        try {
+            bills = GPC.SendGetFacturesRequest(clients.get(index));
+        } catch (Exception ex) {
+            switch(ex.getMessage())
+            {
+                case "ENDCONNEXION" -> {
+                    JOptionPane.showMessageDialog(this, "Connexion Error during transmission of Data", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+                
+                case "UNEXPECTED_RESPONSE" -> {
+                    JOptionPane.showMessageDialog(this, "The response received was unexpected", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+                
+                default -> {
+                    JOptionPane.showMessageDialog(this, "Unkown Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+            throw ex;
+        }
+        DefaultTableModel model = (DefaultTableModel) this.Bill_Table.getModel();
+        model.setRowCount(0);
+        
+        for(Facture bill : bills){
+            Vector<Object> rowData = new Vector<>();
+            
+            rowData.add("" + bill.getId());
+            rowData.add(bill.getDate());
+            rowData.add(bill.getPrix());
+            rowData.add(bill.isPayed());
+            
+            model.addRow(rowData);
+        }
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">
+    
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        jScrollPane1 = new javax.swing.JScrollPane();
+        Bill_Table = new javax.swing.JTable();
+        Client_Combo = new javax.swing.JComboBox<>();
+        Ref = new javax.swing.JButton();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Facture");
+        setMinimumSize(new java.awt.Dimension(696, 388));
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                OnWindowClosing(evt);
+            }
+        });
+
+        Bill_Table.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "IdFacture", "Date", "Prix", "Payer"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Boolean.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        Bill_Table.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        Bill_Table.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        Bill_Table.getTableHeader().setReorderingAllowed(false);
+        Bill_Table.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                OnClick_BillsTable_Event(evt);
+            }
+        });
+        jScrollPane1.setViewportView(Bill_Table);
+        Bill_Table.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+
+        Client_Combo.setToolTipText("Search");
+        Client_Combo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                OnComboBoxClientSelected(evt);
+            }
+        });
+
+        Ref.setText("Refresh");
+        Ref.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                RefreshComboButtonPushed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(Ref)
+                    .addComponent(Client_Combo, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 553, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(Client_Combo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(Ref)
+                        .addContainerGap(331, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                        .addGap(16, 16, 16))))
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+    // </editor-fold>
+    
+    // <editor-fold defaultstate="collapsed" desc="Events">
+    private void OnClick_BillsTable_Event(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_OnClick_BillsTable_Event
+        if(bills == null) return;
+        
+        if(evt.getClickCount() == 2 && Bill_Table.getSelectedRow() != -1)
+        {
+            //get the right Facture
+            Facture bill = bills.get(Bill_Table.getSelectedRow());
+            ArrayList<Sale> sales = null;
+            
+            //Get Sales from server about the bill
+            
+            try {
+                sales = GPC.SendGetSalesRequest(bill.getId());
+            } catch (Exception ex) {
+                switch(ex.getMessage())
+                {
+                    case "ENDCONNEXION" -> {
+                        JOptionPane.showMessageDialog(this, "Connexion Error during transmission of Data: " + ex.getCause(), "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+
+                    case "UNEXPECTED_RESPONSE" -> {
+                        JOptionPane.showMessageDialog(this, "The response received was unexpected", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+
+                    default -> {
+                        JOptionPane.showMessageDialog(this, "Unkown Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+                return;
+            }
+            
+            
+            //set Sales
+            bill.setSales(sales);
+            
+            //Open BillPage
+            BillPage window = new BillPage(GPC, bill, this, ("Facture ["+bill.getId()+"] - " + bill.getIdClient()), true);
+            window.setVisible(true);
+            
+            //Once Dialog Closed, refresh the ui
+            try {
+                RefreshUI();
+            } catch (Exception ex) {
+                Logger.getLogger(MainPage.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }//GEN-LAST:event_OnClick_BillsTable_Event
+
+    private void OnComboBoxClientSelected(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_OnComboBoxClientSelected
+        try {
+            RefreshUI();
+        } catch (Exception ex) {
+            Logger.getLogger(MainPage.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_OnComboBoxClientSelected
+
+    private void OnWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_OnWindowClosing
+        try {
+            this.GPC.SendLogout(Login);
+        } catch (Exception ex) {
+            Logger.getLogger(MainPage.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        this.parent.setVisible(true);
+        this.setVisible(false);
+    }//GEN-LAST:event_OnWindowClosing
+
+    private void RefreshComboButtonPushed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RefreshComboButtonPushed
+        //Put it into the combobox
+        this.Client_Combo.setModel(new javax.swing.DefaultComboBoxModel<>(clients.toArray(new String[0])));
+
+        //Select first combo
+        this.Client_Combo.setSelectedIndex(0);
+    }//GEN-LAST:event_RefreshComboButtonPushed
+
+    // </editor-fold>
+    
+    // <editor-fold defaultstate="collapsed" desc="Generated Properties">
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTable Bill_Table;
+    private javax.swing.JComboBox<String> Client_Combo;
+    private javax.swing.JButton Ref;
+    private javax.swing.JScrollPane jScrollPane1;
+    // End of variables declaration//GEN-END:variables
+    // </editor-fold>
+}

@@ -4,19 +4,33 @@
  */
 package be.hepl.payement_client.GUI;
 
+import be.hepl.payement_protocol.Utils.Gestion_Protocol_Client;
+import be.hepl.payement_protocol.model.Facture;
+import java.awt.Frame;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author Sirac
  */
-public class PayementPage extends javax.swing.JFrame {
+public class PayementPage extends javax.swing.JDialog {
 
     // <editor-fold defaultstate="collapsed" desc="My Properties">
+    private Gestion_Protocol_Client GPC;
+    private Facture bill;
+    public boolean payed;
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Constructors">
-    // </editor-fold>
-    
-    // <editor-fold defaultstate="collapsed" desc="Methods">
+    public PayementPage(Gestion_Protocol_Client GPC, Facture bill, Frame owner, String title, boolean modal) {
+        super(owner, title, modal);
+        initComponents();
+        
+        this.GPC = GPC;
+        this.bill = bill;
+    }
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Generated Code">
@@ -36,11 +50,12 @@ public class PayementPage extends javax.swing.JFrame {
         NomTitulaire_TextField = new javax.swing.JTextField();
         Payer_Button = new javax.swing.JButton();
         Annuler_Button = new javax.swing.JButton();
-        Date_Spinner2 = new javax.swing.JSpinner();
-        Date_Spinner1 = new javax.swing.JSpinner();
+        Month_Spinner = new javax.swing.JSpinner();
+        Day_Spinner = new javax.swing.JSpinner();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Payement");
+        setMinimumSize(new java.awt.Dimension(300, 180));
 
         jLabel1.setText("Nom titulaire :");
 
@@ -49,15 +64,29 @@ public class PayementPage extends javax.swing.JFrame {
         jLabel3.setText("Date validité :");
 
         Payer_Button.setText("Payer");
+        Payer_Button.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                Payer_ButtonActionPerformed(evt);
+            }
+        });
 
         Annuler_Button.setText("Annuler");
+        Annuler_Button.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                Annuler_ButtonActionPerformed(evt);
+            }
+        });
+
+        Month_Spinner.setModel(new javax.swing.SpinnerNumberModel(8, 1, 12, 1));
+
+        Day_Spinner.setModel(new javax.swing.SpinnerNumberModel(16, 1, 31, 1));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(24, 24, 24)
+                .addGap(16, 16, 16)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(Annuler_Button)
                     .addGroup(layout.createSequentialGroup()
@@ -70,17 +99,17 @@ public class PayementPage extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(Date_Spinner1, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(Day_Spinner, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(Date_Spinner2, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(Month_Spinner, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(CodeCarte_TextField, javax.swing.GroupLayout.DEFAULT_SIZE, 165, Short.MAX_VALUE)
                             .addComponent(NomTitulaire_TextField))))
-                .addContainerGap(17, Short.MAX_VALUE))
+                .addContainerGap(15, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(12, 12, 12)
+                .addGap(20, 20, 20)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(NomTitulaire_TextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -91,9 +120,9 @@ public class PayementPage extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
-                    .addComponent(Date_Spinner2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(Date_Spinner1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 51, Short.MAX_VALUE)
+                    .addComponent(Month_Spinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(Day_Spinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(Annuler_Button)
                     .addComponent(Payer_Button))
@@ -103,53 +132,58 @@ public class PayementPage extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
     // </editor-fold>
-   
-    // <editor-fold defaultstate="collapsed" desc="Events">
-    // </editor-fold>
     
-    // <editor-fold defaultstate="collapsed" desc="Main">
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
+    // <editor-fold defaultstate="collapsed" desc="Events">
+    private void Annuler_ButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Annuler_ButtonActionPerformed
+        this.dispose();
+    }//GEN-LAST:event_Annuler_ButtonActionPerformed
+
+    private void Payer_ButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Payer_ButtonActionPerformed
+        if(NomTitulaire_TextField.getText().equals("") || CodeCarte_TextField.getText().equals(""))
+        {
+            JOptionPane.showMessageDialog(this, "Please fill all field", "Warning", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        boolean verified = false;
         try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
+            verified = GPC.SendPayFactureRequest(bill.getId(), NomTitulaire_TextField.getText(), CodeCarte_TextField.getText());
+        } catch (Exception ex) {
+            switch(ex.getMessage())
+            {
+                case "ENDCONNEXION" -> {
+                    JOptionPane.showMessageDialog(this, "Connexion Error during transmission of Data: " + ex.getCause(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
+                                
+                case "CARD_INVALID" -> {
+                    JOptionPane.showMessageDialog(this, "La carte entrée est invalide", "Warning", JOptionPane.WARNING_MESSAGE);
+                }
+                
+                case "UNEXPECTED_RESPONSE" -> {
+                    JOptionPane.showMessageDialog(this, "The response received was unexpected.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+                
+                default -> {
+                    JOptionPane.showMessageDialog(this, "Error[" + ex.getMessage() + "]: " + ex.getCause(), "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(PayementPage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(PayementPage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(PayementPage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(PayementPage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new PayementPage().setVisible(true);
-            }
-        });
-    }
+        
+        
+        if(verified){
+            JOptionPane.showMessageDialog(this, "Payement Success", "Success", JOptionPane.INFORMATION_MESSAGE);
+            payed = true;
+            this.dispose();
+        }
+    }//GEN-LAST:event_Payer_ButtonActionPerformed
     // </editor-fold>
-    
+        
     // <editor-fold defaultstate="collapsed" desc="Generated">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton Annuler_Button;
     private javax.swing.JTextField CodeCarte_TextField;
-    private javax.swing.JSpinner Date_Spinner1;
-    private javax.swing.JSpinner Date_Spinner2;
+    private javax.swing.JSpinner Day_Spinner;
+    private javax.swing.JSpinner Month_Spinner;
     private javax.swing.JTextField NomTitulaire_TextField;
     private javax.swing.JButton Payer_Button;
     private javax.swing.JLabel jLabel1;
@@ -157,5 +191,4 @@ public class PayementPage extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     // End of variables declaration//GEN-END:variables
     // </editor-fold>
-
 }

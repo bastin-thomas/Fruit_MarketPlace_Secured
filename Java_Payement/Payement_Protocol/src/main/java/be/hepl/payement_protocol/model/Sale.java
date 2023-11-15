@@ -4,6 +4,7 @@
  */
 package be.hepl.payement_protocol.model;
 
+import java.io.Serializable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -11,7 +12,7 @@ import java.sql.SQLException;
  *
  * @author Arkios
  */
-public class Sale {    
+public class Sale implements Serializable{    
     // <editor-fold defaultstate="collapsed" desc="Properties">
     private String intitule;
     private int quantiteVendue;

@@ -4,19 +4,76 @@
  */
 package be.hepl.payement_client.GUI;
 
+import be.hepl.payement_protocol.Utils.Gestion_Protocol_Client;
+import be.hepl.payement_protocol.model.Facture;
+import be.hepl.payement_protocol.model.Sale;
+import java.awt.Frame;
+import java.text.DecimalFormat;
+import java.util.Vector;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author Sirac
  */
-public class BillPage extends javax.swing.JFrame {
+public class BillPage extends javax.swing.JDialog {
 
     // <editor-fold defaultstate="collapsed" desc="My Properties">
+    private final Facture bill;
+    private final Gestion_Protocol_Client GPC;
+    private final Frame owner;
+    private boolean payed;
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Constructors">
+    /**
+     *
+     * @param bill
+     * @param owner
+     * @param title
+     * @param modal
+     */
+    public BillPage(Gestion_Protocol_Client GPC, Facture bill, Frame owner, String title, boolean modal) {
+        super(owner, title, modal);
+        initComponents();
+        
+        this.setTitle(title);
+        
+        this.bill = bill;
+        this.GPC = GPC;
+        this.owner = owner;
+        
+        this.IdFacture_Textfield.setText("" + bill.getId());
+        this.Date_Textfield.setText("" + bill.getDate());
+        this.NomClient_Textfield.setText("" + bill.getIdClient());
+        
+        DecimalFormat df = new DecimalFormat("#.##");
+        this.PrixTotal_TextField.setText("" + df.format(bill.getPrix()));
+        
+        payed = bill.isPayed();
+        this.Payer_Button.setEnabled(!payed);
+        RefreshUI();
+    }
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Methods">
+    public void RefreshUI()
+    {
+        DecimalFormat df = new DecimalFormat("#.##");       
+        DefaultTableModel model = (DefaultTableModel) this.Sales_Table.getModel();
+        model.setRowCount(0);
+        
+        for(Sale sale : bill.getSales()){
+            Vector<Object> rowData = new Vector<>();
+            
+            rowData.add(sale.getIntitule());
+            rowData.add(sale.getQuantiteVendue());
+            rowData.add(df.format(sale.getPrixUnite()));
+            rowData.add(df.format((float)sale.getQuantiteVendue() * sale.getPrixUnite()));
+            
+            model.addRow(rowData);
+        }
+    }
     // </editor-fold>
         
     // <editor-fold defaultstate="collapsed" desc="Generated code">
@@ -39,7 +96,7 @@ public class BillPage extends javax.swing.JFrame {
         IdFacture_Label = new javax.swing.JLabel();
         IdFacture_Textfield = new javax.swing.JTextField();
         jScrollPane2 = new javax.swing.JScrollPane();
-        Bill_Table = new javax.swing.JTable();
+        Sales_Table = new javax.swing.JTable();
         Date_Textfield = new javax.swing.JTextField();
         PrixTotal_TextField = new javax.swing.JTextField();
 
@@ -58,20 +115,31 @@ public class BillPage extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Bill");
+        setMinimumSize(new java.awt.Dimension(558, 475));
 
         NomClient_Textfield.setFocusable(false);
 
         IdFacture.setText("Nom Client :");
 
         Payer_Button.setText("Payer");
+        Payer_Button.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                Payer_ButtonActionPerformed(evt);
+            }
+        });
 
-        Annuler_Button.setText("Annuler");
+        Annuler_Button.setText("Retour");
+        Annuler_Button.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                Annuler_ButtonActionPerformed(evt);
+            }
+        });
 
         IdFacture_Label.setText("Id facture :");
 
         IdFacture_Textfield.setFocusable(false);
 
-        Bill_Table.setModel(new javax.swing.table.DefaultTableModel(
+        Sales_Table.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -90,9 +158,13 @@ public class BillPage extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        Bill_Table.setFocusable(false);
-        Bill_Table.getTableHeader().setReorderingAllowed(false);
-        jScrollPane2.setViewportView(Bill_Table);
+        Sales_Table.setFocusable(false);
+        Sales_Table.setRequestFocusEnabled(false);
+        Sales_Table.setRowSelectionAllowed(false);
+        Sales_Table.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        Sales_Table.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        Sales_Table.getTableHeader().setReorderingAllowed(false);
+        jScrollPane2.setViewportView(Sales_Table);
 
         Date_Textfield.setFocusable(false);
 
@@ -155,53 +227,24 @@ public class BillPage extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Events">
-    // </editor-fold>
-    
-    // <editor-fold defaultstate="collapsed" desc="Main">
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(BillPage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(BillPage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(BillPage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(BillPage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
+    private void Annuler_ButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Annuler_ButtonActionPerformed
+        this.dispose();
+    }//GEN-LAST:event_Annuler_ButtonActionPerformed
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new BillPage().setVisible(true);
-            }
-        });
-    }
+    private void Payer_ButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Payer_ButtonActionPerformed
+        PayementPage window = new PayementPage(GPC, bill, this.owner, ("Payement Bill["+bill.getId()+"] - " + bill.getDate()), true);
+        window.setVisible(true);
+        
+        this.Payer_Button.setEnabled(!window.payed);
+    }//GEN-LAST:event_Payer_ButtonActionPerformed
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Generated Properties">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton Annuler_Button;
-    private javax.swing.JTable Bill_Table;
     private javax.swing.JTextField Date_Textfield;
     private javax.swing.JLabel IdFacture;
     private javax.swing.JLabel IdFacture_Label;
@@ -209,6 +252,7 @@ public class BillPage extends javax.swing.JFrame {
     private javax.swing.JTextField NomClient_Textfield;
     private javax.swing.JButton Payer_Button;
     private javax.swing.JTextField PrixTotal_TextField;
+    private javax.swing.JTable Sales_Table;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable jTable1;

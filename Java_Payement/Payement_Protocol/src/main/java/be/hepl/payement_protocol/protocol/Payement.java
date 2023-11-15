@@ -46,7 +46,6 @@ public class Payement implements Protocol
     }
     // </editor-fold>
     
-    
     @Override
     public synchronized Response RequestTreatment(Request requete, Socket socket) throws EndConnectionException 
     {
@@ -57,32 +56,38 @@ public class Payement implements Protocol
             if(requete instanceof GetSalesRequest request)
             {
                 rep = GetSalesRequestTreatment(request, socket);
+                logger.Trace( request.getClass().getName() + " Reçue et traitée");
             }
 
             if(requete instanceof GetFacturesRequest request)
             {
                 rep = GetFacturesRequestTreatment(request, socket);
+                logger.Trace( request.getClass().getName() + " Reçue et traitée");
             }
             
             if(requete instanceof PayFactureRequest request)
             {
                 rep = PayFactureRequestTreatment(request, socket);
+                logger.Trace( request.getClass().getName() + " Reçue et traitée");
             }
             
             if(requete instanceof GetClientsRequest request)
             {
                 rep = GetClientsRequestTreatment(request, socket);
+                logger.Trace( request.getClass().getName() + " Reçue et traitée");
             }
 
-            if(requete instanceof LogoutRequest logoutRequest)
+            if(requete instanceof LogoutRequest request)
             {
-                LogoutRequestTreatment(logoutRequest, socket);
+                LogoutRequestTreatment(request, socket);
+                logger.Trace( request.getClass().getName() + " Reçue et traitée");
             }
         }
         
-        if(requete instanceof LoginRequest loginRequest)
+        if(requete instanceof LoginRequest request)
         {
-            rep = LoginRequestTreatment(loginRequest, socket);
+            rep = LoginRequestTreatment(request, socket);
+            logger.Trace( request.getClass().getName() + " Reçue et traitée");
         }
         
         if(!socket.isConnected()) throw new EndConnectionException(rep);
@@ -276,40 +281,71 @@ public class Payement implements Protocol
      * @return 
      */
     private boolean CheckVisaCard(String visa) {
-        int num = Integer.parseInt(visa);
-        ArrayList<Integer> digits = new ArrayList<>();
+        long num = -1;
         
-        while(num > 0)
+        try
         {
-            digits.add(num%10);
-            num = num/10;
-        }
-        
-        //Double even value
-        for(int i = digits.size() ; i >= 0 ; i--)
-        {
-            //IF EVEN
-            if(i%2 == 0)
+            try
             {
-                digits.set(i, digits.get(i)*2);
+                num = Long.parseLong(visa);
             }
-        }
-        
-        
-        //sum all even doubled values or odd values
-        int checksum = 0;
-        for(Integer digit : digits)
-        {
-            if(digit>10)
+            catch(NumberFormatException ex)
             {
-                checksum+=digit/10;
-                checksum+=digit%10;
+                String newVisa = "";
+                String[] split = visa.split(" ");
+                
+                for(String s : split)
+                {
+                    newVisa+=s;
+                }
+                
+                num = Long.parseLong(newVisa);
             }
-            checksum+=digit;
+            
+            
+            ArrayList<Long> digits = new ArrayList<>();
+
+            while(num > 0)
+            {
+                digits.add(num%10);
+                num = num/10;
+            }
+            
+            //Double ODD index
+            for(int i = 0 ; i < digits.size() ; i++)
+            {
+                //IF ODD index
+                if(i%2 != 0)
+                {
+                    Long doubled = digits.get(i)*2;
+
+                    digits.set(i, doubled);
+                }
+            }
+            
+            //sum all even doubled values or odd values
+            int checksum = 0;
+            for(Long digit : digits)
+            {
+                if(digit>9)
+                {
+                    checksum+=digit-9;
+                }
+                else
+                {
+                    checksum+=digit;
+                }
+            }
+
+            //Check if equals to 0 on modulo 10
+            return (checksum % 10 == 0);
+            
         }
-        
-        //Check if equals to 0 on modulo 10
-        return (checksum % 10 == 0);
+        catch(Exception ex)
+        {
+            logger.Trace("ERROR[" + ex.getMessage() + "] - " + ex.getCause());
+            return false;
+        }
     }
     // </editor-fold>
 }

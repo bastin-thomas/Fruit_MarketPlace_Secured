@@ -29,16 +29,12 @@ public class DBPayement extends JDBC_Bean {
      *
      * @param logger
      */
-    public DBPayement(Logger logger) {
+    public DBPayement(Logger logger) throws SQLException {
         String urlconnexion = "jdbc:mariadb://localhost:3306/PourStudent?user=Student&password=PassStudent1_";
         this.logger = logger;
         
-        try {
-            //Connect to the DB using a mysql string
-            this.setDb(DriverManager.getConnection(urlconnexion));
-        } catch (SQLException ex) {
-            logger.Trace("Impossible to connect to DB server: " + ex.getMessage());
-        }
+        //Connect to the DB using a mysql string
+        this.setDb(DriverManager.getConnection(urlconnexion));
     }
     
     
@@ -47,14 +43,11 @@ public class DBPayement extends JDBC_Bean {
      * @param urlconnexion
      * @param logger
      */
-    public DBPayement(String urlconnexion, Logger logger){
+    public DBPayement(String urlconnexion, Logger logger) throws SQLException{
         this.logger = logger;
-        try {
-            //Connect to the DB using a mysql string
-            this.setDb(DriverManager.getConnection(urlconnexion));
-        } catch (SQLException ex) {
-            logger.Trace("Impossible to connect to DB server: " + ex.getMessage());
-        }
+
+        //Connect to the DB using a mysql string
+        this.setDb(DriverManager.getConnection(urlconnexion));
     }
     // </editor-fold>
     

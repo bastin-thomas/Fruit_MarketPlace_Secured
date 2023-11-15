@@ -37,8 +37,7 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
     private ListenThreadPooled serverThread;
     private final Properties config;
     // </editor-fold>
-    
-    
+        
     // <editor-fold defaultstate="collapsed" desc="Constructor">
     /**
      * Creates new form Payement_Server2
@@ -63,8 +62,7 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
         model1.setValue(Integer.valueOf(config.getProperty(Consts.ConfigPoolSize)));
     }
     // </editor-fold>
-    
-    
+
     // <editor-fold defaultstate="collapsed" desc="Methods">
     /**
      *
@@ -80,6 +78,11 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
         ligne.add(Thread.currentThread().getName());
         ligne.add(message);
         modele.insertRow(modele.getRowCount(),ligne);
+
+        //Put the scroll at bottom
+        logs_table.scrollRectToVisible(
+                logs_table.getCellRect(modele.getRowCount() - 1, 0, true)
+        );
     }
     
     /**
@@ -180,6 +183,11 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
 
         Logs2.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         Logs2.setText("DB URL :");
+
+        jScrollPane2.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        jScrollPane2.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        jScrollPane2.setAutoscrolls(true);
+        jScrollPane2.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
         logs_table.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -293,7 +301,17 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
         if(!isLaunched)
         {     
             //Start the Server      
-            DBPayement db = new DBPayement(DBurl_TextField.getText(), this);
+            DBPayement db = null;
+            try
+            {
+                db = new DBPayement(DBurl_TextField.getText(), this);
+            }
+            catch(Exception ex)
+            {
+                this.Trace("Impossible to connect to DB server: " + ex.getMessage());
+                return;
+            }
+            
             Protocol protocol = new Payement(this, db);
             int port = (int) this.Port_Spinner.getModel().getValue();
             int poolSize = (int) this.Pool_Spinner.getModel().getValue();
@@ -329,6 +347,8 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
         config.setProperty(Consts.ConfigDBString, ""+url);
                 
         ConfigFolderManager.SaveProperties(config);
+        
+        System.exit(0);
     }//GEN-LAST:event_formWindowClosing
     // </editor-fold>
     

@@ -3,16 +3,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package be.hepl.payement_client.GUI;
-import be.hepl.generic_server_tcp.Protocol;
 import be.hepl.payement_client.Utils.ConfigFolderManager;
 import be.hepl.payement_protocol.Utils.Consts;
 import be.hepl.payement_protocol.Utils.Gestion_Protocol_Client;
-import be.hepl.payement_protocol.protocol.request.*;
-import be.hepl.payement_protocol.protocol.response.*;
 import com.formdev.flatlaf.FlatLightLaf;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -28,7 +23,6 @@ public class LoginPage extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="My Properties">
     private Properties Config = null;
     private Gestion_Protocol_Client GPC;
-    private boolean boolresponse = false;
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Constructors">
@@ -158,7 +152,6 @@ public class LoginPage extends javax.swing.JFrame {
     
     // <editor-fold defaultstate="collapsed" desc="Events">
     private void Login_ButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Login_ButtonActionPerformed
-        Socket socket;        
         String Login = "";
         String Password = "";
         
@@ -167,7 +160,8 @@ public class LoginPage extends javax.swing.JFrame {
             String ipServeur = Config.getProperty(Consts.ConfigIP);
             int portServeur = Integer.parseInt(Config.getProperty(Consts.ConfigPort));
             
-            socket = new Socket(ipServeur, portServeur);
+            Socket socket = new Socket(ipServeur, portServeur);
+            GPC = new Gestion_Protocol_Client(socket);
             
         } catch (IOException | NumberFormatException ex) {
             Logger.getLogger(LoginPage.class.getName()).log(Level.SEVERE, null, ex);
@@ -176,47 +170,57 @@ public class LoginPage extends javax.swing.JFrame {
         }
         
         //Try To Login
+        boolean connected = false;
         try{
             Login = this.Login_TextField.getText();
             Password = this.Password_TextField.getText();
-            boolresponse = GPC.SendLogin(Login, Password);
+            connected = GPC.SendLogin(Login, Password);
         }
         catch(Exception ex){
             switch(ex.getMessage())
             {
-                case "ENDCONNEXION":
+                case "ENDCONNEXION" -> {
                     JOptionPane.showMessageDialog(this, "Connexion Error during transmission of Data", "Error", JOptionPane.ERROR_MESSAGE);
-                    break;
-                case "NO_LOGIN":
+                }
+                
+                case "NO_LOGIN" -> {
                     JOptionPane.showMessageDialog(this, "Login Does not exist in our DataBase", "Error", JOptionPane.ERROR_MESSAGE);
-                    break;
-                case "BAD_LOGIN":
+                }
+                
+                case "BAD_LOGIN" -> {
                     JOptionPane.showMessageDialog(this, "You've encoded the wrong password", "Error", JOptionPane.ERROR_MESSAGE);
-                    break;
-                case "UNEXPECTED_RESPONSE":
+                }
+                
+                case "UNEXPECTED_RESPONSE" -> {
                     JOptionPane.showMessageDialog(this, "The response received was unexpected", "Error", JOptionPane.ERROR_MESSAGE);
-                default:
+                }
+                    
+                default -> {
                     JOptionPane.showMessageDialog(this, "Unkown Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
             }
         }
         
         
         //Open Facture Page, if good Login
-        if(boolresponse == true){
-            //FacturePage window = new FacturePage(this, Login);
-            //FacturePage.setVisible(true);
-            this.setVisible(false);
-        }else {
-            JOptionPane.showMessageDialog(this, "Login invalid", "Error", JOptionPane.ERROR_MESSAGE);
+        if(connected){
+            try {
+                MainPage window = new MainPage(Login, GPC, this);                
+                this.setVisible(false);
+                window.setVisible(true);
+            } catch (Exception ex) {
+                Logger.getLogger(LoginPage.class.getName()).log(Level.SEVERE, null, ex);
+                return;
+            }
         }
     }//GEN-LAST:event_Login_ButtonActionPerformed
-
+    
     private void Cancel_ButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Cancel_ButtonActionPerformed
         this.dispose();
     }//GEN-LAST:event_Cancel_ButtonActionPerformed
 
     private void OnWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_OnWindowClosing
-        this.dispose();
+        System.exit(0);
     }//GEN-LAST:event_OnWindowClosing
     // </editor-fold>
     

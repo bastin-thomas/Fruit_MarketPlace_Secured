@@ -27,27 +27,12 @@ public class DBPayement extends JDBC_Bean {
     // <editor-fold defaultstate="collapsed" desc="Constructor">
     /**
      *
-     * @param logger
-     */
-    public DBPayement(Logger logger) throws SQLException {
-        String urlconnexion = "jdbc:mariadb://localhost:3306/PourStudent?user=Student&password=PassStudent1_";
-        this.logger = logger;
-        
-        //Connect to the DB using a mysql string
-        this.setDb(DriverManager.getConnection(urlconnexion));
-    }
-    
-    
-    /**
-     *
      * @param urlconnexion
      * @param logger
      */
     public DBPayement(String urlconnexion, Logger logger) throws SQLException{
+        super(urlconnexion);
         this.logger = logger;
-
-        //Connect to the DB using a mysql string
-        this.setDb(DriverManager.getConnection(urlconnexion));
     }
     // </editor-fold>
     

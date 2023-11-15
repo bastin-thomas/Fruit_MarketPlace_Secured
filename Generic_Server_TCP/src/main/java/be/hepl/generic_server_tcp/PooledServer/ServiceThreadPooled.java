@@ -8,7 +8,6 @@ import be.hepl.generic_server_tcp.Logger;
 import be.hepl.generic_server_tcp.Protocol;
 import be.hepl.generic_server_tcp.ServiceThread;
 import java.io.IOException;
-import java.util.logging.Level;
 
 /**
  *

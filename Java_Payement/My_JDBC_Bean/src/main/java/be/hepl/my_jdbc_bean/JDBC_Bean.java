@@ -28,7 +28,7 @@ public abstract class JDBC_Bean implements Serializable {
         db = null;
     }
     
-    public JDBC_Bean(String urlconnexion) throws ClassNotFoundException, SQLException 
+    public JDBC_Bean(String urlconnexion) throws SQLException 
     {
         //Connect to the DB using a mysql string
         db = DriverManager.getConnection(urlconnexion);

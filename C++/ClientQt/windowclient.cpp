@@ -543,7 +543,7 @@ void WindowClient::RefreshTablePanier()
   float prix = 0;
   for(caddieRows row : Caddie){
     ajouteArticleTablePanier(row.intitule.c_str() , row.prix, row.quantitee);
-    prix += row.prix*row.quantitee;
+    prix += (float)row.prix*(float)row.quantitee;
   }
   setTotal(prix);
 }

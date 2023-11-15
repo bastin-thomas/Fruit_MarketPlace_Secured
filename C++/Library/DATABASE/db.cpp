@@ -204,11 +204,11 @@ void db::CancelAll(vector<caddieRows> * caddie){
 //Do DataBase Confirmer Job
 int db::Confirmer(string idClient, vector<caddieRows> * caddie){
     vector<vector<string>> result;
-    int montant = 0;
+    float montant = 0;
     
     //Loop on the caddie to calculate the bill
     for(caddieRows row : *caddie){
-        montant+=row.prix*row.quantitee;
+        montant+=(float)row.prix * (float)row.quantitee;
     }
 
 

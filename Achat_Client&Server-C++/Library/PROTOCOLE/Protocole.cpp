@@ -144,7 +144,7 @@ achats SendAchat(int socket, int idArticle, int quantitee){
     achat.idArticle = stoi(s2[0]);
 
     achat.quantitee = stoi(s2[1]);
-
+    
     achat.prix = stof(s2[2]);
 
     if(achat.prix <= 0){

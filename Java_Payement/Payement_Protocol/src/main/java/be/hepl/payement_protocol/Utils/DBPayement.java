@@ -30,7 +30,7 @@ public class DBPayement extends JDBC_Bean {
      * @param urlconnexion
      * @param logger
      */
-    public DBPayement(String urlconnexion, Logger logger) throws SQLException{
+    public DBPayement(String urlconnexion, Logger logger) throws SQLException {
         super(urlconnexion);
         this.logger = logger;
     }

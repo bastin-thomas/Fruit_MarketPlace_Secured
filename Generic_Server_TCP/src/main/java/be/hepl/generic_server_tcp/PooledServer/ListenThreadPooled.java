@@ -10,7 +10,6 @@ import be.hepl.generic_server_tcp.Protocol;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
-import java.util.logging.Level;
 
 /**
  *
@@ -38,7 +37,7 @@ public class ListenThreadPooled extends ListenThread {
     // <editor-fold defaultstate="collapsed" desc="Methods">
     @Override
     public void run(){
-        logger.Trace("Démarrage du TH Serveur (Pool)...");
+        logger.Trace("Démarrage du TH Listen (Pool)...");
         // Création du pool de threads
         try{
             for (int i=0 ; i<poolSize ; i++)
@@ -73,7 +72,7 @@ public class ListenThreadPooled extends ListenThread {
         
         pool.interrupt();
         this.close();
-        logger.Trace("TH Serveur (Pool) se termine.");
+        logger.Trace("TH Listen (Pool) se termine.");
     }
     // </editor-fold>
 }

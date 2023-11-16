@@ -29,6 +29,7 @@ public class ConfigFolderManager {
         config.setProperty(Consts.ConfigPoolSize,Consts.ConfigDefaultPoolSize);
         config.setProperty(Consts.ConfigDBString,Consts.ConfigDefaultDBString);
         config.setProperty(Consts.ConfigPort, Consts.ConfigDefaultPort);
+        config.setProperty(Consts.ConfigPortSecured, Consts.ConfigDefaultPortSecured);
         
         try {
             //If file not exist create default one
@@ -58,6 +59,12 @@ public class ConfigFolderManager {
         {
             config.setProperty(Consts.ConfigPort, Consts.ConfigDefaultPort);
         }
+        
+        if(!config.containsKey(Consts.ConfigPortSecured))
+        {
+            config.setProperty(Consts.ConfigPortSecured, Consts.ConfigDefaultPortSecured);
+        }
+        
         
         return config;
     }

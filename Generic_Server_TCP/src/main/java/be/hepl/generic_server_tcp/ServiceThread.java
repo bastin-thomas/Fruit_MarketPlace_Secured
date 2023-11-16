@@ -35,7 +35,7 @@ public abstract class ServiceThread extends Thread {
      */
     public ServiceThread(Protocol protocole, Socket csocket, Logger logger) throws IOException
     {
-        super("TH Client " + numCourant + " (protocole=" + protocole.getNom() + ")");
+        super("TH Service " + numCourant + " (protocole=" + protocole.getNom() + ")");
         this.protocole = protocole;
         this.serviceSocket = csocket;
         this.logger = logger;
@@ -51,7 +51,7 @@ public abstract class ServiceThread extends Thread {
      */
     public ServiceThread(Protocol protocole, ThreadGroup groupe, Logger logger) throws IOException
     {
-        super(groupe,"TH Client " + numCourant + " (protocole=" + protocole.getNom() + ")");
+        super(groupe,"TH Service " + numCourant + " (protocole=" + protocole.getNom() + ")");
         this.protocole = protocole;
         this.serviceSocket = null;
         this.logger = logger;

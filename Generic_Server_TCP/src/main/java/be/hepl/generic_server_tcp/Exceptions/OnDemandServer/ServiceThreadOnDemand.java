@@ -29,9 +29,9 @@ public class ServiceThreadOnDemand extends ServiceThread {
     // <editor-fold defaultstate="collapsed" desc="Methods">
     @Override
     public void run() {
-        logger.Trace("TH Client (Demande) démarre...");
+        logger.Trace("TH Service (Demande) démarre...");
         super.run();
-        logger.Trace("TH Client (Demande) se termine.");
+        logger.Trace("TH Service (Demande) se termine.");
     }
     // </editor-fold>    
 }

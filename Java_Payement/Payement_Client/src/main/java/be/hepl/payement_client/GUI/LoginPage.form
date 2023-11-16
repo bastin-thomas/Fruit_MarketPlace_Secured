@@ -116,7 +116,8 @@
     </Component>
     <Component class="javax.swing.JCheckBox" name="Create_CheckBox">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Create New Account"/>
+        <Property name="selected" type="boolean" value="true"/>
+        <Property name="text" type="java.lang.String" value="Secure"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JButton" name="Login_Button">

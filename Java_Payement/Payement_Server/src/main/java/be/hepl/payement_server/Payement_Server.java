@@ -103,6 +103,7 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
         this.DBurl_TextField.setEnabled(false);
         this.Port_Spinner.setEnabled(false);
         this.AbortButton.setEnabled(true);
+        this.Pool_Spinner.setEnabled(false);
         this.RemoveLogs();
     }
     
@@ -115,6 +116,7 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
         this.DBurl_TextField.setEnabled(true);
         this.Port_Spinner.setEnabled(true);
         this.AbortButton.setEnabled(false);
+        this.Pool_Spinner.setEnabled(true);
         this.RemoveLogs();
     }
     // </editor-fold>

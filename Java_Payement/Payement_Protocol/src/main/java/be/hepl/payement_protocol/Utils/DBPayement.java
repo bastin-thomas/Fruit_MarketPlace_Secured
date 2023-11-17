@@ -63,7 +63,7 @@ public class DBPayement extends JDBC_Bean {
             throw new Exception("NO_LOGIN");
         }
         
-        String DB_Password =result.getString("password");
+        String DB_Password = result.getString("password");
         if(!DB_Password.equals(password))
         {
             throw new Exception("BAD_LOGIN");

@@ -30,7 +30,7 @@ public class ListenThreadOnDemand extends ListenThread {
     // <editor-fold defaultstate="collapsed" desc="Methods">
     @Override
     public void run() {
-        logger.Trace("Démarrage du TH Serveur (Demande)...");
+        logger.Trace("Démarrage du TH Listen (Demande)...");
         while (!this.isInterrupted()) {
             Socket csocket;
             try {
@@ -45,7 +45,7 @@ public class ListenThreadOnDemand extends ListenThread {
                 logger.Trace("Erreur I/O");
             }
         }
-        logger.Trace("TH Serveur (Demande) interrompu.");
+        logger.Trace("TH Listen (Demande) interrompu.");
         try {
             listenSocket.close();
         } catch (IOException ex) {

@@ -10,8 +10,6 @@ import be.hepl.payement_protocol.protocol.request.*;
 import be.hepl.payement_protocol.protocol.response.*;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 
@@ -19,25 +17,20 @@ import java.util.ArrayList;
  *
  * @author Sirac
  */
-public class Gestion_Protocol_Client {
+public class Gestion_Protocol_Client_Secured extends Gestion_Protocol_Client {
     
     // <editor-fold defaultstate="collapsed" desc="Properties">
-    protected final ObjectOutputStream oos;
-    protected final ObjectInputStream ois;
-    protected final Socket socket;
     
     // </editor-fold>
-
+    
     // <editor-fold defaultstate="collapsed" desc="Constructor">
-    public Gestion_Protocol_Client(Socket sock) throws IOException{
-        socket = sock;
-        
-        oos = new ObjectOutputStream(socket.getOutputStream());
-        ois = new ObjectInputStream(socket.getInputStream());
+    public Gestion_Protocol_Client_Secured(Socket sock) throws IOException{
+        super(sock);
     }
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Methods">
+    @Override
     public boolean SendLogin(String Login, String Password) throws Exception{
         Object response = null;
         
@@ -67,6 +60,7 @@ public class Gestion_Protocol_Client {
     }
     
     
+    @Override
     public void SendLogout(String Login) throws Exception{
         try{
             oos.writeObject(new LogoutRequest(Login));
@@ -77,7 +71,7 @@ public class Gestion_Protocol_Client {
     }
     
     
-    
+    @Override
     public ArrayList<String> SendGetClientsRequest() throws Exception{
         Object object = null;
         
@@ -97,7 +91,7 @@ public class Gestion_Protocol_Client {
         }
     }
     
-    
+    @Override
     public ArrayList<Facture> SendGetFacturesRequest(String idClient) throws Exception{
         Object object = null;
         
@@ -117,7 +111,7 @@ public class Gestion_Protocol_Client {
         }
     }
     
-    
+    @Override
     public ArrayList<Sale> SendGetSalesRequest(int idBills) throws Exception{
         Object object = null;
         
@@ -137,8 +131,7 @@ public class Gestion_Protocol_Client {
         }
     }
     
-    
-    
+    @Override
     public boolean SendPayFactureRequest(int idBills, String Name, String VISA) throws Exception{
         Object object = null;
         

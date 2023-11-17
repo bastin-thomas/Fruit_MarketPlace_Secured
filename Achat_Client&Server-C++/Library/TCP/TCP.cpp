@@ -183,6 +183,8 @@ string Receive(int sSocket){
     //Mise en mémoire dans un buffer de char.
     char buffer[TAILLE_MAX_DATA];
     string data;
+
+    setlocale(LC_NUMERIC, "C");
     int size = Receive(sSocket, buffer);
 
     //Si 0 ou -1 on sort car pas de message dans le string

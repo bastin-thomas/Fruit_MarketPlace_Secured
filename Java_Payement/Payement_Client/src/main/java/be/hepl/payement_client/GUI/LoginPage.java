@@ -6,6 +6,7 @@ package be.hepl.payement_client.GUI;
 import be.hepl.payement_client.Utils.ConfigFolderManager;
 import be.hepl.payement_protocol.Utils.Consts;
 import be.hepl.payement_protocol.Utils.Gestion_Protocol_Client;
+import be.hepl.payement_protocol.Utils.Gestion_Protocol_Client_Secured;
 import com.formdev.flatlaf.FlatLightLaf;
 import java.io.IOException;
 import java.net.Socket;
@@ -84,7 +85,8 @@ public class LoginPage extends javax.swing.JFrame {
         Password_Label.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         Password_Label.setText("Password");
 
-        Create_CheckBox.setText("Create New Account");
+        Create_CheckBox.setSelected(true);
+        Create_CheckBox.setText("Secure");
 
         Login_Button.setText("Login");
         Login_Button.addActionListener(new java.awt.event.ActionListener() {
@@ -158,10 +160,17 @@ public class LoginPage extends javax.swing.JFrame {
         //Connect to Server
         try { 
             String ipServeur = Config.getProperty(Consts.ConfigIP);
-            int portServeur = Integer.parseInt(Config.getProperty(Consts.ConfigPort));
             
-            Socket socket = new Socket(ipServeur, portServeur);
-            GPC = new Gestion_Protocol_Client(socket);
+            if(Create_CheckBox.isSelected())
+            {
+                int portServeurSecured = Integer.parseInt(Config.getProperty(Consts.ConfigPortSecured));
+                Socket socket = new Socket(ipServeur, portServeurSecured);
+                GPC = new Gestion_Protocol_Client_Secured(socket);
+            } else {
+                int portServeur = Integer.parseInt(Config.getProperty(Consts.ConfigPort));
+                Socket socket = new Socket(ipServeur, portServeur);
+                GPC = new Gestion_Protocol_Client(socket);
+            }
             
         } catch (IOException | NumberFormatException ex) {
             Logger.getLogger(LoginPage.class.getName()).log(Level.SEVERE, null, ex);
@@ -218,8 +227,9 @@ public class LoginPage extends javax.swing.JFrame {
     private void Cancel_ButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Cancel_ButtonActionPerformed
         this.dispose();
     }//GEN-LAST:event_Cancel_ButtonActionPerformed
-
+    
     private void OnWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_OnWindowClosing
+        ConfigFolderManager.SaveProperties(Config);
         System.exit(0);
     }//GEN-LAST:event_OnWindowClosing
     // </editor-fold>

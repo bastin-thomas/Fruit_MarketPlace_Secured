@@ -25,6 +25,9 @@ public class Consts {
     public final static String ConfigPort = "Server_PORT";
     public final static String ConfigDefaultPort = "50002";
     
+    public final static String ConfigPortSecured = "Server_PORT_SECURED";
+    public final static String ConfigDefaultPortSecured = "50052";
+    
     public final static String ConfigDBString = "DB_URL_CONNEXION";
     public final static String ConfigDefaultDBString = "jdbc:mariadb://192.168.1.19:3306/PourStudent?user=Student&password=PassStudent1_";
     

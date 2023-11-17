@@ -4,6 +4,8 @@
  */
 package be.hepl.payement_server;
 
+import be.hepl.generic_server_tcp.Exceptions.OnDemandServer.ListenThreadOnDemand;
+import be.hepl.generic_server_tcp.ListenThread;
 import be.hepl.payement_server.Utils.ConfigFolderManager;
 
 import be.hepl.generic_server_tcp.Logger;
@@ -13,6 +15,7 @@ import be.hepl.generic_server_tcp.Protocol;
 import be.hepl.payement_protocol.Utils.Consts;
 import be.hepl.payement_protocol.Utils.DBPayement;
 import be.hepl.payement_protocol.protocol.Payement;
+import be.hepl.payement_protocol.protocol.Payement_Secured;
 
 import com.formdev.flatlaf.FlatLightLaf;
 import java.io.IOException;
@@ -22,7 +25,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
 import java.util.Vector;
-import javax.swing.SpinnerModel;
 import javax.swing.table.DefaultTableModel;
 
 
@@ -34,7 +36,8 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
     
     // <editor-fold defaultstate="collapsed" desc="My Properties">
     private boolean isLaunched;
-    private ListenThreadPooled serverThread;
+    private ListenThread socket_secured;
+    private ListenThread socket_unsecured;
     private final Properties config;
     // </editor-fold>
         
@@ -51,15 +54,18 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
         //Get Config From File
         config = ConfigFolderManager.LoadProperties();
         
-        //Set UI Port
-        SpinnerModel model = this.Port_Spinner.getModel();
-        model.setValue(Integer.valueOf(config.getProperty(Consts.ConfigPort)));
+        
+        //Set UI Port-Unsecured
+        Port_Spinner.getModel().setValue(Integer.valueOf(config.getProperty(Consts.ConfigPort)));
+        
+        //Set UI PoolSize
+        Pool_Spinner.getModel().setValue(Integer.valueOf(config.getProperty(Consts.ConfigPoolSize)));
+        
+        //Set UI Port-Secured
+        Port_Secured_Spinner.getModel().setValue(Integer.valueOf(config.getProperty(Consts.ConfigPortSecured)));
         
         //Set DB URL
         DBurl_TextField.setText(config.getProperty(Consts.ConfigDBString));
-        
-        SpinnerModel model1 = this.Pool_Spinner.getModel();
-        model1.setValue(Integer.valueOf(config.getProperty(Consts.ConfigPoolSize)));
     }
     // </editor-fold>
 
@@ -78,7 +84,7 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
         ligne.add(Thread.currentThread().getName());
         ligne.add(message);
         modele.insertRow(modele.getRowCount(),ligne);
-
+        
         //Put the scroll at bottom
         logs_table.scrollRectToVisible(
                 logs_table.getCellRect(modele.getRowCount() - 1, 0, true)
@@ -104,6 +110,7 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
         this.Port_Spinner.setEnabled(false);
         this.AbortButton.setEnabled(true);
         this.Pool_Spinner.setEnabled(false);
+        this.Port_Secured_Spinner.setEnabled(false);
         this.RemoveLogs();
     }
     
@@ -117,6 +124,7 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
         this.Port_Spinner.setEnabled(true);
         this.AbortButton.setEnabled(false);
         this.Pool_Spinner.setEnabled(true);
+        this.Port_Secured_Spinner.setEnabled(true);
         this.RemoveLogs();
     }
     // </editor-fold>
@@ -135,15 +143,21 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
         AbortButton = new javax.swing.JButton();
         Start_Stop_Button = new javax.swing.JButton();
         Logs = new javax.swing.JLabel();
-        Logs1 = new javax.swing.JLabel();
-        Port_Spinner = new javax.swing.JSpinner();
         Logs2 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         logs_table = new javax.swing.JTable();
         jScrollPane1 = new javax.swing.JScrollPane();
         DBurl_TextField = new javax.swing.JTextField();
+        jPanel1 = new javax.swing.JPanel();
         Pool_Spinner = new javax.swing.JSpinner();
         Logs3 = new javax.swing.JLabel();
+        Port_Spinner = new javax.swing.JSpinner();
+        Logs1 = new javax.swing.JLabel();
+        Logs4 = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
+        Port_Secured_Spinner = new javax.swing.JSpinner();
+        Logs6 = new javax.swing.JLabel();
+        Logs7 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(808, 493));
@@ -177,11 +191,6 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
 
         Logs.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         Logs.setText("Logs :");
-
-        Logs1.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        Logs1.setText("Port :");
-
-        Port_Spinner.setModel(new javax.swing.SpinnerNumberModel(50002, 50000, 50100, 1));
 
         Logs2.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         Logs2.setText("DB URL :");
@@ -219,8 +228,18 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
         });
         logs_table.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         logs_table.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        logs_table.setShowVerticalLines(true);
         logs_table.getTableHeader().setReorderingAllowed(false);
         jScrollPane2.setViewportView(logs_table);
+        if (logs_table.getColumnModel().getColumnCount() > 0) {
+            logs_table.getColumnModel().getColumn(0).setMinWidth(115);
+            logs_table.getColumnModel().getColumn(0).setPreferredWidth(115);
+            logs_table.getColumnModel().getColumn(0).setMaxWidth(115);
+            logs_table.getColumnModel().getColumn(1).setMinWidth(50);
+            logs_table.getColumnModel().getColumn(1).setPreferredWidth(150);
+            logs_table.getColumnModel().getColumn(1).setMaxWidth(300);
+            logs_table.getColumnModel().getColumn(2).setPreferredWidth(100);
+        }
 
         jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
         jScrollPane1.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
@@ -231,10 +250,95 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
         DBurl_TextField.setMaximumSize(new java.awt.Dimension(64, 22));
         jScrollPane1.setViewportView(DBurl_TextField);
 
+        jPanel1.setBackground(new java.awt.Color(204, 204, 204));
+
         Pool_Spinner.setModel(new javax.swing.SpinnerNumberModel(5, 1, 500, 1));
 
         Logs3.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         Logs3.setText("Pool Size :");
+
+        Port_Spinner.setModel(new javax.swing.SpinnerNumberModel(50002, 50000, 50100, 1));
+
+        Logs1.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        Logs1.setText("Socket Unsecured");
+
+        Logs4.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        Logs4.setText("Port :");
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(Logs4, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(Port_Spinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(Logs1, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(Logs3, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(Pool_Spinner, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(Logs1)
+                .addGap(24, 24, 24)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(Port_Spinner, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(Logs4))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(Logs3)
+                    .addComponent(Pool_Spinner, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jPanel2.setBackground(new java.awt.Color(204, 204, 204));
+
+        Port_Secured_Spinner.setModel(new javax.swing.SpinnerNumberModel(50052, 50000, 50102, 1));
+
+        Logs6.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        Logs6.setText("Socket Secured");
+
+        Logs7.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        Logs7.setText("Port :");
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(Logs6, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(Logs7, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(Port_Secured_Spinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(Logs6)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(Logs7)
+                    .addComponent(Port_Secured_Spinner, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -243,21 +347,20 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
             .addGroup(layout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 608, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(Logs1, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(Logs2, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(AbortButton, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(Start_Stop_Button, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(Port_Spinner, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(Pool_Spinner, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(Logs3, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(Logs2, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(AbortButton, javax.swing.GroupLayout.DEFAULT_SIZE, 179, Short.MAX_VALUE)
+                                .addComponent(Start_Stop_Button, javax.swing.GroupLayout.DEFAULT_SIZE, 179, Short.MAX_VALUE)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 179, Short.MAX_VALUE))
+                            .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(26, 26, 26)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(Logs, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 580, Short.MAX_VALUE)))
-                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 608, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 748, Short.MAX_VALUE))))
                 .addGap(11, 11, 11))
         );
         layout.setVerticalGroup(
@@ -271,21 +374,17 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(Start_Stop_Button, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(Logs1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(Port_Spinner, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(35, 35, 35)
                         .addComponent(Logs2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(Logs3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(Pool_Spinner, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 24, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
                         .addComponent(AbortButton, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                    .addComponent(jScrollPane2))
                 .addGap(14, 14, 14))
         );
 
@@ -295,7 +394,7 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
     
     // <editor-fold defaultstate="collapsed" desc="Events">
     private void AbortButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AbortButtonActionPerformed
-        serverThread.close();
+        socket_unsecured.close();
         System.exit(127);
     }//GEN-LAST:event_AbortButtonActionPerformed
     
@@ -314,16 +413,22 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
                 return;
             }
             
-            Protocol protocol = new Payement(this, db);
-            int port = (int) this.Port_Spinner.getModel().getValue();
+            
+            int port_unsecured = (int) this.Port_Spinner.getModel().getValue();
+            int port_secured = (int) this.Port_Secured_Spinner.getModel().getValue();
             int poolSize = (int) this.Pool_Spinner.getModel().getValue();
             
             try {
                 FreezeUI();
-                serverThread = new ListenThreadPooled(port, protocol, this, poolSize);
-                serverThread.start();
-                isLaunched = true;
+                //Start Unsecured Server
+                socket_unsecured = new ListenThreadPooled(port_unsecured, new Payement(this, db), this, poolSize);
+                socket_unsecured.start();
                 
+                //Start Secured Server
+                socket_secured = new ListenThreadOnDemand(port_secured, new Payement_Secured(this, db), this);
+                socket_secured.start();
+                
+                isLaunched = true;
             } catch (IOException ex) {
                 this.Trace("Error creating ServerThread: " + ex.getMessage());
             }
@@ -331,7 +436,7 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
         else
         {
             //Stop the Server
-            serverThread.interrupt();
+            socket_unsecured.interrupt();
             
             isLaunched = false;
             UnFreezeUI();
@@ -384,10 +489,16 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
     private javax.swing.JLabel Logs1;
     private javax.swing.JLabel Logs2;
     private javax.swing.JLabel Logs3;
+    private javax.swing.JLabel Logs4;
+    private javax.swing.JLabel Logs6;
+    private javax.swing.JLabel Logs7;
     private javax.swing.JSpinner Pool_Spinner;
+    private javax.swing.JSpinner Port_Secured_Spinner;
     private javax.swing.JSpinner Port_Spinner;
     private javax.swing.JButton Start_Stop_Button;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable logs_table;

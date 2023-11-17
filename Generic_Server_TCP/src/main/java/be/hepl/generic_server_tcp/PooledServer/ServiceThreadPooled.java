@@ -30,7 +30,7 @@ public class ServiceThreadPooled extends ServiceThread {
     @Override
     public void run()
     {
-        logger.Trace("TH Client (Pool) démarre...");
+        logger.Trace("TH Service (Pool) démarre...");
         boolean interrompu = false;
         
         while(!interrompu){
@@ -46,7 +46,7 @@ public class ServiceThreadPooled extends ServiceThread {
             }
         }
         
-        logger.Trace("TH Client (Pool) se termine.");
+        logger.Trace("TH Service (Pool) se termine.");
     }
 
     // </editor-fold>

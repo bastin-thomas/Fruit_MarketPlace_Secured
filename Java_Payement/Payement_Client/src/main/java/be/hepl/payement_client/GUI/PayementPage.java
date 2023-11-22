@@ -9,6 +9,7 @@ import be.hepl.payement_protocol.model.Facture;
 import java.awt.Frame;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.*;
 import javax.swing.JOptionPane;
 
 /**
@@ -144,6 +145,15 @@ public class PayementPage extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(this, "Please fill all field", "Warning", JOptionPane.WARNING_MESSAGE);
             return;
         }
+        
+        Pattern pCodeCarte = Pattern.compile("^4[0-9]{12}(?:[0-9]{3})?$");
+        Matcher mCodeCarte = pCodeCarte.matcher(CodeCarte_TextField.getText());
+
+        if(!mCodeCarte.find() && !CodeCarte_TextField.getText().equals("")){
+            JOptionPane.showMessageDialog(this, "Format invalide", "Warning", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
         
         boolean verified = false;
         try {

@@ -2,31 +2,30 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package be.hepl.payement_protocol.protocol.request;
+package be.hepl.payement_protocol.protocol.response.Secured;
 
-import be.hepl.generic_server_tcp.Request;
+import be.hepl.payement_protocol.protocol.response.*;
+import be.hepl.generic_server_tcp.Response;
+import java.util.ArrayList;
 
 /**
- * « Logout »
+ *
  * @author Arkios
  */
-public class LogoutRequest implements Request {
+public class GetClientsResponse_Secured extends GetClientsResponse{
     
     // <editor-fold defaultstate="collapsed" desc="Properties">
-    protected final String login;
+    
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Constructor">
-    public LogoutRequest(String login)
+    public GetClientsResponse_Secured(ArrayList<String> clients)
     {
-        this.login = login;
+        super(clients);
     }
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Getters and Setters">
-    public String getLogin()
-    {
-        return login;
-    }
+    
     // </editor-fold>
 }

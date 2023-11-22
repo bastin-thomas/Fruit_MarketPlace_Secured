@@ -2,14 +2,12 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package be.hepl.payement_protocol.protocol.request;
+package be.hepl.payement_protocol.protocol.response.Secured;
 
-import be.hepl.generic_server_tcp.Request;
-
-/**
- *
- * @author Sirac
- */
+import be.hepl.payement_protocol.protocol.response.*;
+import be.hepl.generic_server_tcp.Response;
+import be.hepl.payement_protocol.model.Facture;
+import java.util.ArrayList;
 
 /*
     « Get Factures » idClient         Liste des factures (idFacture, date, montant, payé)     On récupère simplement les
@@ -17,22 +15,25 @@ import be.hepl.generic_server_tcp.Request;
                                                                                               factures (sans le contenu détaillé
                                                                                               de la commande donc)
 */
-public class GetFacturesRequest implements Request{
+
+/**
+ *
+ * @author Sirac
+ */
+public class GetFacturesResponse_Secured extends GetFacturesResponse{
+    
     // <editor-fold defaultstate="collapsed" desc="Properties">
-    protected final String idClient;
+    
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Constructor">
-    public GetFacturesRequest(String idClient)
+    public GetFacturesResponse_Secured(ArrayList<Facture> bills)
     {
-        this.idClient = idClient;
+        super(bills);
     }
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Getters and Setters">
-    public String getIdClient()
-    {
-        return idClient;
-    }
+    
     // </editor-fold>
 }

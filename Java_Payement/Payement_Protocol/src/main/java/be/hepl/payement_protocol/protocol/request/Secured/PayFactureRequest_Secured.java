@@ -2,8 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package be.hepl.payement_protocol.protocol.request;
+package be.hepl.payement_protocol.protocol.request.Secured;
 
+import be.hepl.payement_protocol.protocol.request.*;
 import be.hepl.generic_server_tcp.Request;
 
 /**
@@ -17,37 +18,20 @@ import be.hepl.generic_server_tcp.Request;
                                                                                             si ok, on considère que le
                                                                                             paiement est réalisé
 */
-public class PayFactureRequest implements Request{
+public class PayFactureRequest_Secured extends PayFactureRequest{
     
     // <editor-fold defaultstate="collapsed" desc="Properties">
-    protected final int idFacture;
-    protected final String name;
-    protected final String visa;
+    
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Constructor">
-    public PayFactureRequest(int idfacture, String name, String visa)
+    public PayFactureRequest_Secured(int idFacture, String name, String visa)
     {
-        this.idFacture = idfacture;
-        this.name = name;
-        this.visa = visa;
+        super(idFacture, name, visa);
     }
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Getters and Setters">
-    public int getIdFacture()
-    {
-        return idFacture;
-    }
     
-    public String getName()
-    {
-        return name;
-    }
-    
-    public String getVISA()
-    {
-        return visa;
-    }
     // </editor-fold>
 }

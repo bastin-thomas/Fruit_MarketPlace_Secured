@@ -2,8 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package be.hepl.payement_protocol.protocol.request;
+package be.hepl.payement_protocol.protocol.request.Secured;
 
+import be.hepl.payement_protocol.protocol.request.*;
 import be.hepl.generic_server_tcp.Request;
 
 /**
@@ -17,22 +18,19 @@ import be.hepl.generic_server_tcp.Request;
                                                                                               factures (sans le contenu détaillé
                                                                                               de la commande donc)
 */
-public class GetFacturesRequest implements Request{
+public class GetFacturesRequest_Secured extends GetFacturesRequest{
     // <editor-fold defaultstate="collapsed" desc="Properties">
-    protected final String idClient;
+    
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Constructor">
-    public GetFacturesRequest(String idClient)
+    public GetFacturesRequest_Secured(String idClient)
     {
-        this.idClient = idClient;
+        super(idClient);
     }
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Getters and Setters">
-    public String getIdClient()
-    {
-        return idClient;
-    }
+
     // </editor-fold>
 }

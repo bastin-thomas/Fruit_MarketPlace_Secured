@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  */
 
-package be.hepl.payement_protocol.protocol;
+package be.hepl.payement_protocol.protocol.Secured;
 
 import be.hepl.generic_server_tcp.Exceptions.EndConnectionException;
 import be.hepl.generic_server_tcp.Logger;
@@ -12,6 +12,7 @@ import be.hepl.generic_server_tcp.Response;
 import be.hepl.payement_protocol.Utils.DBPayement;
 import be.hepl.payement_protocol.model.*;
 import be.hepl.payement_protocol.protocol.request.*;
+import be.hepl.payement_protocol.protocol.request.Secured.*;
 import be.hepl.payement_protocol.protocol.response.*;
 
 import java.net.Socket;
@@ -84,7 +85,7 @@ public class Payement_Secured implements Protocol
             }
         }
         
-        if(requete instanceof LoginRequest request)
+        if(requete instanceof LoginRequest_Secured request)
         {
             rep = LoginRequestTreatment(request, socket);
             logger.Trace( request.getClass().getName() + " Reçue et traitée");
@@ -104,7 +105,7 @@ public class Payement_Secured implements Protocol
      * @param socket
      * @return 
      */
-    private Response LoginRequestTreatment(LoginRequest loginRequest, Socket socket) {
+    private Response LoginRequestTreatment(LoginRequest_Secured loginRequest, Socket socket) {
         boolean logged = false;
         String message = "";
         String response = "";

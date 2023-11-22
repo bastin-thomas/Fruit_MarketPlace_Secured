@@ -11,7 +11,10 @@ import be.hepl.payement_protocol.protocol.response.*;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.security.Security;
 import java.util.ArrayList;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+
 
 /**
  *
@@ -26,6 +29,8 @@ public class Gestion_Protocol_Client_Secured extends Gestion_Protocol_Client {
     // <editor-fold defaultstate="collapsed" desc="Constructor">
     public Gestion_Protocol_Client_Secured(Socket sock) throws IOException{
         super(sock);
+        
+        Security.addProvider(new BouncyCastleProvider());
     }
     // </editor-fold>
     

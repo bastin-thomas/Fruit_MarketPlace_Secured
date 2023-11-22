@@ -11,11 +11,19 @@ import be.hepl.generic_server_tcp.Request;
  * « Login » Login, password       Oui ou non              Vérification du login et du mot
  *             (d’un employé)                              passe dans la table des employés
  * @author Arkios
+ * @deprecated use {@link #LoginRequest_Secured} instead.
  */
+@Deprecated
 public class LoginRequest implements Request {
     // <editor-fold defaultstate="collapsed" desc="Properties">
-    private final String login;
-    private final String password;
+    protected final String login;
+    
+    /**
+     * Send in clear password on the network, not secure
+     * @deprecated
+     */
+    @Deprecated
+    protected final String password;
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Constructor">
@@ -32,6 +40,12 @@ public class LoginRequest implements Request {
         return login;
     }
     
+    /**
+     *
+     * @return
+     * @deprecated
+     */
+    @Deprecated
     public String getPassword()
     {
         return password;

@@ -15,7 +15,7 @@ import be.hepl.generic_server_tcp.Protocol;
 import be.hepl.payement_protocol.Utils.Consts;
 import be.hepl.payement_protocol.Utils.DBPayement;
 import be.hepl.payement_protocol.protocol.Payement;
-import be.hepl.payement_protocol.protocol.Payement_Secured;
+import be.hepl.payement_protocol.protocol.Secured.Payement_Secured;
 
 import com.formdev.flatlaf.FlatLightLaf;
 import java.io.IOException;

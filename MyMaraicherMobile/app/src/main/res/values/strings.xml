@@ -1,0 +1,20 @@
+<resources>
+    <!-- Strings related to home -->
+    <string name="app_name">MyMaraicherMobile</string>
+
+    <!-- Strings related to login -->
+    <string name="titleLogin">"Veuillez vous connecter"</string>
+    <string name="login_failed">"Erreur de connexion"</string>
+    <string name="hintPassword">Mot de passe</string>
+    <string name="hintLogin">Nom utilisateur</string>
+    <string name="connexion">Se connecter</string>
+
+    <!-- Strings related to settings -->
+    <string name="titleSettings">Settings</string>
+    <string name="contentD_ArrowBack">A arrow</string>
+
+    <!-- Strings related to settings -->
+    <string name="titleMaraicher">"Welcome to MyMaraicherMobile"</string>
+    <string name="imgMaraicher">a picture</string>
+
+</resources>

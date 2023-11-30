@@ -4,9 +4,10 @@
  */
 package be.hepl.payement_client.GUI;
 
-import be.hepl.payement_protocol.Utils.Gestion_Protocol_Client;
+import be.hepl.payement_protocol.protocol.Gestion_Protocol_Client;
 import be.hepl.payement_protocol.model.Facture;
 import be.hepl.payement_protocol.model.Sale;
+import be.hepl.payement_protocol.protocol.Secured.Gestion_Protocol_Client_Secured;
 import java.util.ArrayList;
 import java.util.Vector;
 import java.util.logging.Level;
@@ -19,31 +20,31 @@ import javax.swing.table.DefaultTableModel;
  * @author Sirac
  */
 public class MainPage extends javax.swing.JFrame {
-    
+
     // <editor-fold defaultstate="collapsed" desc="My Properties">
     private final String Login;
     private final Gestion_Protocol_Client GPC;
     private final LoginPage parent;
-    
+
     private ArrayList<String> clients;
     private ArrayList<Facture> bills;
     // </editor-fold>
-    
+
     // <editor-fold defaultstate="collapsed" desc="Constructors">
     public MainPage(String Login, Gestion_Protocol_Client GPC, LoginPage parent) throws Exception {
         initComponents();
-        
+
         this.Login = Login;
         this.GPC = GPC;
         this.parent = parent;
-        
+
         //Change title with current employee logged
         this.setTitle("Bill Management Page - " + Login);
         bills = null;
         clients = null;
-        
+
         InitMainPage();
-        
+
         /*
         //Add the event Listener for Double Click on Jtable
         mytable.addMouseListener(new MouseAdapter() {
@@ -56,33 +57,30 @@ public class MainPage extends javax.swing.JFrame {
                 }
             }
         });
-        */
+         */
     }
-    
-    
-    private void InitMainPage() throws Exception
-    {
+
+    private void InitMainPage() throws Exception {
         try {
             //Get the current Client List
             clients = GPC.SendGetClientsRequest();
-        } catch(Exception ex){
-            switch(ex.getMessage())
-            {
+        } catch (Exception ex) {
+            switch (ex.getMessage()) {
                 case "ENDCONNEXION" -> {
                     JOptionPane.showMessageDialog(this, "Connexion Error during transmission of Data", "Error", JOptionPane.ERROR_MESSAGE);
                 }
-                
+
                 case "UNEXPECTED_RESPONSE" -> {
                     JOptionPane.showMessageDialog(this, "The response received was unexpected", "Error", JOptionPane.ERROR_MESSAGE);
                 }
-                
+
                 default -> {
                     JOptionPane.showMessageDialog(this, "Unkown Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
             throw ex;
         }
-        
+
         //Put it into the combobox
         this.Client_Combo.setModel(new javax.swing.DefaultComboBoxModel<>(clients.toArray(new String[0])));
 
@@ -93,24 +91,22 @@ public class MainPage extends javax.swing.JFrame {
         this.RefreshUI();
     }
     // </editor-fold>    
-    
+
     // <editor-fold defaultstate="collapsed" desc="Methods">
-    public void RefreshUI() throws Exception
-    {
+    public void RefreshUI() throws Exception {
         int index = this.Client_Combo.getSelectedIndex();
         try {
             bills = GPC.SendGetFacturesRequest(clients.get(index));
         } catch (Exception ex) {
-            switch(ex.getMessage())
-            {
+            switch (ex.getMessage()) {
                 case "ENDCONNEXION" -> {
                     JOptionPane.showMessageDialog(this, "Connexion Error during transmission of Data", "Error", JOptionPane.ERROR_MESSAGE);
                 }
-                
+
                 case "UNEXPECTED_RESPONSE" -> {
                     JOptionPane.showMessageDialog(this, "The response received was unexpected", "Error", JOptionPane.ERROR_MESSAGE);
                 }
-                
+
                 default -> {
                     JOptionPane.showMessageDialog(this, "Unkown Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 }
@@ -119,22 +115,21 @@ public class MainPage extends javax.swing.JFrame {
         }
         DefaultTableModel model = (DefaultTableModel) this.Bill_Table.getModel();
         model.setRowCount(0);
-        
-        for(Facture bill : bills){
+
+        for (Facture bill : bills) {
             Vector<Object> rowData = new Vector<>();
-            
+
             rowData.add("" + bill.getId());
             rowData.add(bill.getDate());
             rowData.add(bill.getPrix());
             rowData.add(bill.isPayed());
-            
+
             model.addRow(rowData);
         }
     }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Generated Code">
-    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -240,24 +235,23 @@ public class MainPage extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
     // </editor-fold>
-    
+
     // <editor-fold defaultstate="collapsed" desc="Events">
     private void OnClick_BillsTable_Event(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_OnClick_BillsTable_Event
-        if(bills == null) return;
-        
-        if(evt.getClickCount() == 2 && Bill_Table.getSelectedRow() != -1)
-        {
+        if (bills == null) {
+            return;
+        }
+
+        if (evt.getClickCount() == 2 && Bill_Table.getSelectedRow() != -1) {
             //get the right Facture
             Facture bill = bills.get(Bill_Table.getSelectedRow());
             ArrayList<Sale> sales = null;
-            
+
             //Get Sales from server about the bill
-            
             try {
                 sales = GPC.SendGetSalesRequest(bill.getId());
             } catch (Exception ex) {
-                switch(ex.getMessage())
-                {
+                switch (ex.getMessage()) {
                     case "ENDCONNEXION" -> {
                         JOptionPane.showMessageDialog(this, "Connexion Error during transmission of Data: " + ex.getCause(), "Error", JOptionPane.ERROR_MESSAGE);
                     }
@@ -272,15 +266,14 @@ public class MainPage extends javax.swing.JFrame {
                 }
                 return;
             }
-            
-            
+
             //set Sales
             bill.setSales(sales);
-            
+
             //Open BillPage
-            BillPage window = new BillPage(GPC, bill, this, ("Facture ["+bill.getId()+"] - " + bill.getIdClient()), true);
+            BillPage window = new BillPage(GPC, bill, this, ("Facture [" + bill.getId() + "] - " + bill.getIdClient()), true);
             window.setVisible(true);
-            
+
             //Once Dialog Closed, refresh the ui
             try {
                 RefreshUI();
@@ -300,11 +293,14 @@ public class MainPage extends javax.swing.JFrame {
 
     private void OnWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_OnWindowClosing
         try {
-            this.GPC.SendLogout(Login);
+
+            GPC.SendLogout(Login);
+            GPC.Close();
+
         } catch (Exception ex) {
             Logger.getLogger(MainPage.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         this.parent.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_OnWindowClosing
@@ -318,7 +314,6 @@ public class MainPage extends javax.swing.JFrame {
     }//GEN-LAST:event_RefreshComboButtonPushed
 
     // </editor-fold>
-    
     // <editor-fold defaultstate="collapsed" desc="Generated Properties">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable Bill_Table;

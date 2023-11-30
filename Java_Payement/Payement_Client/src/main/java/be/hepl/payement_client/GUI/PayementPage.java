@@ -4,7 +4,7 @@
  */
 package be.hepl.payement_client.GUI;
 
-import be.hepl.payement_protocol.Utils.Gestion_Protocol_Client;
+import be.hepl.payement_protocol.protocol.Gestion_Protocol_Client;
 import be.hepl.payement_protocol.model.Facture;
 import java.awt.Frame;
 import java.util.logging.Level;

@@ -2,14 +2,18 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package be.hepl.payement_protocol.Utils;
+package be.hepl.payement_protocol.protocol.Secured;
 
+import be.hepl.payement_protocol.protocol.DBPayement;
 import be.hepl.generic_server_tcp.Logger;
+import be.hepl.payement_protocol.Utils.Consts;
+import be.hepl.payement_protocol.Utils.CryptoUtils;
 import be.hepl.payement_protocol.protocol.request.Secured.LoginRequest_Secured;
 import java.security.MessageDigest;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import org.bouncycastle.util.encoders.Hex;
 
 /**
  *
@@ -63,6 +67,7 @@ public class DBPayement_Secured extends DBPayement {
         
         //Recreate the Digest based on Login:
         ArrayList<Object> objects = new ArrayList<>();
+        
         objects.add(login.getLogin());
         objects.add(DB_Password);
         objects.add(login.getTemps());

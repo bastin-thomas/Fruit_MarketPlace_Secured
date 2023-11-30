@@ -10,11 +10,11 @@ import be.hepl.payement_server.Utils.ConfigFolderManager;
 
 import be.hepl.generic_server_tcp.Logger;
 import be.hepl.generic_server_tcp.PooledServer.ListenThreadPooled;
-import be.hepl.generic_server_tcp.Protocol;
 
 import be.hepl.payement_protocol.Utils.Consts;
-import be.hepl.payement_protocol.Utils.DBPayement;
+import be.hepl.payement_protocol.protocol.DBPayement;
 import be.hepl.payement_protocol.protocol.Payement;
+import be.hepl.payement_protocol.protocol.Secured.DBPayement_Secured;
 import be.hepl.payement_protocol.protocol.Secured.Payement_Secured;
 
 import com.formdev.flatlaf.FlatLightLaf;
@@ -53,7 +53,6 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
         
         //Get Config From File
         config = ConfigFolderManager.LoadProperties();
-        
         
         //Set UI Port-Unsecured
         Port_Spinner.getModel().setValue(Integer.valueOf(config.getProperty(Consts.ConfigPort)));
@@ -405,7 +404,7 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
             DBPayement db = null;
             try
             {
-                db = new DBPayement(DBurl_TextField.getText(), this);
+                db = new DBPayement_Secured(DBurl_TextField.getText(), this);
             }
             catch(Exception ex)
             {
@@ -425,11 +424,11 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
                 socket_unsecured.start();
                 
                 //Start Secured Server
-                socket_secured = new ListenThreadOnDemand(port_secured, new Payement_Secured(this, db), this);
+                socket_secured = new ListenThreadOnDemand(port_secured, new Payement_Secured(this, (DBPayement_Secured) db, config), this);
                 socket_secured.start();
                 
                 isLaunched = true;
-            } catch (IOException ex) {
+            } catch (Exception ex) {
                 this.Trace("Error creating ServerThread: " + ex.getMessage());
             }
         }

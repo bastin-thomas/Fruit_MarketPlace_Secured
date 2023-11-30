@@ -5,11 +5,14 @@
 package be.hepl.payement_client.GUI;
 import be.hepl.payement_client.Utils.ConfigFolderManager;
 import be.hepl.payement_protocol.Utils.Consts;
-import be.hepl.payement_protocol.Utils.Gestion_Protocol_Client;
-import be.hepl.payement_protocol.Utils.Gestion_Protocol_Client_Secured;
+import be.hepl.payement_protocol.protocol.Gestion_Protocol_Client;
+import be.hepl.payement_protocol.protocol.Secured.Gestion_Protocol_Client_Secured;
 import com.formdev.flatlaf.FlatLightLaf;
 import java.io.IOException;
 import java.net.Socket;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -165,17 +168,19 @@ public class LoginPage extends javax.swing.JFrame {
             {
                 int portServeurSecured = Integer.parseInt(Config.getProperty(Consts.ConfigPortSecured));
                 Socket socket = new Socket(ipServeur, portServeurSecured);
-                GPC = new Gestion_Protocol_Client_Secured(socket);
+                GPC = new Gestion_Protocol_Client_Secured(socket, Config);
             } else {
                 int portServeur = Integer.parseInt(Config.getProperty(Consts.ConfigPort));
                 Socket socket = new Socket(ipServeur, portServeur);
                 GPC = new Gestion_Protocol_Client(socket);
             }
-            
         } catch (IOException | NumberFormatException ex) {
             Logger.getLogger(LoginPage.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(this, "Impossible to reach the Server on: " + Config.getProperty(Consts.ConfigIP) + ":" + Config.getProperty(Consts.ConfigPort), "Error", JOptionPane.ERROR_MESSAGE);
             return;
+        } catch (KeyStoreException | CertificateException | NoSuchAlgorithmException ex) {
+            Logger.getLogger(LoginPage.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(this, "Impossible to open the KeyStore[" + Config.getProperty(Consts.ConfigKeyStorePath) + "] with password: " + Config.getProperty(Consts.ConfigKeyStorePassword), "Error", JOptionPane.ERROR_MESSAGE);
         }
         
         //Try To Login

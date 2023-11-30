@@ -9,15 +9,37 @@ import be.hepl.generic_server_tcp.Logger;
 import be.hepl.generic_server_tcp.Protocol;
 import be.hepl.generic_server_tcp.Request;
 import be.hepl.generic_server_tcp.Response;
-import be.hepl.payement_protocol.Utils.DBPayement;
+import be.hepl.payement_protocol.Utils.Consts;
+import be.hepl.payement_protocol.Utils.CryptoUtils;
+import static be.hepl.payement_protocol.Utils.CryptoUtils.PROVIDER;
 import be.hepl.payement_protocol.model.*;
 import be.hepl.payement_protocol.protocol.request.*;
 import be.hepl.payement_protocol.protocol.request.Secured.*;
 import be.hepl.payement_protocol.protocol.response.*;
+import be.hepl.payement_protocol.protocol.response.Secured.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 import java.net.Socket;
+import java.security.InvalidKeyException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.Security;
+import java.security.SignatureException;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Properties;
+import javax.crypto.SecretKey;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 /**
  *
@@ -26,17 +48,37 @@ import java.util.HashMap;
 public class Payement_Secured implements Protocol 
 {
     // <editor-fold defaultstate="collapsed" desc="Properties">
-    public final DBPayement db;
+    public final DBPayement_Secured db;
     private final Logger logger;
-    private HashMap<String, Socket> connectedClients;
+    private HashMap<Socket, String> connectedClients;
+    
+    protected final Properties config;
+    protected final KeyStore keystore;
+    protected final char[] keystorePassword;
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Constructor">
-    public Payement_Secured(Logger log, be.hepl.payement_protocol.Utils.DBPayement db)
+    public Payement_Secured(Logger log, DBPayement_Secured db, Properties config) throws Exception
     {
         logger = log;
         connectedClients = new HashMap<>();
         this.db = db;
+        this.config = config;
+        this.keystorePassword = config.getProperty(Consts.ConfigKeyStorePassword).toCharArray();
+        
+        Security.addProvider(new BouncyCastleProvider());
+        
+        keystore = KeyStore.getInstance(Consts.KeyStoreInstanceType);
+        
+        File filestore = new File(config.getProperty(Consts.ConfigKeyStorePath));
+        
+        if(!filestore.exists())
+        {
+            throw new KeyStoreException();
+        }
+        FileInputStream filestorestream = new FileInputStream(filestore.getPath());
+        
+        keystore.load( filestorestream, keystorePassword);
     }
     // </editor-fold>
     
@@ -51,7 +93,7 @@ public class Payement_Secured implements Protocol
     public synchronized Response RequestTreatment(Request requete, Socket socket) throws EndConnectionException 
     {
         Response rep = null;
-        if(connectedClients.containsValue(socket))
+        if(connectedClients.containsKey(socket))
         {
             
             if(requete instanceof GetSalesRequest request)
@@ -78,7 +120,7 @@ public class Payement_Secured implements Protocol
                 logger.Trace( request.getClass().getName() + " Reçue et traitée");
             }
 
-            if(requete instanceof LogoutRequest request)
+            if(requete instanceof LogoutRequest_Secured request)
             {
                 LogoutRequestTreatment(request, socket);
                 logger.Trace( request.getClass().getName() + " Reçue et traitée");
@@ -106,45 +148,98 @@ public class Payement_Secured implements Protocol
      * @return 
      */
     private Response LoginRequestTreatment(LoginRequest_Secured loginRequest, Socket socket) {
+        String KeyPairEntryName = Consts.ClientCertificateName + "-" + loginRequest.getLogin();
+        String SessionKeyEntryName = Consts.SessionKeyName + "-" + loginRequest.getLogin();
         boolean logged = false;
-        String message = "";
         String response = "";
         
         
         try {
-            logged = db.Login(loginRequest.getLogin(), loginRequest.getPassword());
+            logged = db.Login(loginRequest);
         } catch (Exception ex) {
-            switch(ex.getMessage())
-            {
-                case "SQL_ERROR" -> {
-                    response = "SQL_ERROR";
-                    message = ex.getMessage();
-                }
-                
-                case "NO_LOGIN" -> {
-                    response = "NO_LOGIN";
-                    message = ex.getMessage();
-                }
-                
-                case "BAD_LOGIN" -> {
-                    response = "BAD_LOGIN";
-                    message = ex.getMessage();
-                }
-                
-                default ->{
-                    response = "UNKOWN";
-                    message = ex.getMessage();
-                }
-            }
+            response = ex.getMessage();
+        }
+        
+        if(!logged) return new LoginResponse_Secured(false, response);
+        
+        
+        //Verify the Client certificate
+        Certificate rootCert = null;
+        try {
+            rootCert = keystore.getCertificate(Consts.RootCertificateName);
+            loginRequest.getClientCertificate().verify(rootCert.getPublicKey());
+        } catch (KeyStoreException | NoSuchAlgorithmException | NoSuchProviderException ex) {
+            return new LoginResponse_Secured(false, "Error during KeyStore Reading: " + ex.getMessage());
+        } catch (CertificateException | SignatureException | InvalidKeyException ex) {
+            return new LoginResponse_Secured(false, "Your Certificate got a problem: " + ex.getMessage());
         }
         
         
-        if(logged){
-            connectedClients.put(loginRequest.getLogin(), socket);
-            return new LoginResponse(true);
-        } else {
-            return new LoginResponse(false, (response + ": " + message));
-        }   
+        //Manage Client Certificate
+        try{
+            boolean refreshCertificate = false;
+            
+            if(keystore.isCertificateEntry(KeyPairEntryName)){
+                X509Certificate a = (X509Certificate) keystore.getCertificate(KeyPairEntryName);
+                X509Certificate b = (X509Certificate) loginRequest.getClientCertificate();
+                System.out.println(a.toString());
+                System.out.println(b.toString());
+                
+                if(!CryptoUtils.CompareCertificate(a,b)){
+                    //If there is an entry but outdated
+                    refreshCertificate = true;
+                }
+            }
+            else{
+                //If there is no entry
+                refreshCertificate = true;
+            }
+            
+            if(refreshCertificate){
+                //Add the client certificate to the keystore the name will be the client login name
+                keystore.setCertificateEntry(KeyPairEntryName,
+                        loginRequest.getClientCertificate());
+                SaveKeyStore();
+                
+                logger.Trace("Ajout du certificat du client dans le keyStore.");
+            }
+            else{
+                logger.Trace("Certificat du client déjà enregistré dans le keystore.");
+            }
+        }catch(Exception ex){
+            return new LoginResponse_Secured(false, ex.getMessage());
+        }
+        
+        
+        //Create a new SessionKey and encrypt it with public key from the Client.
+        byte[] cryptedSessionSecretKey = null;
+        try{
+            //If there is an old session key it is deleted.
+            if(keystore.isKeyEntry(SessionKeyEntryName)){
+                keystore.deleteEntry(SessionKeyEntryName);
+            }
+            
+            //Create a SecretKey for this session
+            SecretKey sessionSecretKey = CryptoUtils.CreateSecretKey();
+            
+            //Add the new SessionKey to the keystore
+            keystore.setKeyEntry(SessionKeyEntryName, sessionSecretKey, keystorePassword, null);
+            SaveKeyStore();
+            logger.Trace("Ajout d'une clé de session au KeyStore");
+            
+            
+            //Encrypt the secret key, using the public key of Client
+            cryptedSessionSecretKey = CryptoUtils.AsymetricalEncrypt(sessionSecretKey.getEncoded(), 
+                                                                        loginRequest.getClientCertificate().getPublicKey());
+            logger.Trace("Encryption de la clé de session pour l'envoi au client.");
+            
+        } catch(Exception ex) {
+            return new LoginResponse_Secured(false, ex.getMessage());
+        }
+        
+        connectedClients.put(socket, loginRequest.getLogin());
+        
+        return new LoginResponse_Secured(true, cryptedSessionSecretKey);
     }
     
     
@@ -253,9 +348,18 @@ public class Payement_Secured implements Protocol
      * @return 
      */
     private void LogoutRequestTreatment(LogoutRequest logoutRequest, Socket socket) throws EndConnectionException {
-        if(connectedClients.containsKey(logoutRequest.getLogin()) == true)
-        {
-            connectedClients.remove(logoutRequest.getLogin());
+        if(connectedClients.containsKey(socket) == true)
+        {            
+            try {
+                String EntryName = Consts.SessionKeyName + "-" + connectedClients.get(socket);
+                keystore.deleteEntry(EntryName);
+                SaveKeyStore();
+                logger.Trace("Suppression de la clé de session: " + EntryName);
+            } catch (KeyStoreException | IOException | NoSuchAlgorithmException | CertificateException ex) {
+                logger.Trace("Impossible de retirer la clé de session du keystore: " + ex.getMessage());
+            }
+            
+            connectedClients.remove(socket);
             throw new EndConnectionException(null);
         }
     }
@@ -348,6 +452,18 @@ public class Payement_Secured implements Protocol
             logger.Trace("ERROR[" + ex.getMessage() + "] - " + ex.getCause());
             return false;
         }
+    }
+    
+    protected void SaveKeyStore() throws FileNotFoundException, FileNotFoundException, KeyStoreException, IOException, IOException, NoSuchAlgorithmException, NoSuchAlgorithmException, CertificateException
+    {
+        File filestore = new File(config.getProperty(Consts.ConfigKeyStorePath));
+        
+        if(!filestore.exists())
+        {
+            throw new KeyStoreException();
+        }
+        
+        this.keystore.store(new FileOutputStream(filestore.getPath()), config.getProperty(Consts.ConfigKeyStorePassword).toCharArray());
     }
     // </editor-fold>
 }

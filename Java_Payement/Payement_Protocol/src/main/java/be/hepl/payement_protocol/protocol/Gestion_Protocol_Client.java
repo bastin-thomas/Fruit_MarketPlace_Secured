@@ -2,18 +2,22 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package be.hepl.payement_protocol.Utils;
+package be.hepl.payement_protocol.protocol;
 
 import be.hepl.payement_protocol.model.Facture;
 import be.hepl.payement_protocol.model.Sale;
 import be.hepl.payement_protocol.protocol.request.*;
 import be.hepl.payement_protocol.protocol.response.*;
+import java.io.FileNotFoundException;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -25,13 +29,18 @@ public class Gestion_Protocol_Client {
     protected final ObjectOutputStream oos;
     protected final ObjectInputStream ois;
     protected final Socket socket;
-    
+    protected final Properties config;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Constructor">
-    public Gestion_Protocol_Client(Socket sock) throws IOException{
-        socket = sock;
-        
+    public Gestion_Protocol_Client(Socket sock) throws IOException
+    {
+        this(sock, null);
+    }
+    
+    public Gestion_Protocol_Client(Socket sock, Properties config) throws IOException{
+        this.socket = sock;
+        this.config = config;
         oos = new ObjectOutputStream(socket.getOutputStream());
         ois = new ObjectInputStream(socket.getInputStream());
     }
@@ -48,7 +57,7 @@ public class Gestion_Protocol_Client {
         catch(Exception ex){
             throw new Exception("ENDCONNEXION", ex);
         }
-
+        
         
         // Login validity
         if(response instanceof LoginResponse Lresponse){
@@ -165,6 +174,12 @@ public class Gestion_Protocol_Client {
             socket.close();
             throw new Exception("UNEXPECTED_RESPONSE");
         }
+    }
+    
+    
+    public void Close() throws Exception
+    {
+        socket.close();
     }
     // </editor-fold>
 }

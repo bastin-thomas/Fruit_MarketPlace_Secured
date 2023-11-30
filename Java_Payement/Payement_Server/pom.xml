@@ -23,6 +23,11 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk18on</artifactId>
+            <version>1.77</version>
+        </dependency>
+        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>Generic_Server_TCP</artifactId>
             <version>${project.version}</version>

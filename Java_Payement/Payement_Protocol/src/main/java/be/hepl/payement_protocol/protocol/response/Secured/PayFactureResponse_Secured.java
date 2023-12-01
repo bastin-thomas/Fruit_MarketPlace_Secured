@@ -18,22 +18,33 @@ import java.util.ArrayList;
 public class PayFactureResponse_Secured extends PayFactureResponse{
     
     // <editor-fold defaultstate="collapsed" desc="Properties">
-    
+    private byte[] hmac;
     // </editor-fold>
     
-    // <editor-fold defaultstate="collapsed" desc="Constructor">
-    public PayFactureResponse_Secured(boolean success)
-    {
-        super(success);
+    // <editor-fold defaultstate="collapsed" desc="Constructor">    
+    public PayFactureResponse_Secured(boolean success, String cause, byte[] hmac) {
+        super(success, cause);
+        this.hmac = hmac;
     }
     
+    @Deprecated
+    public PayFactureResponse_Secured(boolean success)
+    {
+        super(false, "Deprecated use of constructor");
+        this.hmac = null;
+    }
+    
+    @Deprecated
     public PayFactureResponse_Secured(boolean success, String cause)
     {
-        super(success, cause);
+        super(false, "Deprecated use of constructor");
+        this.hmac = null;
     }
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Getters and Setters">
-
+    public byte[] getHmac(){
+        return hmac;
+    }
     // </editor-fold>
 }

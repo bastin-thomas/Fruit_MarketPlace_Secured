@@ -25,25 +25,15 @@ public class ConfigFolderManager {
     public static Properties LoadProperties() {
         Properties config = new Properties();
         File configFile = new File(Consts.ConfigFilePathServer);
-        
-        config.setProperty(Consts.ConfigPoolSize,Consts.ConfigDefaultPoolSize);
-        config.setProperty(Consts.ConfigDBString,Consts.ConfigDefaultDBString);
-        config.setProperty(Consts.ConfigPort, Consts.ConfigDefaultPort);
-        config.setProperty(Consts.ConfigPortSecured, Consts.ConfigDefaultPortSecured);
-        
+
         try {
-            //If file not exist create default one
-            if(!configFile.exists()){
-                OutputStream output = new FileOutputStream(configFile);
-                config.store(output, Consts.ConfigFileComments);
-            }
-            else{
-                //If exist read Properties
+            if(configFile.exists()){
                 InputStream input = new FileInputStream(configFile);
-                config.clear();
                 config.load(input);
             }
         } catch(IOException ex) {}
+        
+        
         
         if(!config.containsKey(Consts.ConfigPoolSize))
         {
@@ -65,6 +55,26 @@ public class ConfigFolderManager {
             config.setProperty(Consts.ConfigPortSecured, Consts.ConfigDefaultPortSecured);
         }
         
+        if(!config.containsKey(Consts.ConfigKeyStorePath))
+        {
+            config.setProperty(Consts.ConfigKeyStorePath, Consts.ConfigDefaultServerKeyStorePath);
+        }
+        
+        if(!config.containsKey(Consts.ConfigKeyStorePassword))
+        {
+            config.setProperty(Consts.ConfigKeyStorePassword, Consts.ConfigDefaultServerKeyStorePassword);
+        }
+        
+        if (!config.containsKey(Consts.ConfigRootKeyStorePath)) {
+            config.setProperty(Consts.ConfigRootKeyStorePath, Consts.ConfigDefaultRootKeyStorePath);
+        }
+        
+        if (!config.containsKey(Consts.ConfigRootKeyStorePassword)) {
+            config.setProperty(Consts.ConfigRootKeyStorePassword, Consts.ConfigDefaultRootKeyStorePassword);
+        }
+            
+        
+        SaveProperties(config);
         
         return config;
     }

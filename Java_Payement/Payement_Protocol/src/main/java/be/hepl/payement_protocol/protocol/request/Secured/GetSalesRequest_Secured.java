@@ -5,9 +5,6 @@
 package be.hepl.payement_protocol.protocol.request.Secured;
 
 import be.hepl.payement_protocol.protocol.request.*;
-import be.hepl.generic_server_tcp.Request;
-import be.hepl.payement_protocol.model.Sale;
-import java.util.ArrayList;
 
 /**
  *
@@ -21,17 +18,20 @@ import java.util.ArrayList;
 public class GetSalesRequest_Secured extends GetSalesRequest{
     
     // <editor-fold defaultstate="collapsed" desc="Properties">
-    
+    private byte[] idBillsSignature;
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Constructor">
-    public GetSalesRequest_Secured(int idFacture)
+    public GetSalesRequest_Secured(int idBills, byte[] idBillsSignature)
     {
-        super(idFacture);
+        super(idBills);
+        this.idBillsSignature = idBillsSignature;
     }
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Getters and Setters">
-    
-    // </editor-fold>
+    public byte[] getIdBillsSignature() {
+        return idBillsSignature;
+    }
+    // </editor-fold>    
 }

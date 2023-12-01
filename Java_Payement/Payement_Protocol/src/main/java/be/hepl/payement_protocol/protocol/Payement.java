@@ -8,7 +8,6 @@ import be.hepl.generic_server_tcp.Logger;
 import be.hepl.generic_server_tcp.Protocol;
 import be.hepl.generic_server_tcp.Request;
 import be.hepl.generic_server_tcp.Response;
-import be.hepl.payement_protocol.Utils.DBPayement;
 import be.hepl.payement_protocol.model.*;
 import be.hepl.payement_protocol.protocol.request.*;
 import be.hepl.payement_protocol.protocol.response.*;
@@ -30,7 +29,7 @@ public class Payement implements Protocol {
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Constructor">
-    public Payement(Logger log, be.hepl.payement_protocol.Utils.DBPayement db) {
+    public Payement(Logger log, be.hepl.payement_protocol.protocol.DBPayement db) {
         logger = log;
         connectedClients = new HashMap<>();
         this.db = db;
@@ -132,7 +131,7 @@ public class Payement implements Protocol {
             connectedClients.put(loginRequest.getLogin(), socket);
             return new LoginResponse(true);
         } else {
-            return new LoginResponse(false, (response + ": " + message));
+            return new LoginResponse(false, (response));
         }
     }
 

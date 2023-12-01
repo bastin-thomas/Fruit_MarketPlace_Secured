@@ -18,67 +18,70 @@ import java.util.Properties;
  * @author Arkios
  */
 public class ConfigFolderManager {
+
     /**
      * Load Config file into a Properties Object to be used later
+     *
      * @return
-     * @throws IOException 
+     * @throws IOException
      */
-    public static Properties LoadProperties() throws IOException{
+    public static Properties LoadProperties() throws IOException {
         Properties config = new Properties();
         File configFile = new File(Consts.ConfigFilePathClient);
-        
-        //InitDefault Values
-        config.setProperty(Consts.ConfigIP,Consts.ConfigDefaultIP);
-        config.setProperty(Consts.ConfigPort, Consts.ConfigDefaultPort);
-        config.setProperty(Consts.ConfigPortSecured, Consts.ConfigDefaultPortSecured);
-        
-        try
-        {
+
+        try {
             //If file not exist create default one
-            if(!configFile.exists()){
-                OutputStream output = new FileOutputStream(configFile);
-                config.store(output, Consts.ConfigFileComments);
-            }
-            else{
-                //If exist read Properties
+            if (configFile.exists()) {
                 InputStream input = new FileInputStream(configFile);
-                config.clear();
                 config.load(input);
             }
-            
-            
-            
-            if(!config.containsKey(Consts.ConfigIP))
-            {
-                config.setProperty(Consts.ConfigIP,Consts.ConfigDefaultIP);
-            }
+        } catch (IOException ex) {}
 
-            if(!config.containsKey(Consts.ConfigPort))
-            {
-                config.setProperty(Consts.ConfigPort,Consts.ConfigDefaultPort);
-            }
+        if (!config.containsKey(Consts.ConfigIP)) {
+            config.setProperty(Consts.ConfigIP, Consts.ConfigDefaultIP);
+        }
 
-            if(!config.containsKey(Consts.ConfigPortSecured))
-            {
-                config.setProperty(Consts.ConfigPortSecured, Consts.ConfigDefaultPortSecured);
-            }
-            
-        } catch(IOException ex){}
+        if (!config.containsKey(Consts.ConfigPort)) {
+            config.setProperty(Consts.ConfigPort, Consts.ConfigDefaultPort);
+        }
+
+        if (!config.containsKey(Consts.ConfigPortSecured)) {
+            config.setProperty(Consts.ConfigPortSecured, Consts.ConfigDefaultPortSecured);
+        }
+
+        if (!config.containsKey(Consts.ConfigPortSecured)) {
+            config.setProperty(Consts.ConfigPortSecured, Consts.ConfigDefaultPortSecured);
+        }
+
+        if (!config.containsKey(Consts.ConfigKeyStorePath)) {
+            config.setProperty(Consts.ConfigKeyStorePath, Consts.ConfigDefaultClientKeyStorePath);
+        }
+
+        if (!config.containsKey(Consts.ConfigKeyStorePassword)) {
+            config.setProperty(Consts.ConfigKeyStorePassword, Consts.ConfigDefaultClientKeyStorePassword);
+        }
+        
+        if (!config.containsKey(Consts.ConfigRootKeyStorePath)) {
+            config.setProperty(Consts.ConfigRootKeyStorePath, Consts.ConfigDefaultRootKeyStorePath);
+        }
+        
+        if (!config.containsKey(Consts.ConfigRootKeyStorePassword)) {
+            config.setProperty(Consts.ConfigRootKeyStorePassword, Consts.ConfigDefaultRootKeyStorePassword);
+        }
+        
+        SaveProperties(config);
         
         return config;
     }
-    
-    
-    
-    public static void SaveProperties(Properties prop)
-    {
+
+    public static void SaveProperties(Properties prop) {
         File configFile = new File(Consts.ConfigFilePathClient);
         OutputStream output = null;
         try {
             output = new FileOutputStream(configFile);
             prop.store(output, "Custom Config File");
         } catch (IOException ex) {
-                System.out.println("FATAL ERROR WHILE SAVING TO PROPERTIES FILE: " + ex.getMessage());
+            System.out.println("FATAL ERROR WHILE SAVING TO PROPERTIES FILE: " + ex.getMessage());
         }
     }
 }

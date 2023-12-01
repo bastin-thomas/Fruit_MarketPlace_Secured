@@ -21,7 +21,7 @@ import javax.swing.table.DefaultTableModel;
  * @author student
  */
 public final class HomePage extends javax.swing.JFrame {
-       
+
     // <editor-fold defaultstate="collapsed" desc="My Properties">
     public final int CLOCKTICK = 30;
     private final ClientMail _session;

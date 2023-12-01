@@ -4,11 +4,9 @@
  */
 package be.hepl.payement_protocol.protocol.request.Secured;
 
-import be.hepl.payement_protocol.protocol.request.*;
-import be.hepl.payement_protocol.Utils.CryptoUtils;
+import be.hepl.generic_server_tcp.Request;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
+import java.security.cert.Certificate;
 
 
 /**
@@ -16,51 +14,51 @@ import java.util.Date;
  *             (d’un employé)                              passe dans la table des employés
  * @author Arkios
  */
-public class LoginRequest_Secured extends LoginRequest {
+public class LoginRequest_Secured implements Request {
     // <editor-fold defaultstate="collapsed" desc="Properties">
+    protected final String login;
     protected final long temps;     
     protected final double alea;    
     protected final byte[] digest;  // digest envoyé
+    
+    protected final Certificate clientCertificate;
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Constructor">
     /**
      * 
      * @param login
-     * @param password
      * @throws java.io.IOException
      */
-    public LoginRequest_Secured(String login, String password) throws IOException
+    public LoginRequest_Secured(String login, Certificate clientCertificate, byte[] digest, long temps, double alea) throws IOException
     {
-        super(login,null);
-        this.temps = new Date().getTime();
-        this.alea = Math.random();
-        
-        
-        ArrayList<Object> objects = new ArrayList<>();
-        objects.add(login);
-        objects.add(password);
-        objects.add(temps);
-        objects.add(alea);
-        
-        this.digest = CryptoUtils.CreateDigest(objects);
+        this.clientCertificate = clientCertificate;
+        this.digest = digest;
+        this.temps = temps;
+        this.alea = alea;
+        this.login = login;
     }
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Getters and Setters">
-    public byte[] getDigest()
-    {
-        return this.digest;
+    public String getLogin() {
+        return login;
     }
-    
-    public double getAlea()
-    {
-        return this.alea;
-    }
-    
-    public long getTemps()
-    {
+
+    public long getTemps() {
         return temps;
+    }
+
+    public double getAlea() {
+        return alea;
+    }
+
+    public byte[] getDigest() {
+        return digest;
+    }
+
+    public Certificate getClientCertificate() {
+        return clientCertificate;
     }
     // </editor-fold>
 }

@@ -3,18 +3,21 @@
     <string name="app_name">MyMaraicherMobile</string>
 
     <!-- Strings related to login -->
-    <string name="titleLogin">"Veuillez vous connecter"</string>
+    <string name="titleHome">"Veuillez vous connecter"</string>
     <string name="login_failed">"Erreur de connexion"</string>
     <string name="hintPassword">Mot de passe</string>
     <string name="hintLogin">Nom utilisateur</string>
     <string name="connexion">Se connecter</string>
+    <string name="port_serveur">50002</string>
+    <string name="adresse_serveur">1</string>
 
     <!-- Strings related to settings -->
-    <string name="titleSettings">Settings</string>
-    <string name="contentD_ArrowBack">A arrow</string>
+    <string name="titleSettings">Paramètres</string>
+    <string name="TextChoiceLanguage">Choisissez la langue : </string>
+    <string name="content_ArrowBack">Une flèche</string>
 
-    <!-- Strings related to settings -->
-    <string name="titleMaraicher">"Welcome to MyMaraicherMobile"</string>
-    <string name="imgMaraicher">a picture</string>
+    <!-- Strings related to Maraicher -->
+    <string name="titleMaraicher">"Bienvenue sur MyMaraicherMobile"</string>
+    <string name="imgMaraicher">Une image</string>
 
 </resources>

@@ -1,0 +1,24 @@
+<resources>
+    <!-- Strings related to home -->
+    <string name="app_name">MyMaraicherMobile</string>
+
+    <!-- Strings related to login -->
+    <string name="titleHome">"Please connect"</string>
+    <string name="login_failed">"Connexion Failed"</string>
+    <string name="hintPassword">Password</string>
+    <string name="hintLogin">Username</string>
+    <string name="connexion">Login</string>
+    <string name="port_serveur">50002</string>
+    <string name="adresse_serveur">1</string>
+
+    <!-- Strings related to settings -->
+    <string name="titleSettings">Settings</string>
+    <string name="TextChoiceLanguage">Choose your language : </string>
+    <string name="content_ArrowBack">A arrow</string>
+
+
+    <!-- Strings related to Maraicher -->
+    <string name="titleMaraicher">"Welcome to MyMaraicherMobile"</string>
+    <string name="imgMaraicher">A picture</string>
+
+</resources>

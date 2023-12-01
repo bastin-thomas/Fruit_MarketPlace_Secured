@@ -4,8 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
-    android:orientation="vertical"
-    android:visibility="visible">
+    tools:context=".MainActivity"
+    android:orientation="vertical" >
 
     <EditText
         android:id="@+id/loginInput"
@@ -36,5 +36,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="30dp"
-        android:text="@string/connexion" />
+        android:text="@string/connexion"
+        android:background="@drawable/buttons"
+        android:enabled="false" />
 </LinearLayout>

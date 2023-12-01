@@ -5,7 +5,10 @@
     android:id="@+id/fragmentContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    tools:context=".MainActivity"
     android:background="@color/cardview_dark_background">
+
+
 
     <ImageView
         android:layout_width="match_parent"
@@ -20,10 +23,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop ="100dp"
+        android:layout_marginTop="100dp"
         android:minHeight="60dp"
         android:gravity="center"
-        android:text="@string/titleLogin"
+        android:text="@string/titleHome"
         android:textColor="@color/white"
         android:textSize="20sp" />
 

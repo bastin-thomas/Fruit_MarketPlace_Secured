@@ -146,7 +146,7 @@ public class PayementPage extends javax.swing.JDialog {
             return;
         }
         
-        Pattern pCodeCarte = Pattern.compile("^4[0-9]{12}(?:[0-9]{3})?$");
+        Pattern pCodeCarte = Pattern.compile("^((4\\d{3})|(5[1-5]\\d{2})|(6011)|(34\\d{1})|(37\\d{1}))-?\\s?\\d{4}-?\\s?\\d{4}-?\\s?\\d{4}|3[4,7][\\d\\s-]{15}$");
         Matcher mCodeCarte = pCodeCarte.matcher(CodeCarte_TextField.getText());
 
         if(!mCodeCarte.find() && !CodeCarte_TextField.getText().equals("")){
@@ -167,6 +167,14 @@ public class PayementPage extends javax.swing.JDialog {
                                 
                 case "CARD_INVALID" -> {
                     JOptionPane.showMessageDialog(this, "La carte entrée est invalide", "Warning", JOptionPane.WARNING_MESSAGE);
+                }
+                
+                case "HMAC_INVALID" -> {
+                    JOptionPane.showMessageDialog(this, "Le Hmac n'est pas valide, les données ont été corrompue durant l'envoie", "Warning", JOptionPane.WARNING_MESSAGE);
+                }
+                
+                case "SIGN_INVALID" -> {
+                    JOptionPane.showMessageDialog(this, "La signature du client est invalide", "Warning", JOptionPane.WARNING_MESSAGE);
                 }
                 
                 case "UNEXPECTED_RESPONSE" -> {

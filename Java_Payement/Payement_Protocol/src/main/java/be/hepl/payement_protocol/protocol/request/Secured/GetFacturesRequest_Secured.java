@@ -20,17 +20,20 @@ import be.hepl.generic_server_tcp.Request;
 */
 public class GetFacturesRequest_Secured extends GetFacturesRequest{
     // <editor-fold defaultstate="collapsed" desc="Properties">
-    
+    private byte[] idClientSignature;
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Constructor">
-    public GetFacturesRequest_Secured(String idClient)
+    public GetFacturesRequest_Secured(String idClient, byte[] idClientSignature)
     {
         super(idClient);
+        this.idClientSignature = idClientSignature;
     }
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Getters and Setters">
-
+    public byte[] getIdClientSignature() {
+        return idClientSignature;
+    }
     // </editor-fold>
 }

@@ -72,9 +72,14 @@ public class Consts {
     public final static String DigestAlgorythm = "SHA512";
     
     public final static String SymetricAlgorythm = "AES";
+    public final static String SymetricCipherMode = "CBC";
+    public final static String SymetricPaddingMode = "PKCS7Padding";
     
     public final static String AsymetricAlgorythm = "RSA";
-    public final static String CipherMode = "ECB";
-    public final static String PaddingMode = "OAEPWITHSHA-512ANDMGF1PADDING";
+    public final static String AsymetricCipherMode = "ECB";
+    public final static String AsymetricPaddingMode = "OAEPWITHSHA-512ANDMGF1PADDING";
+    
     public final static String SignatureAlgorythm = "SHA512WithRSA";
+    
+    public final static String HMACAlgorythm = "HmacSHA512";
 }

@@ -5,13 +5,8 @@
 package be.hepl.payement_protocol.protocol.request.Secured;
 
 import be.hepl.generic_server_tcp.Request;
-import be.hepl.payement_protocol.Utils.Consts;
-import be.hepl.payement_protocol.protocol.request.*;
-import be.hepl.payement_protocol.Utils.CryptoUtils;
 import java.io.IOException;
 import java.security.cert.Certificate;
-import java.util.ArrayList;
-import java.util.Date;
 
 
 /**

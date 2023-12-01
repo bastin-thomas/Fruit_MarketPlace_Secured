@@ -131,7 +131,7 @@ public class Payement implements Protocol {
             connectedClients.put(loginRequest.getLogin(), socket);
             return new LoginResponse(true);
         } else {
-            return new LoginResponse(false, (response + ": " + message));
+            return new LoginResponse(false, (response));
         }
     }
 

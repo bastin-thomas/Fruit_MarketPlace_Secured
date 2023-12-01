@@ -8,7 +8,6 @@ import be.hepl.payement_protocol.model.Facture;
 import be.hepl.payement_protocol.model.Sale;
 import be.hepl.payement_protocol.protocol.request.*;
 import be.hepl.payement_protocol.protocol.response.*;
-import java.io.FileNotFoundException;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -16,8 +15,6 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *

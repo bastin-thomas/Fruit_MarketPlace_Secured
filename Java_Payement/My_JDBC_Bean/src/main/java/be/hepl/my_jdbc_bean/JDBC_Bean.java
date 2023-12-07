@@ -96,7 +96,11 @@ public abstract class JDBC_Bean implements Serializable {
     protected void update(String Update, String set, String where) throws SQLException {
         Statement statement = db.createStatement();
         String sql = "UPDATE " + Update + " SET " + set + " WHERE " + where;
-        statement.executeUpdate(sql);
+        int executeUpdate = statement.executeUpdate(sql);
+        
+        if(executeUpdate <= 0){
+            throw new SQLException("Nothing to Update");
+        }
     }
 
     /**

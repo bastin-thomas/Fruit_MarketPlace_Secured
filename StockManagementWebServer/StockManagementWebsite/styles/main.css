@@ -1,0 +1,292 @@
+html body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;  
+  font-family: "Open Sans", "Lucida Sans", "Lucida Grande", "Lucida Sans Unicode", Verdana, sans-serif; 
+  background-color: #333941;
+  color: white;
+  font-size: medium;
+  justify-content: space-between;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+header{
+  margin: 0;
+  background-color: #272A2F;
+}
+
+nav{
+  height: 60px;
+  margin: 0;
+  margin-left: 10%;
+  display: flex;
+  align-items: center;
+  align-content: center;
+}
+
+nav > a{
+  padding-left: 20px;
+}
+
+.logo {
+  height: 50px;
+}
+
+.logo_community{
+  margin: 5px;
+  height: 50px;
+}
+
+main{
+  color: rgb(170, 170, 170);
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 100%;
+  justify-content: space-around;
+}
+
+h1{
+  color: white;
+  font-size: xx-large;
+  font-weight: bold;
+  margin: 0;
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+h3{
+  font-size: larger;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+ul{
+  margin: 0;
+  padding: 0;
+
+  margin-top: 5px;
+  margin-bottom: 5px;
+  padding-left: 2em;
+}
+
+.instructions>h3{
+  color: rgb(236, 202, 48);
+}
+
+.content_container{
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+}
+
+.download{
+  display: flex;
+  flex-direction: row;
+  align-content: center;
+  justify-content: flex-start;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+p{
+  font-size: medium;
+}
+
+
+.date_format{
+  font-size: small;
+  margin: 0;
+  padding: 0;
+  padding-top: 5px;
+}
+
+.metadata{
+  margin: 5px;
+  padding-left: 30px;
+}
+
+.metadata>p{
+  margin: 0;
+  padding: 0;
+  padding-top: 5px;
+}
+
+
+.instructions{
+  margin-top: 0.5em;
+  display: flex;
+  flex-direction: column;
+}
+
+
+.credits{
+  margin-top: 0.5em;
+  display: flex;
+  flex-direction: column;
+}
+
+.credits>p{
+  width: 45em;
+  padding-bottom: 15px;
+  font-size: small;
+  /*height: 24em;*/
+  
+  /*
+  border: #ffffff 1px solid;
+  border-radius: 2px;
+  */
+
+  /*overflow:auto;*/
+}
+
+
+.userNames{
+  padding: 0;
+  margin: 0;
+}
+
+
+.data {
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.data>div:first-child{
+  padding-top: 4em;
+  flex-shrink: 1;
+}
+
+.youtube_tutorial{
+  padding-top: 2em;
+  padding-bottom: 0.5em;
+}
+
+iframe{
+  width: 48em;
+  height: 27em;
+}
+
+.data>div>a{
+  display: flex;
+  flex-direction: row;
+}
+
+.data>div>a>div{
+  width: 27em;
+  height: 6em;
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  justify-content: center;
+  align-items: center;
+}
+
+.data>div>a>div>p:first-child{
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  font-size: xx-large;
+}
+
+.data>div>p{
+  margin-top: 1px;
+  align-self: self-start;
+  margin-left: 10px;
+}
+
+
+footer{
+  background-color: #272A2F;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-content: center;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center;
+}
+
+footer>a{
+  margin:13px;
+}
+
+footer>p{
+  margin: 0;
+  padding: 0;
+  font-size: small;
+}
+
+
+
+
+.vert {
+  color: rgba(218, 201, 55, 1.0);
+  /*color: white;*/
+  font-weight: bold;
+}
+
+
+.file {
+  border: 1px solid rgb(114, 114, 114);
+  margin: 5px;
+  border-radius: 10px;
+  background-color: rgba(233, 26, 26, 1.0);
+  color: white;
+  text-align: center;
+  height: auto;
+  width: auto;
+}
+
+.file:hover {
+  background-color: rgba(233, 26, 26, 1.0);
+  text-decoration: none;
+  border-color: rgba(218, 201, 55, 1.0);
+  color: rgba(218, 201, 55, 1.0);;
+}
+
+.file:visited {
+  background-color: rgba(233, 26, 26, 1.0);
+  text-decoration: none;
+  border-color: rgba(218, 201, 55, 1.0);
+  color: rgba(218, 201, 55, 1.0);;
+}
+
+a:link {
+  color: rgb(170, 170, 170);
+  text-decoration: none;
+}
+
+a:visited {
+  color: rgb(170, 170, 170);
+  text-decoration: none;
+}
+
+a:hover {
+  color: white;
+  text-decoration: none;
+}
+
+a:active {
+  color: white;
+  text-decoration: none;
+}
+
+.trad_version{
+  padding: 0;
+  margin: 0;
+}
+
+.trad_version>span{
+  font-size: medium;
+}

@@ -20,38 +20,37 @@ import org.json.JSONObject;
  *
  * @author Arkios
  */
-public class ApiHandler extends MyHttpHandler {    
+public class ApiHandler extends MyHttpHandler {
+
     private ArrayList<String> connectedClients;
-    
+
     public ApiHandler(Logger Log, DBStock db) {
-        super(Log,db);
+        super(Log, db);
     }
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         String requestPath = exchange.getRequestURI().getPath();
         String requestMethod = exchange.getRequestMethod();
-        
+
         log.Trace("IndexHandler (method:" + requestMethod + ") = " + requestPath);
-        
-        
-        
-        if(requestMethod.equalsIgnoreCase("GET")){
-            if(requestPath.endsWith("Articles")){
+
+        if (requestMethod.equalsIgnoreCase("GET")) {
+            if (requestPath.endsWith("Articles")) {
                 //Manage Articles Procedure
                 boolean noProblemo = false;
                 String Cause = "";
-                JSONObject response =  new JSONObject();
-                
+                JSONObject response = new JSONObject();
+
                 Map<String, String> queryParams = parseQueryParams(exchange.getRequestURI().getQuery());
-                
-                if(!queryParams.containsKey("cleSession")){
-                    Erreur404(exchange);
+
+                if (!queryParams.containsKey("cleSession")) {
+                    response.put("Cause", "Paramètre incomplet");
+                    SendResponse(exchange, response);
                     return;
                 }
-                
+
                 //Check Session Auth:
-                    
                 //do DB Logic:
                 try {
                     ArrayList<Article> articles = db.getArticles();
@@ -60,57 +59,49 @@ public class ApiHandler extends MyHttpHandler {
                     response.put("Cause", Cause);
                 }
                 
-                
-                exchange.sendResponseHeaders(200, response.toString().length());
-                exchange.getResponseHeaders().set("Content-Type", "text/json");
-                OutputStream outputStream = exchange.getResponseBody();
-                outputStream.write(response.toString().getBytes());
-                outputStream.close();
-            } else
+                SendResponse(exchange, response);
 
-            if(requestPath.endsWith("Login")){
+            } else if (requestPath.endsWith("Login")) {
                 //Manage Login Procedure
-                
-            } else
-            
-            if(requestPath.endsWith("Logout")){
+
+            } else if (requestPath.endsWith("Logout")) {
                 //Manage Logout procedure
                 
                 //Check Session Auth:
-            
-            } else Erreur404(exchange);
-        } else 
-        if(requestMethod.equalsIgnoreCase("POST")){
-            if(requestPath.endsWith("Articles")){
+                
+            } else {
+                Erreur404(exchange);
+            }
+        } else if (requestMethod.equalsIgnoreCase("POST")) {
+            if (requestPath.endsWith("Articles")) {
                 //Manage update of Articles
                 boolean noProblemo = false;
                 String cause = "";
-                JSONObject response =  new JSONObject();
-                
+                JSONObject response = new JSONObject();
+
                 byte[] requestBody = exchange.getRequestBody().readAllBytes();
-                String formData = new String(requestBody,StandardCharsets.UTF_8);
+                String formData = new String(requestBody, StandardCharsets.UTF_8);
                 Map<String, String> queryParams = parseQueryParams(formData);
-                
-                if(!queryParams.containsKey("cleSession") || !queryParams.containsKey("idArticle")
-                    || !queryParams.containsKey("prix") || !queryParams.containsKey("stock")){
-                    Erreur404(exchange);
+
+                if (!queryParams.containsKey("cleSession") || !queryParams.containsKey("idArticle")
+                        || !queryParams.containsKey("prix") || !queryParams.containsKey("stock")) {
+
+                    response.put("Cause", "Paramètre incomplet");
+                    SendResponse(exchange, response);
                     return;
                 }
-                
-                
+
                 String cleSession = queryParams.get("cleSession");
                 int idArticle = Integer.parseInt(queryParams.get("idArticle"));
                 float prix = Float.parseFloat(queryParams.get("prix"));
                 int stock = Integer.parseInt(queryParams.get("stock"));
-                
+
                 //Check Session Auth:
-                
                 //do DB Logics
                 log.Trace("cleSession: " + cleSession);
                 log.Trace("idArticles: " + idArticle);
                 log.Trace("prix: " + prix);
                 log.Trace("stock: " + stock);
-                
                 
                 try {
                     db.UpdateArticles(idArticle, prix, stock);
@@ -119,17 +110,16 @@ public class ApiHandler extends MyHttpHandler {
                     log.Trace("UpdateArticles Exception: " + ex.getMessage());
                     response.put("Success", false);
                     response.put("Cause", ex.getMessage());
-                }               
+                }
                 
-                exchange.sendResponseHeaders(200, response.toString().length());
-                exchange.getResponseHeaders().set("Content-Type", "text/json");
-                OutputStream outputStream = exchange.getResponseBody();
-                outputStream.write(response.toString().getBytes());
-                outputStream.close();
+                SendResponse(exchange, response);
+
+            } else {
+                Erreur404(exchange);
             }
-            else Erreur404(exchange);
+        } else {
+            Erreur404(exchange);
         }
-        else Erreur404(exchange);
     }
-    
+
 }

@@ -13,6 +13,8 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  *
@@ -41,6 +43,14 @@ public abstract class MyHttpHandler implements HttpHandler {
             java.util.logging.Logger.getLogger(IndexHandler.class.getName()).log(Level.SEVERE, null, ex);
             log.Trace("Erreur: " + ex.getMessage());
         }
+    }
+    
+    
+    protected void SendResponse(HttpExchange exchange, JSONObject response) throws IOException{       
+        exchange.sendResponseHeaders(200, response.toString().getBytes().length);
+        exchange.getResponseHeaders().set("Content-Type", "text/json");
+        exchange.getResponseBody().write(response.toString().getBytes());
+        exchange.getResponseBody().close();
     }
     
     

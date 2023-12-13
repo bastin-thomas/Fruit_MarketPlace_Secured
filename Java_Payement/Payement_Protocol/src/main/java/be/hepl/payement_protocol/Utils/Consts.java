@@ -21,20 +21,36 @@ public class Consts {
     public final static String ConfigFileComments = "Default configuration File";
     
     
+    
     public final static String ConfigIP = "Server_IP";
     public final static String ConfigDefaultIP = "127.0.0.1";
     
     public final static String ConfigPort = "Server_PORT";
     public final static String ConfigDefaultPort = "50002";
     
-    public final static String ConfigPortSecured = "Server_PORT_SECURED";
-    public final static String ConfigDefaultPortSecured = "50052";
-    
     public final static String ConfigDBString = "DB_URL_CONNEXION";
     public final static String ConfigDefaultDBString = "jdbc:mariadb://192.168.1.19:3306/PourStudent?user=Student&password=PassStudent1_";
     
     public final static String ConfigPoolSize = "POOL_SIZE";
     public final static String ConfigDefaultPoolSize = "10";
+    
+    
+    /*Protocol Char*/
+    public final static char EndOfRequest1 = '&';
+    public final static char EndOfRequest2 = ')';
+    
+    public final static char SplitCommand = '@';
+    public final static char SplitParameters = '#';
+    public final static char SplitList = '~';
+ 
+    
+    public final static String CharsetName = "UTF-8";
+    
+    
+    /*RTI CRYPTO*/
+    public final static String ConfigPortSecured = "Server_PORT_SECURED";
+    public final static String ConfigDefaultPortSecured = "50052";
+    
     
     public final static String ConfigKeyStorePath = "KEYSTORE_PATH";
     public final static String ConfigDefaultClientKeyStorePath = "../../JAVA_CRYPTO/ClientKeyStore.p12";
@@ -51,15 +67,6 @@ public class Consts {
     public final static String ConfigDefaultRootKeyStorePassword = "1234";
     
     
-    public final static char EndOfRequest1 = '&';
-    public final static char EndOfRequest2 = ')';
-    
-    public final static char SplitCommand = '@';
-    public final static char SplitParameters = '#';
-    public final static char SplitList = '~';
- 
-    
-    public final static String CharsetName = "UTF-8";
     
     public final static String SecurityProvider = BouncyCastleProvider.PROVIDER_NAME;
     public final static String KeyStoreInstanceType = "PKCS12";
@@ -82,4 +89,10 @@ public class Consts {
     public final static String SignatureAlgorythm = "SHA512WithRSA";
     
     public final static String HMACAlgorythm = "HmacSHA512";
+
+    /*SSL - Ecom*/
+    public final static String ConfigPortTLS = "Server_PORT_TLS";
+    public final static String ConfigDefaultPortTLS = "50062";
+    
+    public final static String TLSVersion = "TLSv1.3";
 }

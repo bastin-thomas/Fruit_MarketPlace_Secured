@@ -55,6 +55,11 @@ public class ConfigFolderManager {
             config.setProperty(Consts.ConfigPortSecured, Consts.ConfigDefaultPortSecured);
         }
         
+        if(!config.containsKey(Consts.ConfigPortTLS))
+        {
+            config.setProperty(Consts.ConfigPortTLS, Consts.ConfigDefaultPortTLS);
+        }
+        
         if(!config.containsKey(Consts.ConfigKeyStorePath))
         {
             config.setProperty(Consts.ConfigKeyStorePath, Consts.ConfigDefaultServerKeyStorePath);

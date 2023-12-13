@@ -3,19 +3,25 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package be.hepl.payement_client.GUI;
+import be.hepl.generic_server_tcp.TLSUtils.TLSUtils;
 import be.hepl.payement_client.Utils.ConfigFolderManager;
 import be.hepl.payement_protocol.Utils.Consts;
 import be.hepl.payement_protocol.protocol.Gestion_Protocol_Client;
 import be.hepl.payement_protocol.protocol.Secured.Gestion_Protocol_Client_Secured;
 import com.formdev.flatlaf.FlatLightLaf;
+import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
+import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.SSLSocketFactory;
 import javax.swing.JOptionPane;
 
 /**
@@ -65,9 +71,10 @@ public class LoginPage extends javax.swing.JFrame {
         Password_TextField = new javax.swing.JPasswordField();
         Login_Label = new javax.swing.JLabel();
         Password_Label = new javax.swing.JLabel();
-        Create_CheckBox = new javax.swing.JCheckBox();
+        Secured_CheckBox = new javax.swing.JCheckBox();
         Login_Button = new javax.swing.JButton();
         Cancel_Button = new javax.swing.JButton();
+        TLS_CheckBox = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Login");
@@ -88,8 +95,13 @@ public class LoginPage extends javax.swing.JFrame {
         Password_Label.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         Password_Label.setText("Password");
 
-        Create_CheckBox.setSelected(true);
-        Create_CheckBox.setText("Secure");
+        Secured_CheckBox.setSelected(true);
+        Secured_CheckBox.setText("Secure");
+        Secured_CheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                Secured_CheckBoxActionPerformed(evt);
+            }
+        });
 
         Login_Button.setText("Login");
         Login_Button.addActionListener(new java.awt.event.ActionListener() {
@@ -105,15 +117,15 @@ public class LoginPage extends javax.swing.JFrame {
             }
         });
 
+        TLS_CheckBox.setSelected(true);
+        TLS_CheckBox.setText("Using TLS");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(Create_CheckBox))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(21, 21, 21)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -128,7 +140,12 @@ public class LoginPage extends javax.swing.JFrame {
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(Cancel_Button)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(Login_Button)))))
+                                .addComponent(Login_Button))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(Secured_CheckBox, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(TLS_CheckBox, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addGap(23, 23, 23))
         );
         layout.setVerticalGroup(
@@ -142,9 +159,11 @@ public class LoginPage extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(Password_Label, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(Password_TextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(Create_CheckBox)
-                .addGap(24, 24, 24)
+                .addGap(4, 4, 4)
+                .addComponent(Secured_CheckBox)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(TLS_CheckBox)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(Login_Button)
                     .addComponent(Cancel_Button))
@@ -159,28 +178,51 @@ public class LoginPage extends javax.swing.JFrame {
     private void Login_ButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Login_ButtonActionPerformed
         String Login = "";
         String Password = "";
+        int portServeur = -1;
+        String ipServeur = "-1.-1.-1.-1";
         
         //Connect to Server
         try { 
-            String ipServeur = Config.getProperty(Consts.ConfigIP);
+            ipServeur = Config.getProperty(Consts.ConfigIP);
             
-            if(Create_CheckBox.isSelected())
+            if(Secured_CheckBox.isSelected())
             {
-                int portServeurSecured = Integer.parseInt(Config.getProperty(Consts.ConfigPortSecured));
-                Socket socket = new Socket(ipServeur, portServeurSecured);
-                GPC = new Gestion_Protocol_Client_Secured(socket, Config);
+                if(TLS_CheckBox.isSelected()){
+                    
+                    String storePath = Config.getProperty(Consts.ConfigKeyStorePath);
+                    String keyStorePassword = Config.getProperty(Consts.ConfigKeyStorePassword);
+                    KeyStore store = KeyStore.getInstance(new File(storePath), keyStorePassword.toCharArray());
+                    
+                    SSLContext Ss1C = TLSUtils.getTLSContext(Consts.TLSVersion, Consts.SecurityProvider,
+                            store, keyStorePassword);
+                    
+                    portServeur = Integer.parseInt(Config.getProperty(Consts.ConfigPortTLS));
+                    SSLSocketFactory SslSFac= Ss1C.getSocketFactory();
+                    SSLSocket socket = (SSLSocket) SslSFac.createSocket(ipServeur, portServeur);
+                    
+                    GPC = new Gestion_Protocol_Client(socket, Config);
+                }
+                else{
+                    portServeur = Integer.parseInt(Config.getProperty(Consts.ConfigPortSecured));
+                    Socket socket = new Socket(ipServeur, portServeur);
+                    GPC = new Gestion_Protocol_Client_Secured(socket, Config);
+                }
             } else {
-                int portServeur = Integer.parseInt(Config.getProperty(Consts.ConfigPort));
+                portServeur = Integer.parseInt(Config.getProperty(Consts.ConfigPort));
                 Socket socket = new Socket(ipServeur, portServeur);
                 GPC = new Gestion_Protocol_Client(socket);
             }
         } catch (IOException | NumberFormatException ex) {
             Logger.getLogger(LoginPage.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(this, "Impossible to reach the Server on: " + Config.getProperty(Consts.ConfigIP) + ":" + Config.getProperty(Consts.ConfigPort), "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Impossible to reach the Server on: " + ipServeur + ":" + portServeur, "Error", JOptionPane.ERROR_MESSAGE);
             return;
         } catch (KeyStoreException | CertificateException | NoSuchAlgorithmException ex) {
             Logger.getLogger(LoginPage.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(this, "Impossible to open the KeyStore[" + Config.getProperty(Consts.ConfigKeyStorePath) + "] with password: " + Config.getProperty(Consts.ConfigKeyStorePassword), "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception ex) {
+            Logger.getLogger(LoginPage.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(this, "Impossible to open the SSL Socket: " + ipServeur + ":" + portServeur, "Error", JOptionPane.ERROR_MESSAGE);
+            return;
         }
         
         //Try To Login
@@ -237,6 +279,17 @@ public class LoginPage extends javax.swing.JFrame {
         ConfigFolderManager.SaveProperties(Config);
         System.exit(0);
     }//GEN-LAST:event_OnWindowClosing
+
+    private void Secured_CheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Secured_CheckBoxActionPerformed
+        if(this.Secured_CheckBox.isSelected()){
+            this.TLS_CheckBox.setSelected(true);
+            this.TLS_CheckBox.setEnabled(true);
+        }
+        else{
+            this.TLS_CheckBox.setSelected(false);
+            this.TLS_CheckBox.setEnabled(false);
+        }
+    }//GEN-LAST:event_Secured_CheckBoxActionPerformed
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Main">
@@ -264,12 +317,13 @@ public class LoginPage extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Properties">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton Cancel_Button;
-    private javax.swing.JCheckBox Create_CheckBox;
     private javax.swing.JButton Login_Button;
     private javax.swing.JLabel Login_Label;
     private javax.swing.JTextField Login_TextField;
     private javax.swing.JLabel Password_Label;
     private javax.swing.JPasswordField Password_TextField;
+    private javax.swing.JCheckBox Secured_CheckBox;
+    private javax.swing.JCheckBox TLS_CheckBox;
     // End of variables declaration//GEN-END:variables
     // </editor-fold>
 }

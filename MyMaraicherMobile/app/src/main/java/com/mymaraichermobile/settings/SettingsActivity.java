@@ -1,4 +1,4 @@
-package com.mymaraichermobile;
+package com.mymaraichermobile.settings;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,20 +11,36 @@ import android.widget.Spinner;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.mymaraichermobile.R;
+
 public class SettingsActivity extends AppCompatActivity {
     String selectedLanguage = "";
     Context context = this;
+    String nameClass;
+    Class<?> targetClass;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
-        setTitle(getString(R.string.titleSettings));
-
         //region Variables
 
         String currentLanguage = LanguageManager.getLanguage(this);
         Spinner languages = findViewById(R.id.languageSpinner);
+
+        // On récupère la classe appellante
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            nameClass = extras.getString("class_name");
+
+            try {
+                targetClass = Class.forName(nameClass);
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+
+            Log.d("CLASSE", "Classe : " + targetClass);
+        }
 
         // Création d'un adaptateur pour les options du Spinner
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
@@ -81,8 +97,8 @@ public class SettingsActivity extends AppCompatActivity {
         findViewById(R.id.backButton).setOnClickListener(view -> {
             finish();// Termine l'activité en cours, ramenant l'utilisateur à la page précédente
 
-            Intent intent = new Intent(context, MainActivity.class);
-            startActivity(intent);
+            Intent intent = new Intent(context, targetClass);
+            context.startActivity(intent);
         });
 
         //endregion

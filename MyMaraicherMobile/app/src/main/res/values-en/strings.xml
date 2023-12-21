@@ -1,6 +1,22 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Strings related to home -->
     <string name="app_name">MyMaraicherMobile</string>
+    <string name="titleActivityConfig">ConfigActivity</string>
+
+    <!-- Strings related to socket -->
+    <string name="params_format_error">PARAMS_FORMAT_ERROR</string>
+    <string name="EndOfRequest1">&amp;</string>
+    <string name="EndOfRequest2">)</string>
+    <string name="SplitCommand">"@"</string>
+    <string name="SplitParameters">#</string>
+    <string name="SplitList">~</string>
+    <string name="endconnexion">ENDCONNEXION</string>
+    <string name="critical">CRITICAL</string>
+    <string name="no_article_found">NO_ARTICLE_FOUND</string>
+    <string name="cancel_error">CANCEL_ERROR</string>
+    <string name="port_serveur">50001</string>
+    <string name="ip_serveur">10.59.22.26</string>
+<!--    jdbc\:mariadb\://10.59.22.29\:3306/PourStudent?user\=Student&amp;password\=PassStudent1_-->
 
     <!-- Strings related to login -->
     <string name="titleHome">"Please connect"</string>
@@ -8,8 +24,7 @@
     <string name="hintPassword">Password</string>
     <string name="hintLogin">Username</string>
     <string name="connexion">Login</string>
-    <string name="port_serveur">50002</string>
-    <string name="adresse_serveur">1</string>
+    <string name="newAccount">New</string>
 
     <!-- Strings related to settings -->
     <string name="titleSettings">Settings</string>
@@ -20,5 +35,19 @@
     <!-- Strings related to Maraicher -->
     <string name="titleMaraicher">"Welcome to MyMaraicherMobile"</string>
     <string name="imgMaraicher">A picture</string>
-
+    <string name="add">Add</string>
+    <string name="previous">previous</string>
+    <string name="next">next</string>
+    <string name="fruitsName" />
+    <string name="fruitsPrice" />
+    <string name="fruitsStock" />
+    <string name="unitPriceText">Unit price :</string>
+    <string name="product">Product :</string>
+    <string name="stockProduct">Quantity stock :</string>
+    <string name="titleCaddie">Basket :</string>
+    <string name="total">Total :</string>
+    <string name="deleteAllButton">Delete Basket</string>
+    <string name="deleteButton">Delete</string>
+    <string name="confirmButton">Confirm</string>
+    <string name="disconnectButton">Disconnect</string>
 </resources>

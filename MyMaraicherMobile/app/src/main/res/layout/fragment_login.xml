@@ -31,6 +31,13 @@
         tools:ignore="VisualLintTextFieldSize"
         android:autofillHints="" />
 
+    <CheckBox
+        android:id="@+id/checkBoxAccount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checked="false"
+        android:text="@string/newAccount" />
+
     <Button
         android:id="@+id/loginButton"
         android:layout_width="wrap_content"

@@ -1,4 +1,4 @@
-package com.mymaraichermobile;
+package com.mymaraichermobile.settings;
 
 import android.app.Activity;
 import android.content.Context;
@@ -6,17 +6,19 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.util.Log;
-
+import androidx.appcompat.app.AppCompatActivity;
 import java.util.Locale;
 
-public class LanguageManager {
+public class LanguageManager extends AppCompatActivity {
 
     //region Private variables
     private static final String LANGUAGE_PREF_KEY = "language_pref";
     private static final String DEFAULT_LANGUAGE = "fr";
+
     //endregion
 
     //region Methods
+
     public static String getLanguage(Context context) {
         SharedPreferences preferences = context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
 
@@ -47,15 +49,25 @@ public class LanguageManager {
         Locale locale = new Locale(lang);
         Locale.setDefault(locale);
 
-        Configuration config = context.getResources().getConfiguration();
+        Configuration config = new Configuration();
         config.setLocale(locale);
 
         Resources resources = context.getResources();
         resources.updateConfiguration(config, resources.getDisplayMetrics());
 
+        saveLanguage(context, lang);
+
         // Rafraîchir l'activité actuelle
         if (context instanceof Activity) {
             ((Activity) context).recreate();
+        }
+    }
+
+    public static void handleLanguageAndConfiguration(Context context) {
+        String selectedLanguage = LanguageManager.getLanguage(context);
+
+        if (LanguageManager.isLanguageChanged(context, selectedLanguage.toLowerCase())) {
+            LanguageManager.changeLanguage(context, selectedLanguage.toLowerCase());
         }
     }
     //endregion

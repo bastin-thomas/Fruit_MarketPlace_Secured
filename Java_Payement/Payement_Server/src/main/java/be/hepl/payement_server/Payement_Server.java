@@ -5,11 +5,13 @@
 package be.hepl.payement_server;
 
 import be.hepl.generic_server_tcp.Exceptions.OnDemandServer.ListenThreadOnDemand;
+import be.hepl.generic_server_tcp.Exceptions.OnDemandServer.ListenThreadOnDemand_TLS;
 import be.hepl.generic_server_tcp.ListenThread;
 import be.hepl.payement_server.Utils.ConfigFolderManager;
 
 import be.hepl.generic_server_tcp.Logger;
 import be.hepl.generic_server_tcp.PooledServer.ListenThreadPooled;
+import be.hepl.generic_server_tcp.TLSUtils.TLSUtils;
 
 import be.hepl.payement_protocol.Utils.Consts;
 import be.hepl.payement_protocol.protocol.DBPayement;
@@ -18,13 +20,20 @@ import be.hepl.payement_protocol.protocol.Secured.DBPayement_Secured;
 import be.hepl.payement_protocol.protocol.Secured.Payement_Secured;
 
 import com.formdev.flatlaf.FlatLightLaf;
+import java.io.File;
 import java.io.IOException;
+import java.security.KeyStore;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
 import java.util.Vector;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLServerSocket;
+import javax.net.ssl.SSLServerSocketFactory;
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.SSLSocketFactory;
 import javax.swing.table.DefaultTableModel;
 
 
@@ -37,6 +46,7 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
     // <editor-fold defaultstate="collapsed" desc="My Properties">
     private boolean isLaunched;
     private ListenThread socket_secured;
+    private ListenThread socket_TLS;
     private ListenThread socket_unsecured;
     private final Properties config;
     // </editor-fold>
@@ -62,6 +72,8 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
         
         //Set UI Port-Secured
         Port_Secured_Spinner.getModel().setValue(Integer.valueOf(config.getProperty(Consts.ConfigPortSecured)));
+        
+        Port_TLS_Spinner.getModel().setValue(Integer.valueOf(config.getProperty(Consts.ConfigPortTLS)));
         
         //Set DB URL
         DBurl_TextField.setText(config.getProperty(Consts.ConfigDBString));
@@ -110,6 +122,7 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
         this.AbortButton.setEnabled(true);
         this.Pool_Spinner.setEnabled(false);
         this.Port_Secured_Spinner.setEnabled(false);
+        this.Port_TLS_Spinner.setEnabled(false);
         this.RemoveLogs();
     }
     
@@ -124,6 +137,7 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
         this.AbortButton.setEnabled(false);
         this.Pool_Spinner.setEnabled(true);
         this.Port_Secured_Spinner.setEnabled(true);
+        this.Port_TLS_Spinner.setEnabled(true);
         this.RemoveLogs();
     }
     // </editor-fold>
@@ -157,6 +171,8 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
         Port_Secured_Spinner = new javax.swing.JSpinner();
         Logs6 = new javax.swing.JLabel();
         Logs7 = new javax.swing.JLabel();
+        LogsTLS = new javax.swing.JLabel();
+        Port_TLS_Spinner = new javax.swing.JSpinner();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(808, 493));
@@ -170,7 +186,6 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
         jLabel1.setText("Payement Server Manager");
 
         AbortButton.setBackground(new java.awt.Color(204, 0, 0));
-        AbortButton.setForeground(new java.awt.Color(0, 0, 0));
         AbortButton.setText("ABORT");
         AbortButton.setEnabled(false);
         AbortButton.addActionListener(new java.awt.event.ActionListener() {
@@ -180,7 +195,6 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
         });
 
         Start_Stop_Button.setBackground(new java.awt.Color(51, 204, 0));
-        Start_Stop_Button.setForeground(new java.awt.Color(0, 0, 0));
         Start_Stop_Button.setText("START");
         Start_Stop_Button.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -271,18 +285,17 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(Logs4, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(28, 28, 28)
                         .addComponent(Port_Spinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(Logs1, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(Logs3, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(Pool_Spinner, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addComponent(Logs1, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(Logs3, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(17, 17, 17)
+                        .addComponent(Pool_Spinner, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -309,7 +322,12 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
         Logs6.setText("Socket Secured");
 
         Logs7.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        Logs7.setText("Port :");
+        Logs7.setText("Port Self:");
+
+        LogsTLS.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        LogsTLS.setText("Port TLS:");
+
+        Port_TLS_Spinner.setModel(new javax.swing.SpinnerNumberModel(50062, 50000, 50100, 1));
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -318,14 +336,16 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(Logs6, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(Logs6, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(Logs7, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(Port_Secured_Spinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(Logs7)
+                            .addComponent(LogsTLS))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(Port_TLS_Spinner, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(Port_Secured_Spinner, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -336,6 +356,12 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(Logs7)
                     .addComponent(Port_Secured_Spinner, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(Port_TLS_Spinner, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addComponent(LogsTLS, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(5, 5, 5)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -345,31 +371,30 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(20, 20, 20)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 608, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(244, 244, 244)
+                .addComponent(Logs, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(20, 20, 20)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 608, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(Logs2, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(AbortButton, javax.swing.GroupLayout.DEFAULT_SIZE, 179, Short.MAX_VALUE)
-                                .addComponent(Start_Stop_Button, javax.swing.GroupLayout.DEFAULT_SIZE, 179, Short.MAX_VALUE)
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 179, Short.MAX_VALUE))
-                            .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(26, 26, 26)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(Logs, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 748, Short.MAX_VALUE))))
-                .addGap(11, 11, 11))
+                    .addComponent(Start_Stop_Button, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(Logs2, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(AbortButton, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 756, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(6, 6, 6)
                 .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(6, 6, 6)
                 .addComponent(Logs)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(6, 6, 6)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(Start_Stop_Button, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -379,12 +404,11 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(35, 35, 35)
                         .addComponent(Logs2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGap(6, 6, 6)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
+                        .addGap(36, 36, 36)
                         .addComponent(AbortButton, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane2))
-                .addGap(14, 14, 14))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 525, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
 
         pack();
@@ -415,6 +439,7 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
             
             int port_unsecured = (int) this.Port_Spinner.getModel().getValue();
             int port_secured = (int) this.Port_Secured_Spinner.getModel().getValue();
+            int port_tls = (int) this.Port_TLS_Spinner.getModel().getValue();
             int poolSize = (int) this.Pool_Spinner.getModel().getValue();
             
             try {
@@ -427,6 +452,17 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
                 socket_secured = new ListenThreadOnDemand(port_secured, new Payement_Secured(this, (DBPayement_Secured) db, config), this);
                 socket_secured.start();
                 
+                
+                
+                //Start TLS Server
+                String storePath = config.getProperty(Consts.ConfigKeyStorePath);
+                String keyStorePassword = config.getProperty(Consts.ConfigKeyStorePassword);
+                KeyStore store = KeyStore.getInstance(new File(storePath), keyStorePassword.toCharArray());
+                
+                socket_TLS = new ListenThreadOnDemand_TLS(port_tls, new Payement(this, db), this,
+                        Consts.TLSVersion, Consts.SecurityProvider, store, keyStorePassword);
+                socket_TLS.start();
+                
                 isLaunched = true;
             } catch (Exception ex) {
                 this.Trace("Error creating ServerThread: " + ex.getMessage());
@@ -436,6 +472,8 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
         {
             //Stop the Server
             socket_unsecured.interrupt();
+            socket_secured.interrupt();
+            socket_TLS.interrupt();
             
             isLaunched = false;
             UnFreezeUI();
@@ -445,6 +483,12 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         int port = (int) this.Port_Spinner.getModel().getValue();
         config.setProperty(Consts.ConfigPort, ""+port);
+        
+        int port_secured = (int) this.Port_Secured_Spinner.getModel().getValue();
+        config.setProperty(Consts.ConfigPortSecured, ""+port_secured);
+        
+        int port_tls = (int) this.Port_TLS_Spinner.getModel().getValue();
+        config.setProperty(Consts.ConfigPortTLS, ""+port_tls);
         
         int poolSize = (int) this.Pool_Spinner.getModel().getValue();
         config.setProperty(Consts.ConfigPoolSize, ""+poolSize);
@@ -491,9 +535,11 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
     private javax.swing.JLabel Logs4;
     private javax.swing.JLabel Logs6;
     private javax.swing.JLabel Logs7;
+    private javax.swing.JLabel LogsTLS;
     private javax.swing.JSpinner Pool_Spinner;
     private javax.swing.JSpinner Port_Secured_Spinner;
     private javax.swing.JSpinner Port_Spinner;
+    private javax.swing.JSpinner Port_TLS_Spinner;
     private javax.swing.JButton Start_Stop_Button;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;

@@ -49,8 +49,12 @@ public class ConfigFolderManager {
             config.setProperty(Consts.ConfigPortSecured, Consts.ConfigDefaultPortSecured);
         }
 
-        if (!config.containsKey(Consts.ConfigPortSecured)) {
-            config.setProperty(Consts.ConfigPortSecured, Consts.ConfigDefaultPortSecured);
+        if (!config.containsKey(Consts.ConfigPortTLS)) {
+            config.setProperty(Consts.ConfigPortTLS, Consts.ConfigDefaultPortTLS);
+        }
+        
+        if (!config.containsKey(Consts.ConfigRootKeyStorePassword)) {
+            config.setProperty(Consts.ConfigRootKeyStorePassword, Consts.ConfigDefaultRootKeyStorePassword);
         }
 
         if (!config.containsKey(Consts.ConfigKeyStorePath)) {

@@ -6,7 +6,9 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.util.Log;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import java.util.Locale;
 
 public class LanguageManager extends AppCompatActivity {
@@ -42,8 +44,6 @@ public class LanguageManager extends AppCompatActivity {
     }
 
     public static void changeLanguage(Context context, String lang) {
-        // On sauvegarde la nouvelle langue
-        saveLanguage(context, lang.toLowerCase());
 
         // On met à jour la configuration de la langue
         Locale locale = new Locale(lang);
@@ -55,20 +55,26 @@ public class LanguageManager extends AppCompatActivity {
         Resources resources = context.getResources();
         resources.updateConfiguration(config, resources.getDisplayMetrics());
 
-        saveLanguage(context, lang);
+        // On sauvegarde la nouvelle langue
+        saveLanguage(context, lang.toLowerCase());
 
-        // Rafraîchir l'activité actuelle
-        if (context instanceof Activity) {
-            ((Activity) context).recreate();
-        }
     }
 
     public static void handleLanguageAndConfiguration(Context context) {
         String selectedLanguage = LanguageManager.getLanguage(context);
 
-        if (LanguageManager.isLanguageChanged(context, selectedLanguage.toLowerCase())) {
-            LanguageManager.changeLanguage(context, selectedLanguage.toLowerCase());
-        }
+        LanguageManager.changeLanguage(context, selectedLanguage.toLowerCase());
+
     }
+
+    public static void refreshUi(Context context) {
+
+        // Rafraîchir l'activité actuelle
+        if (context instanceof Activity cActivity) {
+            cActivity.recreate();
+        }
+
+    }
+
     //endregion
 }

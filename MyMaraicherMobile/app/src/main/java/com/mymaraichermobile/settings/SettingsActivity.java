@@ -75,15 +75,13 @@ public class SettingsActivity extends AppCompatActivity {
                     // Pour changer la langue en fonction de la sélection
                     LanguageManager.changeLanguage(context, selectedLanguage.toLowerCase());
 
-                    // On sauvegarde la langue choisie
-                    LanguageManager.saveLanguage(context, selectedLanguage);
+                    LanguageManager.refreshUi(context);
 
                     String cur = LanguageManager.getLanguage(context);
                     Log.d("SettingsActivity", "NomCurrent: " + cur);
                     Log.d("SettingsActivity", "NomSelected: " + selectedLanguage);
-
-                    recreate();
                 }
+
             }
 
             @Override

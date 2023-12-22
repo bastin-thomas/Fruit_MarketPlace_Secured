@@ -15,7 +15,7 @@
     <string name="no_article_found">NO_ARTICLE_FOUND</string>
     <string name="cancel_error">CANCEL_ERROR</string>
     <string name="port_serveur">50001</string>
-    <string name="ip_serveur">10.59.22.29</string>
+    <string name="ip_serveur">91.177.209.51</string>
 <!--    jdbc\:mariadb\://10.59.22.29\:3306/PourStudent?user\=Student&amp;password\=PassStudent1_-->
 
     <!-- Strings related to login -->

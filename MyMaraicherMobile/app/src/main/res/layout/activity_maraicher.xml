@@ -247,7 +247,7 @@
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="10dp"
             android:minHeight="48dp"
-            android:onClick="Disconnect"
+            android:onClick="disconnect"
             android:text="@string/disconnectButton"
             android:textColor="@color/white"
             android:textSize="10sp" />

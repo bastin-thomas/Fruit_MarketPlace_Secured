@@ -73,7 +73,7 @@ public class LoginFragment extends Fragment {
 
             if(!isChecked) {
                 try {
-
+                    Log.d("SENDLOGIN", "TEST");
                     client.sendLogin(usernameInput.getText().toString(), passwordInput.getText().toString());
 
                 } catch (Exception e) {
@@ -117,7 +117,6 @@ public class LoginFragment extends Fragment {
             }
 
             //endregion
-
 
             // Si login bon, on passe à la page du Maraicher
             Intent intent = new Intent(requireContext(), MaraicherActivity.class);
@@ -200,6 +199,21 @@ public class LoginFragment extends Fragment {
     }
 
     //region Methods
+
+    @Override
+    public void onDestroy() { // FINI
+        super.onDestroy();
+
+        try {
+
+            client.sendCancelAll();
+            client.sendLogout();
+            client.close();
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public void updateButtonState() {
         loginButton.setEnabled(usernameInput.getText().toString().length() > 0 && passwordInput.getText().toString().length() > 0);

@@ -40,6 +40,7 @@ public class ProtocoleClient {
         //Send and wait for response
         try{
             socket.send("LOGIN" + (R.string.SplitCommand) + nom + (R.string.SplitParameters) + mdp);
+            Log.d("TRACE LOGIN", "Nom : " + nom + " mdp : " + mdp);
             message = socket.receive();
         }catch(IOException ex){
             throw new Exception(String.valueOf(R.string.endconnexion));

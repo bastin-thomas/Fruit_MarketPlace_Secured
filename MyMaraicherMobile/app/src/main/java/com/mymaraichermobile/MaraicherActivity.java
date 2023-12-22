@@ -1,7 +1,9 @@
 package com.mymaraichermobile;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -12,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.mymaraichermobile.client.Articles;
@@ -23,10 +26,11 @@ import com.mymaraichermobile.settings.SettingsActivity;
 
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.Vector;
 
 public class MaraicherActivity extends AppCompatActivity {
-    // TODO Faire LoginId + add and delete(/ALl) Buttons
+    // TODO Faire add and delete(/ALl) Buttons
 
     //region Private variables
 
@@ -52,12 +56,14 @@ public class MaraicherActivity extends AppCompatActivity {
     // Variables pour le panier
     private ListView caddieListView;
     private TextView totalText;
+    private EditText quantityEditText;
     private float totalPrice;
     private int currentArticle;
     private ArrayList<CaddieRows> caddie;
 
     //endregion
 
+    @RequiresApi(api = Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,6 +86,9 @@ public class MaraicherActivity extends AppCompatActivity {
 
         //region Variables initialisation
 
+        UUID uuid = UUID.randomUUID();
+        loginId = uuid.toString();
+
         // variables IDS
         imageFruitView = findViewById(R.id.imageView);
         quantityEditText = findViewById(R.id.quantityEditText);
@@ -95,7 +104,9 @@ public class MaraicherActivity extends AppCompatActivity {
         deleteAllButton = findViewById(R.id.deleteAllButton);
         confirmButton = findViewById(R.id.confirmButton);
 
+        // Buttons Initialisation
         previousButton.setEnabled(false);
+        nextButton.setEnabled(true);
 
         // variables panier
         currentArticle = 0;
@@ -107,47 +118,23 @@ public class MaraicherActivity extends AppCompatActivity {
         //endregion
 
         //region Button Listener
-        previousButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showPreviousElement();
-            }
-        });
+        previousButton.setOnClickListener(v ->
+                showPreviousElement());
 
-        nextButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showNextElement();
-            }
-        });
+        nextButton.setOnClickListener(v ->
+                showNextElement());
 
-        addCaddieButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addToCaddie();
-            }
-        });
+        addCaddieButton.setOnClickListener(v ->
+                addToCaddie());
 
-        deleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                deleteArticle();
-            }
-        });
+        deleteButton.setOnClickListener(v ->
+                deleteArticle());
 
-        deleteAllButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                deleteCaddie();
-            }
-        });
+        deleteAllButton.setOnClickListener(v ->
+                deleteCaddie());
 
-        confirmButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendConfirm(); // Envoie la requête de confirmation au serveur pour valider le Caddie
-            }
-        });
+        confirmButton.setOnClickListener(v ->
+            sendConfirm()); // Envoie la requête de confirmation au serveur pour valider le Caddie
 
         //endregion
 
@@ -156,14 +143,18 @@ public class MaraicherActivity extends AppCompatActivity {
     //region Methods
 
     // Application
+
+    // S'exécute avant que l'application s'arrête
     @Override
     protected void onDestroy() { // FINI
         super.onDestroy();
 
         try {
+
             client.sendCancelAll();
             client.sendLogout();
             client.close();
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -180,8 +171,9 @@ public class MaraicherActivity extends AppCompatActivity {
     }
 
     // Pour revenir à la page de connexion
-    public void Disconnect(View view) { // FINI
+    public void disconnect(View view) { // FINI
         try {
+
             client.sendCancelAll();
             client.sendLogout();
             client.close();
@@ -201,6 +193,7 @@ public class MaraicherActivity extends AppCompatActivity {
 
     // Caddie
     private void showPreviousElement() { // FINI
+
         if(!this.previousButton.isEnabled())
         {
             this.nextButton.setEnabled(true);
@@ -213,21 +206,19 @@ public class MaraicherActivity extends AppCompatActivity {
 
 
         } catch (Exception ex) {
-            switch (ex.getMessage()) {
+            switch (Objects.requireNonNull(ex.getMessage())) {
 
-                case "ENDCONNEXION" -> {
+                case "ENDCONNEXION" ->
                     this.runOnUiThread(() ->
                             configActivity.afficherPopupErreur("ERROR PREVIOUS BUTTON", ("Erreur transmission des données : " + ex.getMessage()), this));
-                }
 
                 case "NO_ARTICLE_FOUND" -> // On désactive le bouton car plus d'article précédent
                         this.previousButton.setEnabled(false);
 
-                case "PARAMS_FORMAT_ERROR" -> {
+                case "PARAMS_FORMAT_ERROR" ->
 
                     this.runOnUiThread(() ->
                             configActivity.afficherPopupErreur("ERROR FORMAT PREVIOUS BUTTON", ("MAUVAIS FORMAT : " + ex.getMessage()), this));
-                }
 
                 default ->
                         this.runOnUiThread(() ->
@@ -239,6 +230,7 @@ public class MaraicherActivity extends AppCompatActivity {
     }
 
     private void showNextElement() { // FINI
+
         if (!this.nextButton.isEnabled()) {
             this.previousButton.setEnabled(true);
         }
@@ -250,7 +242,7 @@ public class MaraicherActivity extends AppCompatActivity {
 
 
         } catch (Exception ex) {
-            switch (ex.getMessage()) {
+            switch (Objects.requireNonNull(ex.getMessage())) {
 
                 case "ENDCONNEXION" -> this.runOnUiThread(() ->
                         configActivity.afficherPopupErreur("ERROR PREVIOUS BUTTON", ("Erreur transmission des données : " + ex.getMessage()), this));
@@ -266,10 +258,13 @@ public class MaraicherActivity extends AppCompatActivity {
             }
 
         }
+
     }
 
+    // Met à jour les détails du produit affiché en fonction de l'élément sélectionné
+    @SuppressLint("SetTextI18n")
     private void refreshArticle(int index) throws Exception { // FINI
-        // Met à jour les détails du produit affiché en fonction de l'image actuelle
+
         Articles art = client.sendConsult(index);
 
         try {
@@ -293,8 +288,10 @@ public class MaraicherActivity extends AppCompatActivity {
 
     }
 
-    private void RefreshCaddie() { // FINI
-        // Met à jour l'affichage du panier avec la liste des articles actuels
+    // Met à jour l'affichage du panier avec la liste des articles
+    @SuppressLint("SetTextI18n")
+    private void refreshCaddie() { // FINI
+
         caddie.clear();
 
         ArrayAdapter<Vector<String>> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
@@ -302,23 +299,23 @@ public class MaraicherActivity extends AppCompatActivity {
         adapter.clear();
 
         try{
+
             caddie = client.sendCaddie();
+
         }catch(Exception ex){
             switch (Objects.requireNonNull(ex.getMessage())) {
-                case "ENDCONNEXION":
-                    this.runOnUiThread(() ->
-                            configActivity.afficherPopupErreur("ERROR CONNECTION REFRESH CADDIE", "ERREUR TRANSMISSION DES DONNEES : " + ex.getMessage(), this));
-                    break;
+                case "ENDCONNEXION" -> this.runOnUiThread(() ->
+                        configActivity.afficherPopupErreur("ERROR CONNECTION REFRESH CADDIE", "ERREUR TRANSMISSION DES DONNEES : "
+                                + ex.getMessage(), this));
 
-                case "PARAMS_FORMAT_ERROR":
-                    this.runOnUiThread(() ->
-                            configActivity.afficherPopupErreur("ERROR FORMAT REFRESH CADDIE", "MAUVAIS FORMAT : " + ex.getMessage(), this));
-                    break;
+                case "PARAMS_FORMAT_ERROR" -> this.runOnUiThread(() ->
 
-                default:
-                    this.runOnUiThread(() ->
-                            configActivity.afficherPopupErreur("UNKNOW ERROR REFRESH CADDIE", "ERREUR INCONNUE : " + ex.getMessage(), this));
-                    break;
+                        configActivity.afficherPopupErreur("ERROR FORMAT REFRESH CADDIE", "MAUVAIS FORMAT : "
+                                + ex.getMessage(), this));
+
+                default -> this.runOnUiThread(() ->
+                        configActivity.afficherPopupErreur("UNKNOW ERROR REFRESH CADDIE", "ERREUR INCONNUE : "
+                                + ex.getMessage(), this));
             }
         }
 
@@ -342,41 +339,48 @@ public class MaraicherActivity extends AppCompatActivity {
         adapter.notifyDataSetChanged();
 
         this.totalText.setText("" + totalPrice);
+
     }
 
-    private void addToCaddie () {
-        // Ajoute le produit actuel à la liste des produits
+    // Ajoute le produit choisit à la liste des produits
+    private void addToCaddie () { // PAS FINI
+
+        // quantityEditText
         // articleList.add(article);
 
-        RefreshCaddie(); // Met à jour l'affichage du panier
+        refreshCaddie(); // Met à jour l'affichage du panier
+
     }
 
-    private void deleteArticle() {
-        // Supprime l'article sélectionné
+    // Supprime l'article sélectionné
+    private void deleteArticle() { // PAS FINI
+
 
 
         // Met à jour le panier
-        RefreshCaddie();
+        refreshCaddie();
 
     }
 
-    private void deleteCaddie() {
-        // Supprime tous les articles du panier
+    // Supprime tous les articles du panier
+    private void deleteCaddie() { // PAS FINI
+
 
 
         // Met à jour le panier
-        RefreshCaddie();
+        refreshCaddie();
 
     }
 
-    private void sendConfirm() { // FINI
-        // On confirme le panier et on crée la facture
+    // On confirme le panier et on crée la facture
+    private void sendConfirm() { // PAS FINI
 
         try {
+
             client.sendConfirmer(loginId);
 
         } catch(Exception ex){
-            switch(ex.getMessage()) {
+            switch(Objects.requireNonNull(ex.getMessage())) {
                 case "ENDCONNEXION" -> {
                     this.runOnUiThread(() ->
                             configActivity.afficherPopupErreur("ERROR DATA CONFIRM", "ERREUR TRANSMISSION DONNEES : "
@@ -409,7 +413,8 @@ public class MaraicherActivity extends AppCompatActivity {
         this.runOnUiThread(() ->
                 configActivity.afficherPopupErreur("SUCCESS CONFIRM", "La commande a bien été enregistrée.", this));
 
-        RefreshCaddie();
+        refreshCaddie();
+
     }
 
     //endregion

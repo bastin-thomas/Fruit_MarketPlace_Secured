@@ -10,9 +10,6 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
-import java.nio.charset.CharsetEncoder;
 import java.nio.charset.StandardCharsets;
 
 public class SocketClient {
@@ -20,7 +17,6 @@ public class SocketClient {
     private final Socket socket;
     private final DataOutputStream dos;
     private final DataInputStream dis;
-    CharsetEncoder mEnc = StandardCharsets.ISO_8859_1.newEncoder();
 
     //endregion
 
@@ -58,10 +54,10 @@ public class SocketClient {
         {
             byte b1 = dis.readByte();
 
-            if (b1 == (byte) R.string.EndOfRequest1)
+            if (b1 == (byte) '&')
             {
                 byte b2 = dis.readByte();
-                if (b2 == (byte) R.string.EndOfRequest2){
+                if (b2 == (byte) ')') {
                     eot = true;
                 }
                 else{
@@ -78,28 +74,10 @@ public class SocketClient {
     }
 
     public void send(String msg) throws IOException{
-        String trame = msg + (R.string.EndOfRequest1) + (R.string.EndOfRequest2);
+        String trame = msg + '&' + ')';
 
-        dos.write(StringEncodeCString(trame,true));
+        dos.write(trame.getBytes(StandardCharsets.ISO_8859_1));
         dos.flush();
-    }
-
-    private byte[] StringEncodeCString(String msg, boolean zeroTeminate)
-    {
-        int zero = 0;
-
-        if(zeroTeminate)
-            zero = 1;
-
-        int len = msg.length();
-        byte b[] = new byte[len + zero];
-        ByteBuffer bbuf = ByteBuffer.wrap(b);
-        mEnc.encode(CharBuffer.wrap(msg), bbuf, true);
-
-        if(zeroTeminate)
-            b[len] = 0;
-
-        return b;
     }
 
     public void close() throws IOException

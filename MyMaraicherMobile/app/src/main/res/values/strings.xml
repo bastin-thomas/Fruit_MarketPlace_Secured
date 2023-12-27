@@ -6,10 +6,10 @@
     <!-- Strings related to socket -->
     <string name="params_format_error">PARAMS_FORMAT_ERROR</string>
     <string name="EndOfRequest1">&amp;</string>
-    <string name="EndOfRequest2">)</string>
+    <string name="EndOfRequest2">")"</string>
     <string name="SplitCommand">"@"</string>
-    <string name="SplitParameters">#</string>
-    <string name="SplitList">~</string>
+    <string name="SplitParameters">"#"</string>
+    <string name="SplitList">"~"</string>
     <string name="endconnexion">ENDCONNEXION</string>
     <string name="critical">CRITICAL</string>
     <string name="no_article_found">NO_ARTICLE_FOUND</string>
@@ -19,8 +19,8 @@
 <!--    jdbc\:mariadb\://10.59.22.29\:3306/PourStudent?user\=Student&amp;password\=PassStudent1_-->
 
     <!-- Strings related to login -->
-    <string name="titleHome">"Veuillez vous connecter"</string>
-    <string name="login_failed">"Erreur de connexion"</string>
+    <string name="titleHome">Veuillez vous connecter</string>
+    <string name="login_failed">Erreur de connexion</string>
     <string name="hintPassword">Mot de passe</string>
     <string name="hintLogin">Nom utilisateur</string>
     <string name="connexion">Se connecter</string>
@@ -32,7 +32,7 @@
     <string name="content_ArrowBack">Une flèche</string>
 
     <!-- Strings related to Maraicher -->
-    <string name="titleMaraicher">"Bienvenue sur MyMaraicherMobile"</string>
+    <string name="titleMaraicher">Bienvenue sur MyMaraicherMobile</string>
     <string name="imgMaraicher">Une image</string>
     <string name="add">Ajouter</string>
     <string name="previous">précédent</string>

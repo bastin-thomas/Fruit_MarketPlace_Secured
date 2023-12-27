@@ -124,6 +124,7 @@ public class LoginFragment extends Fragment {
             // On transfère les infos vers la page Maraicher
             intent.putExtra("socket_key", String.valueOf(socket));
             intent.putExtra("protocol_key", String.valueOf(client));
+            intent.putExtra("loginId_key", usernameInput.getText().toString());
 
             startActivity(intent);
         }

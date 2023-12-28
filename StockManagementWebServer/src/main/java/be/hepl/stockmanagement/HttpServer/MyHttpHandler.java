@@ -13,7 +13,6 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**

@@ -4,15 +4,13 @@
  */
 package be.hepl.payement_protocol.protocol.Secured;
 
+import be.hepl.cryptolibrary.CryptoConsts;
 import be.hepl.payement_protocol.Utils.Consts;
-import be.hepl.payement_protocol.Utils.CryptoUtils;
-import static be.hepl.payement_protocol.Utils.CryptoUtils.PROVIDER;
+import be.hepl.cryptolibrary.CryptoUtils;
 import be.hepl.payement_protocol.protocol.Gestion_Protocol_Client;
 import be.hepl.payement_protocol.model.Facture;
 import be.hepl.payement_protocol.model.Sale;
-import be.hepl.payement_protocol.protocol.request.*;
 import be.hepl.payement_protocol.protocol.request.Secured.*;
-import be.hepl.payement_protocol.protocol.response.*;
 import be.hepl.payement_protocol.protocol.response.Secured.*;
 import java.io.File;
 import java.io.FileInputStream;
@@ -20,14 +18,12 @@ import java.io.FileOutputStream;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.security.Key;
 import java.security.KeyPair;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
-import java.security.SecureRandom;
 import java.security.Security;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
@@ -58,8 +54,8 @@ public class Gestion_Protocol_Client_Secured extends Gestion_Protocol_Client {
         super(sock, config);
 
         Security.addProvider(new BouncyCastleProvider());
-
-        keystore = KeyStore.getInstance(Consts.KeyStoreInstanceType);
+        
+        keystore = KeyStore.getInstance(CryptoConsts.KeyStoreInstanceType);
 
         File filestore = new File(config.getProperty(Consts.ConfigKeyStorePath));
 
@@ -77,9 +73,9 @@ public class Gestion_Protocol_Client_Secured extends Gestion_Protocol_Client {
     // <editor-fold defaultstate="collapsed" desc="SendLogin Request">
     @Override
     public boolean SendLogin(String Login, String Password) throws Exception {
-        String ClientKeypairEntryName = Consts.ClientCertificateName + "-" + Login;
-        String SessionSecretKeyEntryName = Consts.SessionKeyName + "-" + Login;
-        Certificate RootCert = keystore.getCertificate(Consts.RootCertificateName);
+        String ClientKeypairEntryName = CryptoConsts.ClientCertificateName + "-" + Login;
+        String SessionSecretKeyEntryName = CryptoConsts.SessionKeyName + "-" + Login;
+        Certificate RootCert = keystore.getCertificate(CryptoConsts.RootCertificateName);
         Object response = null;
         
         //Digest Creation         
@@ -172,7 +168,7 @@ public class Gestion_Protocol_Client_Secured extends Gestion_Protocol_Client {
         try {
             oos.writeObject(new LogoutRequest_Secured(Login));
             try {
-                String SessionSecretKeyEntryName = Consts.SessionKeyName + "-" + currentUser;
+                String SessionSecretKeyEntryName = CryptoConsts.SessionKeyName + "-" + currentUser;
                 if (keystore.isKeyEntry(SessionSecretKeyEntryName)) {
                     keystore.deleteEntry(SessionSecretKeyEntryName);
                 }
@@ -188,8 +184,8 @@ public class Gestion_Protocol_Client_Secured extends Gestion_Protocol_Client {
 
     @Override
     public ArrayList<String> SendGetClientsRequest() throws Exception {
-        String KeyPairEntryName = Consts.ClientCertificateName + "-" + currentUser;
-        String SessionKeyEntryName = Consts.SessionKeyName + "-" + currentUser;
+        String KeyPairEntryName = CryptoConsts.ClientCertificateName + "-" + currentUser;
+        String SessionKeyEntryName = CryptoConsts.SessionKeyName + "-" + currentUser;
         Object object = null;
 
         
@@ -234,8 +230,8 @@ public class Gestion_Protocol_Client_Secured extends Gestion_Protocol_Client {
 
     @Override
     public ArrayList<Facture> SendGetFacturesRequest(String idClient) throws Exception {
-        String KeyPairEntryName = Consts.ClientCertificateName + "-" + currentUser;
-        String SessionKeyEntryName = Consts.SessionKeyName + "-" + currentUser;
+        String KeyPairEntryName = CryptoConsts.ClientCertificateName + "-" + currentUser;
+        String SessionKeyEntryName = CryptoConsts.SessionKeyName + "-" + currentUser;
         Object object = null;
 
         //Create a signature:
@@ -278,8 +274,8 @@ public class Gestion_Protocol_Client_Secured extends Gestion_Protocol_Client {
 
     @Override
     public ArrayList<Sale> SendGetSalesRequest(int idBills) throws Exception {
-        String KeyPairEntryName = Consts.ClientCertificateName + "-" + currentUser;
-        String SessionKeyEntryName = Consts.SessionKeyName + "-" + currentUser;
+        String KeyPairEntryName = CryptoConsts.ClientCertificateName + "-" + currentUser;
+        String SessionKeyEntryName = CryptoConsts.SessionKeyName + "-" + currentUser;
         Object object = null;
         
         //Create a signature:
@@ -321,8 +317,8 @@ public class Gestion_Protocol_Client_Secured extends Gestion_Protocol_Client {
 
     @Override
     public boolean SendPayFactureRequest(int idBills, String Name, String VISA) throws Exception {
-        String KeyPairEntryName = Consts.ClientCertificateName + "-" + currentUser;
-        String SessionKeyEntryName = Consts.SessionKeyName + "-" + currentUser;
+        String KeyPairEntryName = CryptoConsts.ClientCertificateName + "-" + currentUser;
+        String SessionKeyEntryName = CryptoConsts.SessionKeyName + "-" + currentUser;
         SecretKey sessionKey = null;
         
         Object object = null;

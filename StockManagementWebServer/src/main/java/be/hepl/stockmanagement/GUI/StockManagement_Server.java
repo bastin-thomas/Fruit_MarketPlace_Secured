@@ -2,14 +2,18 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package be.hepl.stockmanagement.webserver;
+package be.hepl.stockmanagement.GUI;
 
+import be.hepl.cryptolibrary.CryptoConsts;
 import be.hepl.generic_server_tcp.Logger;
 import be.hepl.stockmanagement.HttpServer.StockManagement_HttpServer;
+import be.hepl.stockmanagement.HttpServer.StockManagement_HttpsServer;
 import be.hepl.stockmanagement.Utils.ConfigFolderManager;
 import be.hepl.stockmanagement.Utils.Consts;
 import be.hepl.stockmanagement.Utils.DBStock;
 import com.formdev.flatlaf.FlatLightLaf;
+import java.io.File;
+import java.security.KeyStore;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -28,6 +32,7 @@ public class StockManagement_Server extends javax.swing.JFrame implements Logger
     // <editor-fold defaultstate="collapsed" desc="My Properties">
     private boolean isLaunched;
     private StockManagement_HttpServer unSecuredServer;
+    private StockManagement_HttpsServer SecuredServer;
     private final Properties config;
     // </editor-fold>
         
@@ -49,6 +54,11 @@ public class StockManagement_Server extends javax.swing.JFrame implements Logger
         
         //Set UI PoolSize
         Pool_Spinner.getModel().setValue(Integer.valueOf(config.getProperty(Consts.ConfigPoolSize)));
+        
+        this.PortSecured_Spinner.getModel().setValue(Integer.valueOf(config.getProperty(Consts.ConfigPortSecured)));
+        
+        this.PoolSecured_Spinner1.getModel().setValue(Integer.valueOf(config.getProperty(Consts.ConfigPoolSecuredSize)));
+        
 
         //Set DB URL
         DBurl_TextField.setText(config.getProperty(Consts.ConfigDBString));
@@ -138,6 +148,12 @@ public class StockManagement_Server extends javax.swing.JFrame implements Logger
         Port_Spinner = new javax.swing.JSpinner();
         Logs1 = new javax.swing.JLabel();
         Logs4 = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
+        PoolSecured_Spinner1 = new javax.swing.JSpinner();
+        Logs5 = new javax.swing.JLabel();
+        PortSecured_Spinner = new javax.swing.JSpinner();
+        Logs6 = new javax.swing.JLabel();
+        Logs7 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(808, 493));
@@ -264,7 +280,7 @@ public class StockManagement_Server extends javax.swing.JFrame implements Logger
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addComponent(Port_Spinner)
                             .addComponent(Pool_Spinner, javax.swing.GroupLayout.DEFAULT_SIZE, 85, Short.MAX_VALUE))))
-                .addContainerGap(12, Short.MAX_VALUE))
+                .addContainerGap(24, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -279,6 +295,58 @@ public class StockManagement_Server extends javax.swing.JFrame implements Logger
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(Logs3)
                     .addComponent(Pool_Spinner, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(18, Short.MAX_VALUE))
+        );
+
+        jPanel2.setBackground(new java.awt.Color(204, 204, 204));
+
+        PoolSecured_Spinner1.setModel(new javax.swing.SpinnerNumberModel(5, 1, 500, 1));
+
+        Logs5.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        Logs5.setText("Pool Size :");
+
+        PortSecured_Spinner.setModel(new javax.swing.SpinnerNumberModel(443, 443, 8090, 1));
+
+        Logs6.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        Logs6.setText("Socket Secured");
+
+        Logs7.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        Logs7.setText("Port :");
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(Logs6, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                .addComponent(Logs5, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(Logs7, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(32, 32, 32)))
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(PortSecured_Spinner)
+                            .addComponent(PoolSecured_Spinner1))))
+                .addContainerGap(20, Short.MAX_VALUE))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(Logs6)
+                .addGap(24, 24, 24)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(PortSecured_Spinner, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(Logs7))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(Logs5)
+                    .addComponent(PoolSecured_Spinner1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -288,20 +356,22 @@ public class StockManagement_Server extends javax.swing.JFrame implements Logger
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(20, 20, 20)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 608, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(226, 226, 226)
-                .addComponent(Logs, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(20, 20, 20)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(Start_Stop_Button, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(Logs2, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(AbortButton, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(12, 12, 12)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 758, Short.MAX_VALUE))
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 608, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(Start_Stop_Button, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(AbortButton, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(Logs2, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(Logs, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 740, Short.MAX_VALUE)))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -316,12 +386,15 @@ public class StockManagement_Server extends javax.swing.JFrame implements Logger
                         .addComponent(Start_Stop_Button, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(Logs2)
-                        .addGap(6, 6, 6)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(86, 86, 86)
-                        .addComponent(AbortButton, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addComponent(AbortButton, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 13, Short.MAX_VALUE))
                     .addComponent(jScrollPane2))
                 .addGap(14, 14, 14))
         );
@@ -333,6 +406,7 @@ public class StockManagement_Server extends javax.swing.JFrame implements Logger
     // <editor-fold defaultstate="collapsed" desc="Events">
     private void AbortButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AbortButtonActionPerformed
         unSecuredServer.close();
+        SecuredServer.close();
         System.exit(127);
     }//GEN-LAST:event_AbortButtonActionPerformed
     
@@ -354,21 +428,48 @@ public class StockManagement_Server extends javax.swing.JFrame implements Logger
             String ip = (String) config.get(Consts.ConfigIP);
             int port = (int) this.Port_Spinner.getModel().getValue();
             int poolSize = (int) this.Pool_Spinner.getModel().getValue();
+            
+            int portSecured = (int) this.PortSecured_Spinner.getModel().getValue();
+            int poolSizeSecured = (int) this.PoolSecured_Spinner1.getModel().getValue();
+            
             int maxPendingConnexion = Integer.parseInt(config.getProperty(Consts.ConfigMaxPendingConnexion));
             
+            FreezeUI();
+            
+            int i = 0;
             try {
-                FreezeUI();
                 //Start Server                
                 unSecuredServer = new StockManagement_HttpServer(ip, port, poolSize,maxPendingConnexion, this, db);
                 
-                isLaunched = true;
             } catch (Exception ex) {
                 this.Trace("Error creating HttpServer: " + ex.getMessage());
+                i++;
+            }
+            
+            try {
+                String storePath = config.getProperty(Consts.ConfigKeyStorePath);
+                String keyStorePassword = config.getProperty(Consts.ConfigKeyStorePassword);
+                
+                KeyStore store = KeyStore.getInstance(new File(storePath), keyStorePassword.toCharArray());
+                
+                SecuredServer = new StockManagement_HttpsServer(ip, portSecured, poolSizeSecured,maxPendingConnexion, this, db, 
+                        CryptoConsts.TLSCypherSuit, CryptoConsts.TLSVersion, CryptoConsts.SecurityTLSProvider, store, keyStorePassword);
+            } catch (Exception ex) {
+                this.Trace("Error creating HttpsServer: " + ex.getMessage());
+                i++;
+            }
+            
+            if(i==0){
+                isLaunched = true;
+            }
+            else{
+                UnFreezeUI();
             }
         }
         else
         {
             //Stop the Server
+            SecuredServer.close();
             unSecuredServer.close();
             isLaunched = false;
             UnFreezeUI();
@@ -378,6 +479,7 @@ public class StockManagement_Server extends javax.swing.JFrame implements Logger
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         try{
             unSecuredServer.close();
+            SecuredServer.close();
         }
         catch(Exception ex){
             System.out.println("Unable to close server unsecured");
@@ -392,6 +494,12 @@ public class StockManagement_Server extends javax.swing.JFrame implements Logger
         
         String url = DBurl_TextField.getText();
         config.setProperty(Consts.ConfigDBString, ""+url);
+        
+        int portSecured = (int) PortSecured_Spinner.getModel().getValue();
+        config.setProperty(Consts.ConfigPortSecured, ""+portSecured);
+        
+        int poolSizeSecured = (int) PoolSecured_Spinner1.getModel().getValue();
+        config.setProperty(Consts.ConfigPoolSecuredSize, ""+poolSizeSecured);
                 
         ConfigFolderManager.SaveProperties(config);
     }//GEN-LAST:event_formWindowClosing
@@ -428,11 +536,17 @@ public class StockManagement_Server extends javax.swing.JFrame implements Logger
     private javax.swing.JLabel Logs2;
     private javax.swing.JLabel Logs3;
     private javax.swing.JLabel Logs4;
+    private javax.swing.JLabel Logs5;
+    private javax.swing.JLabel Logs6;
+    private javax.swing.JLabel Logs7;
+    private javax.swing.JSpinner PoolSecured_Spinner1;
     private javax.swing.JSpinner Pool_Spinner;
+    private javax.swing.JSpinner PortSecured_Spinner;
     private javax.swing.JSpinner Port_Spinner;
     private javax.swing.JButton Start_Stop_Button;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable logs_table;

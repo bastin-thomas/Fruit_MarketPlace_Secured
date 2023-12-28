@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package be.hepl.generic_server_tcp.Exceptions.OnDemandServer;
+package be.hepl.generic_server_tcp.OnDemandServer;
 
 import be.hepl.generic_server_tcp.Logger;
 import be.hepl.generic_server_tcp.Protocol;

@@ -21,6 +21,10 @@ public abstract class ListenThread extends Thread {
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Constructor">
+    public ListenThread(String name){
+        super(name);
+    }
+    
     public ListenThread(int port, Protocol protocole, Logger logger)
     {
         super("TH Serveur (port=" + port + ",protocole=" + protocole.getNom() + ")");

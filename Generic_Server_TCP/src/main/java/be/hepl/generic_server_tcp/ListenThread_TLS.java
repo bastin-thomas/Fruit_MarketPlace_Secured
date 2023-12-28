@@ -4,12 +4,11 @@
  */
 package be.hepl.generic_server_tcp;
 
-import be.hepl.generic_server_tcp.TLSUtils.TLSUtils;
+import be.hepl.cryptolibrary.TLSUtils;
 import java.io.IOException;
 import java.net.ServerSocket;
 import javax.net.ssl.SSLServerSocket;
 import java.security.KeyStore;
-import java.util.logging.Level;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLServerSocketFactory;
 
@@ -19,21 +18,29 @@ import javax.net.ssl.SSLServerSocketFactory;
  */
 public abstract class ListenThread_TLS extends ListenThread {
     
-    public ListenThread_TLS(int port, Protocol protocole, Logger logger, String sslVersion, String provider, KeyStore store, String keystorePassword)
+    public ListenThread_TLS(int port, Protocol protocole, Logger logger, String cypherSuit, String sslVersion, String provider, KeyStore store, String keystorePassword)
     {
-        super(port, protocole, logger);
-        logger.Trace("TH Serveur_SSL (port=" + port + ",protocole=" + protocole.getNom() + ")");
+        super("TH Serveur (port=" + port + ",protocole=" + protocole.getNom() + ")");
         
+        this.port = port;
+        this.protocole = protocole;
+        this.logger = logger;
         
-        try{
-            SSLContext tlsContext = TLSUtils.getTLSContext(sslVersion, provider, store, keystorePassword);
-            SSLServerSocketFactory SslSFac= tlsContext.getServerSocketFactory();
-            listenSocket = (SSLServerSocket) SslSFac.createServerSocket(port);
-            ((SSLServerSocket)listenSocket).setNeedClientAuth(true);
+        try{            
+            listenSocket = TLSUtils.createServerSocket(port, cypherSuit, sslVersion, provider, store, keystorePassword);
         }
         catch(Exception ex)
         {
             logger.Trace("Error Creation Socket: " + ex.getMessage());
+        }
+    }
+    
+    public void close()
+    {
+        try {
+            listenSocket.close();
+        } catch (IOException ex) {
+            logger.Trace(ex.getMessage());
         }
     }
 }

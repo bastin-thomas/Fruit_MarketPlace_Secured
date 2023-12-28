@@ -3,13 +3,14 @@
  */
 package be.hepl.payement_protocol.protocol.Secured;
 
+import be.hepl.cryptolibrary.CryptoConsts;
 import be.hepl.generic_server_tcp.Exceptions.EndConnectionException;
 import be.hepl.generic_server_tcp.Logger;
 import be.hepl.generic_server_tcp.Protocol;
 import be.hepl.generic_server_tcp.Request;
 import be.hepl.generic_server_tcp.Response;
 import be.hepl.payement_protocol.Utils.Consts;
-import be.hepl.payement_protocol.Utils.CryptoUtils;
+import be.hepl.cryptolibrary.CryptoUtils;
 import be.hepl.payement_protocol.model.*;
 import be.hepl.payement_protocol.protocol.request.*;
 import be.hepl.payement_protocol.protocol.request.Secured.*;
@@ -68,7 +69,7 @@ public class Payement_Secured implements Protocol {
 
         Security.addProvider(new BouncyCastleProvider());
 
-        keystore = KeyStore.getInstance(Consts.KeyStoreInstanceType);
+        keystore = KeyStore.getInstance(CryptoConsts.KeyStoreInstanceType);
 
         File filestore = new File(config.getProperty(Consts.ConfigKeyStorePath));
 
@@ -142,8 +143,8 @@ public class Payement_Secured implements Protocol {
      * @return
      */
     private Response LoginRequestTreatment(LoginRequest_Secured loginRequest, Socket socket) {
-        String KeyPairEntryName = Consts.ClientCertificateName + "-" + loginRequest.getLogin();
-        String SessionKeyEntryName = Consts.SessionKeyName + "-" + loginRequest.getLogin();
+        String KeyPairEntryName = CryptoConsts.ClientCertificateName + "-" + loginRequest.getLogin();
+        String SessionKeyEntryName = CryptoConsts.SessionKeyName + "-" + loginRequest.getLogin();
         boolean logged = false;
         String response = "";
 
@@ -161,7 +162,7 @@ public class Payement_Secured implements Protocol {
         logger.Trace("Vérification Certificat du Client");
         Certificate rootCert = null;
         try {
-            rootCert = keystore.getCertificate(Consts.RootCertificateName);
+            rootCert = keystore.getCertificate(CryptoConsts.RootCertificateName);
             loginRequest.getClientCertificate().verify(rootCert.getPublicKey());
         } catch (KeyStoreException | NoSuchAlgorithmException | NoSuchProviderException ex) {
             return new LoginResponse_Secured(false, "Error during KeyStore Reading: " + ex.getMessage());
@@ -241,7 +242,7 @@ public class Payement_Secured implements Protocol {
     private void LogoutRequestTreatment(LogoutRequest logoutRequest, Socket socket) throws EndConnectionException {
         if (connectedClients.containsKey(socket) == true) {
             try {
-                String EntryName = Consts.SessionKeyName + "-" + connectedClients.get(socket);
+                String EntryName = CryptoConsts.SessionKeyName + "-" + connectedClients.get(socket);
                 keystore.deleteEntry(EntryName);
                 SaveKeyStore();
                 logger.Trace("Suppression de la clé de session: " + EntryName);
@@ -255,8 +256,8 @@ public class Payement_Secured implements Protocol {
     }
 
     private Response GetClientsRequestTreatment(GetClientsRequest_Secured request, Socket socket) {
-        String KeyPairEntryName = Consts.ClientCertificateName + "-" + connectedClients.get(socket);
-        String SessionKeyEntryName = Consts.SessionKeyName + "-" + connectedClients.get(socket);
+        String KeyPairEntryName = CryptoConsts.ClientCertificateName + "-" + connectedClients.get(socket);
+        String SessionKeyEntryName = CryptoConsts.SessionKeyName + "-" + connectedClients.get(socket);
         ArrayList<String> clients = new ArrayList<>();
 
         //Check signature:
@@ -309,8 +310,8 @@ public class Payement_Secured implements Protocol {
                                                                                        de la commande donc)
      */
     private Response GetFacturesRequestTreatment(GetFacturesRequest_Secured request, Socket socket) {
-        String KeyPairEntryName = Consts.ClientCertificateName + "-" + connectedClients.get(socket);
-        String SessionKeyEntryName = Consts.SessionKeyName + "-" + connectedClients.get(socket);
+        String KeyPairEntryName = CryptoConsts.ClientCertificateName + "-" + connectedClients.get(socket);
+        String SessionKeyEntryName = CryptoConsts.SessionKeyName + "-" + connectedClients.get(socket);
 
         ArrayList<Facture> bills = new ArrayList<>();
 
@@ -374,8 +375,8 @@ public class Payement_Secured implements Protocol {
                                                                 concernant une facture dont on fournirait l’id au serveur.
      */
     private Response GetSalesRequestTreatment(GetSalesRequest_Secured request, Socket socket) {
-        String KeyPairEntryName = Consts.ClientCertificateName + "-" + connectedClients.get(socket);
-        String SessionKeyEntryName = Consts.SessionKeyName + "-" + connectedClients.get(socket);
+        String KeyPairEntryName = CryptoConsts.ClientCertificateName + "-" + connectedClients.get(socket);
+        String SessionKeyEntryName = CryptoConsts.SessionKeyName + "-" + connectedClients.get(socket);
 
         ArrayList<Sale> Sales = new ArrayList<>();
 
@@ -441,8 +442,8 @@ public class Payement_Secured implements Protocol {
                                                                                             paiement est réalisé
      */
     private Response PayFactureRequestTreatment(PayFactureRequest_Secured request, Socket socket) {
-        String KeyPairEntryName = Consts.ClientCertificateName + "-" + connectedClients.get(socket);
-        String SessionKeyEntryName = Consts.SessionKeyName + "-" + connectedClients.get(socket);
+        String KeyPairEntryName = CryptoConsts.ClientCertificateName + "-" + connectedClients.get(socket);
+        String SessionKeyEntryName = CryptoConsts.SessionKeyName + "-" + connectedClients.get(socket);
         
         ArrayList<Object> data = new ArrayList<>();
         SecretKey secretKey = null;

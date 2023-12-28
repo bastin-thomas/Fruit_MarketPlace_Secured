@@ -3,15 +3,19 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package be.hepl.payement_client.GUI;
-import be.hepl.generic_server_tcp.TLSUtils.TLSUtils;
+import be.hepl.cryptolibrary.CryptoConsts;
+import be.hepl.cryptolibrary.TLSUtils;
 import be.hepl.payement_client.Utils.ConfigFolderManager;
 import be.hepl.payement_protocol.Utils.Consts;
 import be.hepl.payement_protocol.protocol.Gestion_Protocol_Client;
 import be.hepl.payement_protocol.protocol.Secured.Gestion_Protocol_Client_Secured;
 import com.formdev.flatlaf.FlatLightLaf;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.Socket;
+import java.net.SocketException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -20,6 +24,7 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLHandshakeException;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 import javax.swing.JOptionPane;
@@ -180,6 +185,7 @@ public class LoginPage extends javax.swing.JFrame {
         String Password = "";
         int portServeur = -1;
         String ipServeur = "-1.-1.-1.-1";
+        String securedStatus = "Unsecured";
         
         //Connect to Server
         try { 
@@ -188,21 +194,27 @@ public class LoginPage extends javax.swing.JFrame {
             if(Secured_CheckBox.isSelected())
             {
                 if(TLS_CheckBox.isSelected()){
+                    securedStatus = "TLS";
+                    
+                    String ip = Config.getProperty(Consts.ConfigIP);
+                    String port = Config.getProperty(CryptoConsts.ConfigPortTLS);
+                    String TLSVersion = CryptoConsts.TLSVersion;
+                    String TLSProvider = CryptoConsts.SecurityTLSProvider;
+                    String CypherSuit = CryptoConsts.TLSCypherSuit;
                     
                     String storePath = Config.getProperty(Consts.ConfigKeyStorePath);
                     String keyStorePassword = Config.getProperty(Consts.ConfigKeyStorePassword);
                     KeyStore store = KeyStore.getInstance(new File(storePath), keyStorePassword.toCharArray());
                     
-                    SSLContext Ss1C = TLSUtils.getTLSContext(Consts.TLSVersion, Consts.SecurityProvider,
-                            store, keyStorePassword);
                     
-                    portServeur = Integer.parseInt(Config.getProperty(Consts.ConfigPortTLS));
-                    SSLSocketFactory SslSFac= Ss1C.getSocketFactory();
-                    SSLSocket socket = (SSLSocket) SslSFac.createSocket(ipServeur, portServeur);
+                    Socket socket = TLSUtils.createClientSocket(ip, port, CypherSuit, TLSVersion, TLSProvider, store, keyStorePassword);
+                    
                     
                     GPC = new Gestion_Protocol_Client(socket, Config);
                 }
                 else{
+                    securedStatus = "SelfSecured";
+                    
                     portServeur = Integer.parseInt(Config.getProperty(Consts.ConfigPortSecured));
                     Socket socket = new Socket(ipServeur, portServeur);
                     GPC = new Gestion_Protocol_Client_Secured(socket, Config);
@@ -212,13 +224,21 @@ public class LoginPage extends javax.swing.JFrame {
                 Socket socket = new Socket(ipServeur, portServeur);
                 GPC = new Gestion_Protocol_Client(socket);
             }
+        } catch(SSLHandshakeException ex){
+            Logger.getLogger(LoginPage.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(this, "SSL Handshake Error (" + ipServeur + ":" + portServeur + "): " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        } catch(SocketException ex){
+            Logger.getLogger(LoginPage.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(this, "Socket Error (" + ipServeur + ":" + portServeur + "): " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            return;
         } catch (IOException | NumberFormatException ex) {
             Logger.getLogger(LoginPage.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(this, "Impossible to reach the Server on: " + ipServeur + ":" + portServeur, "Error", JOptionPane.ERROR_MESSAGE);
             return;
         } catch (KeyStoreException | CertificateException | NoSuchAlgorithmException ex) {
             Logger.getLogger(LoginPage.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(this, "Impossible to open the KeyStore[" + Config.getProperty(Consts.ConfigKeyStorePath) + "] with password: " + Config.getProperty(Consts.ConfigKeyStorePassword), "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Impossible to open the KeyStore[" + Config.getProperty(Consts.ConfigKeyStorePath) + "] with password: " + Config.getProperty(Consts.ConfigKeyStorePassword), "Error", JOptionPane.ERROR_MESSAGE);    
         } catch (Exception ex) {
             Logger.getLogger(LoginPage.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(this, "Impossible to open the SSL Socket: " + ipServeur + ":" + portServeur, "Error", JOptionPane.ERROR_MESSAGE);
@@ -261,7 +281,7 @@ public class LoginPage extends javax.swing.JFrame {
         //Open Facture Page, if good Login
         if(connected){
             try {
-                MainPage window = new MainPage(Login, GPC, this);                
+                MainPage window = new MainPage(Login, GPC, this, securedStatus);                
                 this.setVisible(false);
                 window.setVisible(true);
             } catch (Exception ex) {
@@ -277,6 +297,7 @@ public class LoginPage extends javax.swing.JFrame {
     
     private void OnWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_OnWindowClosing
         ConfigFolderManager.SaveProperties(Config);
+        
         System.exit(0);
     }//GEN-LAST:event_OnWindowClosing
 

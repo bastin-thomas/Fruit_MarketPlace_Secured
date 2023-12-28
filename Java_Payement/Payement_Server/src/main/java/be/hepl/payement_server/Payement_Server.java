@@ -4,14 +4,14 @@
  */
 package be.hepl.payement_server;
 
-import be.hepl.generic_server_tcp.Exceptions.OnDemandServer.ListenThreadOnDemand;
-import be.hepl.generic_server_tcp.Exceptions.OnDemandServer.ListenThreadOnDemand_TLS;
+import be.hepl.cryptolibrary.CryptoConsts;
+import be.hepl.generic_server_tcp.OnDemandServer.ListenThreadOnDemand;
+import be.hepl.generic_server_tcp.OnDemandServer.ListenThreadOnDemand_TLS;
 import be.hepl.generic_server_tcp.ListenThread;
 import be.hepl.payement_server.Utils.ConfigFolderManager;
 
 import be.hepl.generic_server_tcp.Logger;
 import be.hepl.generic_server_tcp.PooledServer.ListenThreadPooled;
-import be.hepl.generic_server_tcp.TLSUtils.TLSUtils;
 
 import be.hepl.payement_protocol.Utils.Consts;
 import be.hepl.payement_protocol.protocol.DBPayement;
@@ -21,20 +21,23 @@ import be.hepl.payement_protocol.protocol.Secured.Payement_Secured;
 
 import com.formdev.flatlaf.FlatLightLaf;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.Security;
+import java.security.cert.CertificateException;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
 import java.util.Vector;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLServerSocket;
-import javax.net.ssl.SSLServerSocketFactory;
-import javax.net.ssl.SSLSocket;
-import javax.net.ssl.SSLSocketFactory;
+import java.util.logging.Level;
 import javax.swing.table.DefaultTableModel;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 
 /**
@@ -49,6 +52,8 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
     private ListenThread socket_TLS;
     private ListenThread socket_unsecured;
     private final Properties config;
+    
+    private KeyStore store;
     // </editor-fold>
         
     // <editor-fold defaultstate="collapsed" desc="Constructor">
@@ -73,7 +78,7 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
         //Set UI Port-Secured
         Port_Secured_Spinner.getModel().setValue(Integer.valueOf(config.getProperty(Consts.ConfigPortSecured)));
         
-        Port_TLS_Spinner.getModel().setValue(Integer.valueOf(config.getProperty(Consts.ConfigPortTLS)));
+        Port_TLS_Spinner.getModel().setValue(Integer.valueOf(config.getProperty(CryptoConsts.ConfigPortTLS)));
         
         //Set DB URL
         DBurl_TextField.setText(config.getProperty(Consts.ConfigDBString));
@@ -289,14 +294,12 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
                         .addComponent(Logs4, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(28, 28, 28)
                         .addComponent(Port_Spinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(Logs1, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(Logs1, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(Logs3, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(17, 17, 17)
                         .addComponent(Pool_Spinner, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -370,22 +373,25 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 608, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(244, 244, 244)
-                .addComponent(Logs, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 608, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(244, 244, 244)
+                        .addComponent(Logs, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(Start_Stop_Button, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(Logs2, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(AbortButton, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 756, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 756, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -408,7 +414,7 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(36, 36, 36)
                         .addComponent(AbortButton, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 525, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jScrollPane2)))
         );
 
         pack();
@@ -457,10 +463,10 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
                 //Start TLS Server
                 String storePath = config.getProperty(Consts.ConfigKeyStorePath);
                 String keyStorePassword = config.getProperty(Consts.ConfigKeyStorePassword);
-                KeyStore store = KeyStore.getInstance(new File(storePath), keyStorePassword.toCharArray());
+                store = KeyStore.getInstance(new File(storePath), keyStorePassword.toCharArray());
                 
-                socket_TLS = new ListenThreadOnDemand_TLS(port_tls, new Payement(this, db), this,
-                        Consts.TLSVersion, Consts.SecurityProvider, store, keyStorePassword);
+                socket_TLS = new ListenThreadOnDemand_TLS(port_tls, new Payement(this, db), this, CryptoConsts.TLSCypherSuit,
+                        CryptoConsts.TLSVersion, CryptoConsts.SecurityTLSProvider, store, keyStorePassword);
                 socket_TLS.start();
                 
                 isLaunched = true;
@@ -488,7 +494,7 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
         config.setProperty(Consts.ConfigPortSecured, ""+port_secured);
         
         int port_tls = (int) this.Port_TLS_Spinner.getModel().getValue();
-        config.setProperty(Consts.ConfigPortTLS, ""+port_tls);
+        config.setProperty(CryptoConsts.ConfigPortTLS, ""+port_tls);
         
         int poolSize = (int) this.Pool_Spinner.getModel().getValue();
         config.setProperty(Consts.ConfigPoolSize, ""+poolSize);
@@ -507,6 +513,8 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
+        Security.addProvider(new BouncyCastleProvider());
+        
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.

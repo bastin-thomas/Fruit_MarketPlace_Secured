@@ -8,8 +8,6 @@ import be.hepl.java_c.client.Utils.Consts;
 import be.hepl.java_c.client.Utils.SocketClient;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *

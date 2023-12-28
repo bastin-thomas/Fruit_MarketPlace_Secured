@@ -116,8 +116,12 @@ public class MaraicherActivity extends AppCompatActivity {
         caddieListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         totalText = findViewById(R.id.totalText);
 
-
-
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                refreshArticle(currentArticle);
+            }
+        }).start();
 
         //endregion
 
@@ -246,6 +250,7 @@ public class MaraicherActivity extends AppCompatActivity {
 
     // Caddie
     private void showPreviousElement() {
+
         if(!this.previousButton.isEnabled())
         {
             this.nextButton.setEnabled(true);
@@ -321,6 +326,7 @@ public class MaraicherActivity extends AppCompatActivity {
     // Met à jour les détails du produit affiché en fonction de l'élément sélectionné
     @SuppressLint("SetTextI18n")
     private void refreshArticle(int index) {
+
         Articles art;
 
         try {
@@ -357,6 +363,7 @@ public class MaraicherActivity extends AppCompatActivity {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+
     }
 
     // Mettre à jour la vue du caddie

@@ -1,6 +1,11 @@
-package com.mymaraichermobile.model;
+package com.mymaraichermobile.model.ProtocoleMarket;
 
 import android.util.Log;
+
+
+import com.mymaraichermobile.model.Achats;
+import com.mymaraichermobile.model.Articles;
+import com.mymaraichermobile.model.CaddieRows;
 
 import java.io.IOException;
 import java.util.ArrayList;

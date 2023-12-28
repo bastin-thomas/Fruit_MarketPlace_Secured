@@ -1,4 +1,4 @@
-package com.mymaraichermobile.settings;
+package com.mymaraichermobile.GUI.settings;
 
 import android.content.Context;
 import android.content.Intent;

@@ -1,8 +1,6 @@
-package com.mymaraichermobile.model.ProtocoleThreaded;
+package com.mymaraichermobile.model.ProtocoleMarket.ProtocoleThreaded;
 
-import com.mymaraichermobile.model.ProtocoleClient;
-
-import kotlin.NotImplementedError;
+import com.mymaraichermobile.model.ProtocoleMarket.ProtocoleClient;
 
 public abstract class RequestTemplate implements Runnable {
     protected final ProtocoleClient prot;

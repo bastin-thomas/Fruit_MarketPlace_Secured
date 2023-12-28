@@ -1,9 +1,6 @@
-package com.mymaraichermobile.model.ProtocoleThreaded;
+package com.mymaraichermobile.model.ProtocoleMarket.ProtocoleThreaded;
 
-import com.mymaraichermobile.model.CaddieRows;
-import com.mymaraichermobile.model.ProtocoleClient;
-
-import java.util.ArrayList;
+import com.mymaraichermobile.model.ProtocoleMarket.ProtocoleClient;
 
 public class sendCancelAllRequest extends RequestTemplate {
 

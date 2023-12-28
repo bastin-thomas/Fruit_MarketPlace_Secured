@@ -1,11 +1,10 @@
-package com.mymaraichermobile.model.ProtocoleThreaded;
+package com.mymaraichermobile.model.ProtocoleMarket.ProtocoleThreaded;
 
 import com.mymaraichermobile.model.Achats;
 import com.mymaraichermobile.model.Articles;
 import com.mymaraichermobile.model.CaddieRows;
-import com.mymaraichermobile.model.ProtocoleClient;
+import com.mymaraichermobile.model.ProtocoleMarket.ProtocoleClient;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class ProtocoleClientThreaded {
@@ -26,6 +25,11 @@ public class ProtocoleClientThreaded {
     //endregion
 
     //region Protocol Methods
+    public void close() throws Exception{
+        prot.close();
+    }
+
+
     public void sendLogin(String nom, String mdp) throws Exception {
         sendLoginRequest request = new sendLoginRequest(prot, nom, mdp);
         Thread handler = new Thread(request);

@@ -18,7 +18,7 @@ public class CaddieRows {
         this.prix = prix;
     }
 
-    CaddieRows(String params) {
+    public CaddieRows(String params) {
         String[] paramTokens = params.split("" + "#");
 
         this.idArticle = Integer.parseInt(paramTokens[0]);

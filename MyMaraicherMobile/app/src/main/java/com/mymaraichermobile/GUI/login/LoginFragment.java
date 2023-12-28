@@ -1,4 +1,4 @@
-package com.mymaraichermobile.login;
+package com.mymaraichermobile.GUI.login;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,11 +14,12 @@ import android.widget.EditText;
 
 import androidx.fragment.app.Fragment;
 
-import com.mymaraichermobile.maraicher.MaraicherActivity;
+import com.mymaraichermobile.GUI.maraicher.MaraicherActivity;
 import com.mymaraichermobile.R;
-import com.mymaraichermobile.message.PopupMessage;
-import com.mymaraichermobile.model.ProtocoleClient;
-import com.mymaraichermobile.model.SocketClient;
+import com.mymaraichermobile.GUI.message.PopupMessage;
+import com.mymaraichermobile.model.ProtocoleMarket.ProtocoleClient;
+import com.mymaraichermobile.model.ProtocoleMarket.ProtocoleThreaded.ProtocoleClientThreaded;
+import com.mymaraichermobile.model.ProtocoleMarket.SocketClient;
 import com.mymaraichermobile.model.SocketHandler;
 
 import java.io.IOException;
@@ -27,16 +28,16 @@ import java.util.Objects;
 public class LoginFragment extends Fragment {
 
     //region Private variables
-
     PopupMessage popupMessage = new PopupMessage();
     SocketClient socket;
-    ProtocoleClient client;
+    ProtocoleClientThreaded client;
     private EditText usernameInput;
     private EditText passwordInput;
     private Button loginButton;
     private CheckBox newAccountChecked;
     
     //endregion
+
 
     // Création d'un thread unique pour la connexion socket/serveur
     private class SocketClientThread extends Thread {
@@ -54,7 +55,7 @@ public class LoginFragment extends Fragment {
                 socket = new SocketClient(requireContext());
 
                 // Liaison socket/serveur
-                client = new ProtocoleClient(socket);
+                client = new ProtocoleClientThreaded(new ProtocoleClient(socket));
 
                 Log.d("SOCKET", "Socket : " + socket);
                 Log.d("CLIENT", "Client : " + client);

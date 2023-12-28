@@ -15,7 +15,7 @@ public class Achats {
         this.prix = prix;
     }
 
-    Achats(String params) throws Exception {
+    public Achats(String params) throws Exception {
         String[] paramTokens = params.split("" + "#");
 
         this.idArticle = Integer.parseInt(paramTokens[0]);

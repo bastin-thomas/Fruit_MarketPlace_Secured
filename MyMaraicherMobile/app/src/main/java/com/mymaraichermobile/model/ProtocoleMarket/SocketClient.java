@@ -1,4 +1,4 @@
-package com.mymaraichermobile.model;
+package com.mymaraichermobile.model.ProtocoleMarket;
 
 import android.content.Context;
 

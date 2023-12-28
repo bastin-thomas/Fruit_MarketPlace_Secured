@@ -1,7 +1,6 @@
-package com.mymaraichermobile.model.ProtocoleThreaded;
+package com.mymaraichermobile.model.ProtocoleMarket.ProtocoleThreaded;
 
-import com.mymaraichermobile.model.Articles;
-import com.mymaraichermobile.model.ProtocoleClient;
+import com.mymaraichermobile.model.ProtocoleMarket.ProtocoleClient;
 
 public class sendCancelRequest extends RequestTemplate {
     private final int idArticle;

@@ -1,4 +1,4 @@
-package com.mymaraichermobile.main;
+package com.mymaraichermobile.GUI.login;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,12 +9,11 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.mymaraichermobile.R;
-import com.mymaraichermobile.login.LoginFragment;
 import com.mymaraichermobile.configuration.ConfigManager;
-import com.mymaraichermobile.settings.SettingsActivity;
+import com.mymaraichermobile.GUI.settings.SettingsActivity;
 
 
-public class MainActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, SettingsActivity.class);
 
         // Pour retrouver la classe qui utilise l'activité
-        intent.putExtra("class_name", MainActivity.class.getName());
+        intent.putExtra("class_name", LoginActivity.class.getName());
         startActivity(intent);
 
         finish();

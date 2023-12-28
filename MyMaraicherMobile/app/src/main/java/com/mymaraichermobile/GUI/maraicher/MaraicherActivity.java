@@ -1,4 +1,4 @@
-package com.mymaraichermobile.maraicher;
+package com.mymaraichermobile.GUI.maraicher;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -17,15 +17,15 @@ import android.widget.TextView;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.mymaraichermobile.GUI.main.MainActivity;
 import com.mymaraichermobile.R;
-import com.mymaraichermobile.main.ConfigActivity;
-import com.mymaraichermobile.message.PopupMessage;
+import com.mymaraichermobile.GUI.message.PopupMessage;
 import com.mymaraichermobile.model.Achats;
 import com.mymaraichermobile.model.Articles;
 import com.mymaraichermobile.model.CaddieRows;
-import com.mymaraichermobile.model.ProtocoleClient;
+import com.mymaraichermobile.model.ProtocoleMarket.ProtocoleThreaded.ProtocoleClientThreaded;
 import com.mymaraichermobile.model.SocketHandler;
-import com.mymaraichermobile.settings.SettingsActivity;
+import com.mymaraichermobile.GUI.settings.SettingsActivity;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -37,7 +37,7 @@ public class MaraicherActivity extends AppCompatActivity {
     PopupMessage popupMessage = new PopupMessage();
 
     // Infos connexions
-    private ProtocoleClient client;
+    private ProtocoleClientThreaded client;
     private String loginId;
 
     // Variables pour stocker les IDs
@@ -241,7 +241,7 @@ public class MaraicherActivity extends AppCompatActivity {
 
         }
 
-        Intent intent = new Intent(this, ConfigActivity.class);
+        Intent intent = new Intent(this, MainActivity.class);
 
         startActivity(intent);
 

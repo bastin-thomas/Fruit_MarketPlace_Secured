@@ -6,7 +6,7 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.mymaraichermobile.configuration.ConfigManager;
+import com.mymaraichermobile.configuration.ConfigHandler;
 import com.mymaraichermobile.GUI.login.LoginActivity;
 
 public class MainActivity extends AppCompatActivity {
@@ -15,7 +15,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        ConfigManager.handleLanguageAndConfiguration(this);
+        ConfigHandler.handleLanguageAndConfiguration(this);
 
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);

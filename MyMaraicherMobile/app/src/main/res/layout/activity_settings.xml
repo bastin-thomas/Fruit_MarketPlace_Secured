@@ -7,104 +7,145 @@
     android:background="@color/gray"
     tools:ignore="ExtraText">
 
-    <TextView
-        android:id="@+id/titleSettings"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="40dp"
-        android:gravity="center"
-        android:text="@string/titleSettings"
-        android:textColor="@color/white"
-        android:textSize="20sp" />
-
-    <TextView
-        android:id="@+id/ChoiceLanguage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:layout_centerVertical="true"
-        android:text="@string/TextChoiceLanguage"
-        android:textColor="@color/white"
-        android:textSize="20sp" />
-
-    <TextView
-        android:id="@+id/ChoiceIpView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/ChoiceLanguage"
-        android:layout_centerVertical="true"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="20dp"
-        android:text="Ip : "
-        android:textColor="@color/white"
-        android:textSize="20sp" />
-
-    <TextView
-        android:id="@+id/ChoicePortView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/ChoiceIpView"
-        android:layout_centerVertical="true"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="20dp"
-        android:text="Port : "
-        android:textColor="@color/white"
-        android:textSize="20sp" />
-
-    <EditText
-        android:id="@+id/ChoiceIp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_marginTop="10dp"
-        android:layout_marginStart="100dp"
-        android:layout_below="@id/ChoiceLanguage"
-        android:textColor="@color/white" />
-
-    <EditText
-        android:id="@+id/ChoicePort"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_marginTop="10dp"
-        android:layout_marginStart="100dp"
-        android:layout_below="@id/ChoiceIpView"
-        android:textColor="@color/white" />
-
-    <Button
-        android:id="@+id/saveButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@id/ChoicePortView"
-        android:text="@string/SaveButton"
-        android:textColor="@color/white"
-        android:onClick="saveConfig"
-        />
-
-    <Spinner
-        android:id="@+id/languageSpinner"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_marginHorizontal="220dp"
-        android:entries="@array/language_options"
-        android:minHeight="60dp" />
-    />
-
     <ImageView
-        android:id="@+id/backButton"
-        android:layout_width="30dp"
-        android:layout_height="48dp"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="23dp"
-        android:layout_marginTop="16dp"
-        android:contentDescription="@string/content_ArrowBack"
-        android:src="@drawable/arrowback" />
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0.5"
+        android:contentDescription="@string/imgMaraicher"
+        android:scaleType="centerCrop"
+        android:src="@drawable/maraicher" />
 
+
+    <LinearLayout
+        android:id="@+id/NavBar"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginBottom="15dp"
+        tools:ignore="UseCompoundDrawables">
+
+        <ImageView
+            android:id="@+id/backButton"
+            android:layout_width="30dp"
+            android:layout_height="48dp"
+            android:contentDescription="@string/content_ArrowBack"
+            android:src="@drawable/arrowback" />
+
+        <TextView
+            android:id="@+id/titleSettings"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:gravity="center"
+            android:text="@string/titleSettings"
+            android:textColor="@color/white"
+            android:textSize="20sp" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/NavBar"
+        android:gravity="center"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:orientation="vertical">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginBottom="15dp">
+
+            <TextView
+                android:id="@+id/ChoiceLanguage"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:text="@string/TextChoiceLanguage"
+                android:textColor="@color/white"
+                android:textSize="20sp" />
+
+            <Spinner
+                android:id="@+id/languageSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="5dp"
+                android:entries="@array/language_options"
+                android:minHeight="60dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginBottom="15dp">
+
+            <TextView
+                android:id="@+id/ChoiceIpView"
+                android:layout_width="56dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:text="Ip : "
+                android:textColor="@color/white"
+                android:textSize="20sp" />
+
+
+            <EditText
+                android:id="@+id/ChoiceIp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="127.0.0.1"
+                android:textColor="@color/white" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginBottom="15dp">
+
+            <TextView
+                android:id="@+id/ChoicePortView"
+                android:layout_width="56dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:text="Port : "
+                android:textColor="@color/white"
+                android:textSize="20sp" />
+
+            <EditText
+                android:id="@+id/ChoicePort"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="50001"
+                android:textColor="@color/white" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_gravity="center"
+            android:gravity="center">
+
+
+            <Button
+                android:id="@+id/saveButton"
+                android:layout_width="176dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:onClick="saveConfig"
+                android:text="@string/SaveButton"
+                android:textColor="@color/white" />
+        </LinearLayout>
+    </LinearLayout>
 </RelativeLayout>

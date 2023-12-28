@@ -2,7 +2,7 @@ package com.mymaraichermobile.model.ProtocoleMarket;
 
 import android.content.Context;
 
-import com.mymaraichermobile.configuration.ConfigManager;
+import com.mymaraichermobile.configuration.ConfigHandler;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -22,7 +22,7 @@ public class SocketClient {
 
     //region Constructeurs
     public SocketClient(Context context) throws NumberFormatException, IOException {
-        socket = new Socket(ConfigManager.getIp(context), Integer.parseInt(ConfigManager.getPort(context)));
+        socket = new Socket(ConfigHandler.getIp(context), Integer.parseInt(ConfigHandler.getPort(context)));
 
         dos = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
 

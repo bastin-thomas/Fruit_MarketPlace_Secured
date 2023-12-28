@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
     <!-- Ajout de la permission pour accéder au réseau -->
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -40,7 +40,7 @@
         </activity>
 
         <activity
-            android:name=".configuration.ConfigManager"
+            android:name=".configuration.ConfigHandler"
             android:exported="true"
             android:theme="@style/AppTheme">
             <intent-filter>

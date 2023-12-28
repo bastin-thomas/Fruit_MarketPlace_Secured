@@ -9,7 +9,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.mymaraichermobile.R;
-import com.mymaraichermobile.configuration.ConfigManager;
+import com.mymaraichermobile.configuration.ConfigHandler;
 import com.mymaraichermobile.GUI.settings.SettingsActivity;
 
 
@@ -20,7 +20,7 @@ public class LoginActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        ConfigManager.handleLanguageAndConfiguration(this);
+        ConfigHandler.handleLanguageAndConfiguration(this);
 
         openLoginFragment();
     }

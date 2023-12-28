@@ -4,7 +4,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".GUI.maraicher.MaraicherActivity"
-    android:background="@color/material_dynamic_neutral50">
+    android:background="@color/Fond_Transparent">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0.5"
+        android:contentDescription="@string/imgMaraicher"
+        android:scaleType="centerCrop"
+        android:src="@drawable/maraicher" />
 
     <TextView
         android:id="@+id/titleMaraicher"
@@ -17,10 +25,6 @@
         android:text="@string/titleMaraicher"
         android:textColor="@color/white"
         android:textSize="20sp" />
-
-    <!-- SHOP PANEL -->
-
-    <!-- BUY PANEL -->
 
     <!-- BASKET PANEL -->
     <RelativeLayout
@@ -70,9 +74,11 @@
             android:layout_marginBottom="20dp"
             android:text="@string/add"
             android:textColor="@color/white"
-            android:textSize="10sp" />
+            android:textSize="10sp"
+            />
 
         <EditText
+            android:background="@color/Fond_Caddie"
             android:id="@+id/quantityEditText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -106,56 +112,90 @@
             android:layout_toEndOf="@+id/imageView"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/articleTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/product"
-                android:textColor="@color/white"
-                android:textSize="16sp" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical">
 
-            <TextView
-                android:id="@+id/articleListView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:importantForAutofill="no"
-                android:text=""
-                android:textColor="@color/white"
-                android:textSize="16sp" />
+                <TextView
+                    android:id="@+id/articleTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:text="@string/product"
+                    android:textColor="@color/white"
+                    android:textSize="16sp" />
 
-            <TextView
-                android:id="@+id/priceTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/unitPriceText"
-                android:textColor="@color/white"
-                android:textSize="16sp" />
+                <TextView
+                    android:id="@+id/articleListView"
+                    android:layout_marginLeft="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:importantForAutofill="no"
+                    android:text="Un article random"
+                    android:textColor="@color/white"
+                    android:textSize="16sp" />
+            </LinearLayout>
 
-            <TextView
-                android:id="@+id/priceListView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:importantForAutofill="no"
-                android:text=""
-                android:textColor="@color/white"
-                android:textSize="16sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/priceTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:text="@string/unitPriceText"
+                    android:textColor="@color/white"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/priceListView"
+                    android:layout_marginLeft="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:importantForAutofill="no"
+                    android:text="0.0"
+                    android:textColor="@color/white"
+                    android:textSize="16sp" />
+
+            </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical">
 
             <TextView
                 android:id="@+id/stockTextView"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
                 android:text="@string/stockProduct"
                 android:textColor="@color/white"
                 android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/stockListView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
                 android:importantForAutofill="no"
-                android:text=""
+                android:text="0"
                 android:textColor="@color/white"
                 android:textSize="16sp" />
+
+        </LinearLayout>
 
         </LinearLayout>
 
@@ -182,30 +222,39 @@
             android:layout_width="wrap_content"
             android:layout_height="200dp"
             android:layout_marginBottom="20dp"
-            android:contextClickable="true" />
+            android:contextClickable="true"
+            android:background="@color/Fond_Caddie"
+            />
 
-        <TextView
-            android:id="@+id/totalTextView"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/caddieListView"
             android:layout_marginStart="250dp"
-            android:layout_marginTop="10dp"
-            android:text="@string/total"
-            android:textColor="@color/white"
-            android:textSize="16sp" />
+            android:layout_marginTop="10dp">
 
-        <TextView
-            android:id="@+id/totalText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/caddieListView"
-            android:layout_marginStart="300dp"
-            android:layout_marginTop="10dp"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            android:text="0"
-            android:importantForAutofill="no" />
+            <TextView
+                android:id="@+id/totalTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+
+                android:text="@string/total"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/totalText"
+                android:layout_marginLeft="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:text="0.0"
+                android:importantForAutofill="no" />
+        </LinearLayout>
+
+
 
         <Button
             android:id="@+id/deleteAllButton"

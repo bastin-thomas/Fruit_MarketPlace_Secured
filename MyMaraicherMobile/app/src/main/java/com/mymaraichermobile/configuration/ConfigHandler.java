@@ -10,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.Locale;
 
-public class ConfigManager extends AppCompatActivity{
+public class ConfigHandler extends AppCompatActivity{
 
     //region Private variables
     private static final String LANG_KEY = "lang_pref";
@@ -56,8 +56,8 @@ public class ConfigManager extends AppCompatActivity{
     }
 
     public static void handleLanguageAndConfiguration(Context context) {
-        String selectedLanguage = ConfigManager.getLanguage(context);
-        ConfigManager.changeLanguage(context, selectedLanguage.toLowerCase());
+        String selectedLanguage = ConfigHandler.getLanguage(context);
+        ConfigHandler.changeLanguage(context, selectedLanguage.toLowerCase());
     }
 
     public static void changeLanguage(Context context, String lang) {

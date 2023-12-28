@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Strings related to home -->
-    <string name="app_name">MyMaraicherMobile</string>
+    <string name="app_name">MaraicherMobile</string>
     <string name="titleActivityConfig">ConfigActivity</string>
 
     <!-- Strings related to login -->
@@ -19,7 +19,7 @@
     <string name="SaveButton">Enregistrer</string>
 
     <!-- Strings related to Maraicher -->
-    <string name="titleMaraicher">Bienvenue sur MyMaraicherMobile</string>
+    <string name="titleMaraicher">Bienvenue sur MaraicherMobile</string>
     <string name="imgMaraicher">Une image</string>
     <string name="add">Ajouter</string>
     <string name="previous">précédent</string>

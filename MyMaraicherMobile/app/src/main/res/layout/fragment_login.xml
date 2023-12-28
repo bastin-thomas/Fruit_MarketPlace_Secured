@@ -12,13 +12,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/fragment_vertical_margin"
+        android:autofillHints=""
         android:hint="@string/hintLogin"
         android:inputType="text"
         android:minHeight="50dp"
-        android:textColorHint="@color/white"
         android:textColor="@color/white"
-        tools:ignore="VisualLintTextFieldSize"
-        android:autofillHints="" />
+        android:focusedByDefault="true"
+
+
+        android:textColorHint="@color/white"
+        tools:ignore="VisualLintTextFieldSize" />
 
     <EditText
         android:id="@+id/passwordInput"
@@ -39,9 +42,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:checked="false"
-        android:textColorHint="@color/white"
+        android:minHeight="48dp"
+        android:text="@string/newAccount"
         android:textColor="@color/white"
-        android:text="@string/newAccount" />
+        android:textColorHint="@color/white" />
 
     <Button
         android:id="@+id/loginButton"
@@ -50,5 +54,7 @@
         android:layout_margin="30dp"
         android:background="@drawable/buttons"
         android:enabled="false"
+        android:textColor="@color/white"
+
         android:text="@string/connexion" />
 </LinearLayout>

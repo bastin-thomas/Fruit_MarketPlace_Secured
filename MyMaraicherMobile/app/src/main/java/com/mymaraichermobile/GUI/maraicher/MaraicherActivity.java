@@ -26,6 +26,7 @@ import com.mymaraichermobile.model.CaddieRows;
 import com.mymaraichermobile.model.ProtocoleMarket.ProtocoleThreaded.ProtocoleClientThreaded;
 import com.mymaraichermobile.model.SocketHandler;
 import com.mymaraichermobile.GUI.settings.SettingsActivity;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -115,8 +116,9 @@ public class MaraicherActivity extends AppCompatActivity {
         caddieListView.setAdapter(adapter);
         caddieListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         totalText = findViewById(R.id.totalText);
-
         //endregion
+
+        refreshArticle(currentArticle);
 
         //region Button Listener
 
@@ -319,7 +321,6 @@ public class MaraicherActivity extends AppCompatActivity {
     // Met à jour les détails du produit affiché en fonction de l'élément sélectionné
     @SuppressLint("SetTextI18n")
     private void refreshArticle(int index) {
-
         Articles art;
 
         try {
@@ -338,6 +339,12 @@ public class MaraicherActivity extends AppCompatActivity {
             this.articleListView.setText("");
             this.priceListView.setText("");
             this.stockListView.setText("");
+
+            String nomImage = art.getImage().toLowerCase();
+            nomImage = nomImage.replace(".jpg","");
+
+            int resID = getResources().getIdentifier(nomImage, "drawable", getPackageName());
+            Picasso.get().load(resID).into(imageFruitView);
 
             this.imageFruitView.setImageDrawable(Drawable.createFromPath("/images/" + art.getImage()));
 

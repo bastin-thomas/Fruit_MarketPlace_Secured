@@ -14,7 +14,7 @@ import android.widget.Spinner;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.mymaraichermobile.R;
-import com.mymaraichermobile.configuration.ConfigManager;
+import com.mymaraichermobile.configuration.ConfigHandler;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -36,9 +36,9 @@ public class SettingsActivity extends AppCompatActivity {
 
         //region Variables
 
-        String currentLanguage = ConfigManager.getLanguage(this);
-        String propIp = ConfigManager.getIp(this);
-        String propPort = ConfigManager.getPort(this);
+        String currentLanguage = ConfigHandler.getLanguage(this);
+        String propIp = ConfigHandler.getIp(this);
+        String propPort = ConfigHandler.getPort(this);
         Spinner languages = findViewById(R.id.languageSpinner);
         saveButton = findViewById(R.id.saveButton);
         choiceIp = findViewById(R.id.ChoiceIp);
@@ -78,7 +78,7 @@ public class SettingsActivity extends AppCompatActivity {
         languages.setAdapter(adapter);
 
         // On récupére l'indice de la dernière valeur sélectionnée
-        String lastSelectedLanguage = ConfigManager.getLanguage(this);
+        String lastSelectedLanguage = ConfigHandler.getLanguage(this);
         int position = getPositionForLanguage(lastSelectedLanguage);
         languages.setSelection(position);
 
@@ -95,11 +95,11 @@ public class SettingsActivity extends AppCompatActivity {
                 if (!currentLanguage.equals(selectedLanguage.toLowerCase())) {
 
                     // Pour changer la langue en fonction de la sélection
-                    ConfigManager.changeLanguage(context, selectedLanguage.toLowerCase());
+                    ConfigHandler.changeLanguage(context, selectedLanguage.toLowerCase());
 
-                    ConfigManager.refreshUi(context);
+                    ConfigHandler.refreshUi(context);
 
-                    String cur = ConfigManager.getLanguage(context);
+                    String cur = ConfigHandler.getLanguage(context);
                     Log.d("SettingsActivity", "NomCurrent: " + cur);
                     Log.d("SettingsActivity", "NomSelected: " + selectedLanguage);
                 }
@@ -122,7 +122,7 @@ public class SettingsActivity extends AppCompatActivity {
         });
 
         saveButton.setOnClickListener(v ->
-                ConfigManager.saveConfig(context, choiceIp.getText().toString(),
+                ConfigHandler.saveConfig(context, choiceIp.getText().toString(),
                         Integer.parseInt(choicePort.getText().toString())));
 
         //endregion
@@ -141,8 +141,8 @@ public class SettingsActivity extends AppCompatActivity {
         return 0; // Par défaut, retournez la première position si la langue n'est pas trouvée
     }
 
-    private void saveConfig() {
-
+    private void saveConfig(View view) {
+        ConfigHandler.saveConfig(this.context, choiceIp.getText().toString(), Integer.parseInt(choicePort.getText().toString()));
     }
     //endregion
 }

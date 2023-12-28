@@ -9,7 +9,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>18</maven.compiler.source>
         <maven.compiler.target>18</maven.compiler.target>
-        <exec.mainClass>be.hepl.stockmanagement.webserver.StockManagement_Server</exec.mainClass>
+        <exec.mainClass>be.hepl.stockmanagement.GUI.StockManagement_Server</exec.mainClass>
     </properties>
     
     <dependencies>

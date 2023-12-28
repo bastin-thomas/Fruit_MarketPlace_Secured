@@ -25,21 +25,23 @@ public class MainPage extends javax.swing.JFrame {
     private final String Login;
     private final Gestion_Protocol_Client GPC;
     private final LoginPage parent;
+    private final String securedStatus;
 
     private ArrayList<String> clients;
     private ArrayList<Facture> bills;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Constructors">
-    public MainPage(String Login, Gestion_Protocol_Client GPC, LoginPage parent) throws Exception {
+    public MainPage(String Login, Gestion_Protocol_Client GPC, LoginPage parent, String securedStatus) throws Exception {
         initComponents();
 
         this.Login = Login;
         this.GPC = GPC;
         this.parent = parent;
+        this.securedStatus = securedStatus;
 
         //Change title with current employee logged
-        this.setTitle("Bill Management Page - " + Login);
+        this.setTitle("Bill Management Page - " + Login + "     ["+securedStatus+"]");
         bills = null;
         clients = null;
 
@@ -266,14 +268,14 @@ public class MainPage extends javax.swing.JFrame {
                 }
                 return;
             }
-
+                
             //set Sales
             bill.setSales(sales);
-
+            
             //Open BillPage
-            BillPage window = new BillPage(GPC, bill, this, ("Facture [" + bill.getId() + "] - " + bill.getIdClient()), true);
+            BillPage window = new BillPage(GPC, bill, this, ("Facture [" + bill.getId() + "] - " + bill.getIdClient() +  "     ["+securedStatus+"]"), true, securedStatus);
             window.setVisible(true);
-
+            
             //Once Dialog Closed, refresh the ui
             try {
                 RefreshUI();
@@ -312,8 +314,8 @@ public class MainPage extends javax.swing.JFrame {
         //Select first combo
         this.Client_Combo.setSelectedIndex(0);
     }//GEN-LAST:event_RefreshComboButtonPushed
-
     // </editor-fold>
+    
     // <editor-fold defaultstate="collapsed" desc="Generated Properties">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable Bill_Table;

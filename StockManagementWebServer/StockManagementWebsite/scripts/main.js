@@ -30,6 +30,7 @@ function OnButtonUpdateArticleClick(id){
         }
     });
 
+
     if(toUpdate === null || toUpdate.prix == prix && toUpdate.stock == stock){
         console.log("Nothing changed");
         $(returnTag).text(`Nothing Changed`);
@@ -37,9 +38,10 @@ function OnButtonUpdateArticleClick(id){
         setTimeout(() => {
             $(returnTag).text(``);
         }, 2000);
-
+        
         return;
     }
+
 
     console.log("Update Card: id(" + id + ") = {prix=" + prix + ", stock" + stock + "}");
 

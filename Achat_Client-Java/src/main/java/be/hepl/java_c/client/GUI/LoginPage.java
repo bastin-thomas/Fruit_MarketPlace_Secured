@@ -187,8 +187,8 @@ public class LoginPage extends javax.swing.JFrame {
         SocketClient socket;
         Protocol prot;
         
-        String Login = "";
-        String Password = "";
+        String Login = this.Login_TextField.getText();
+        String Password = this.Password_TextField.getText();
         
         //Connect to Server
         try {
@@ -206,7 +206,7 @@ public class LoginPage extends javax.swing.JFrame {
         {
             //Try To Create a new Account
             try{
-                prot.SendCreateLogin(this.Login_TextField.getText(), this.Password_TextField.getText());
+                prot.SendCreateLogin(Login, Password);
                 this.Create_CheckBox.setSelected(false);
             }
             catch(Exception ex){
@@ -225,8 +225,6 @@ public class LoginPage extends javax.swing.JFrame {
         {
             //Try To Login
             try{
-                Login = this.Login_TextField.getText();
-                Password = this.Password_TextField.getText();
                 prot.SendLogin(Login, Password);
             }
             catch(Exception ex){

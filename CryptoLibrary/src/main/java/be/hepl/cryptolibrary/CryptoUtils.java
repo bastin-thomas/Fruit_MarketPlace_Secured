@@ -2,7 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package be.hepl.payement_protocol.Utils;
+package be.hepl.cryptolibrary;
+
+import be.hepl.cryptolibrary.CryptoConsts;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -72,10 +74,10 @@ import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
  */
 public class CryptoUtils {
     
-    public static final String CERT_SIGNATURE_ALG = Consts.SignatureAlgorythm;
-    public static final String DIGEST_ALG = Consts.DigestAlgorythm;
-    public static final String KEY_ALG = Consts.AsymetricAlgorythm;
-    public static final String PROVIDER = Consts.SecurityProvider;
+    public static final String CERT_SIGNATURE_ALG = CryptoConsts.SignatureAlgorythm;
+    public static final String DIGEST_ALG = CryptoConsts.DigestAlgorythm;
+    public static final String KEY_ALG = CryptoConsts.AsymetricAlgorythm;
+    public static final String PROVIDER = CryptoConsts.SecurityProvider;
     
        
     // <editor-fold defaultstate="collapsed" desc="Asymetrical Utils">
@@ -109,8 +111,8 @@ public class CryptoUtils {
     public static Certificate[] CreateCertificate(String Name, KeyPair key, String password, Properties config) {
         try {
             //Open RootKeyStore
-            KeyStore rootkeystore = KeyStore.getInstance(Consts.KeyStoreInstanceType);
-            File filestore = new File(config.getProperty(Consts.ConfigRootKeyStorePath));
+            KeyStore rootkeystore = KeyStore.getInstance(CryptoConsts.KeyStoreInstanceType);
+            File filestore = new File(config.getProperty(CryptoConsts.ConfigRootKeyStorePath));
             
             if(!filestore.exists())
             {
@@ -118,11 +120,11 @@ public class CryptoUtils {
             }
             
             FileInputStream filestorestream = new FileInputStream(filestore.getPath());
-            rootkeystore.load(filestorestream, config.getProperty(Consts.ConfigRootKeyStorePassword).toCharArray());
+            rootkeystore.load(filestorestream, config.getProperty(CryptoConsts.ConfigRootKeyStorePassword).toCharArray());
             
             //Get the rootPriveKey to sign the new certificate
-            PrivateKey rootPriKey = (PrivateKey) rootkeystore.getKey(Consts.RootCertificateName, config.getProperty(Consts.ConfigRootKeyStorePassword).toCharArray());
-            X509Certificate rootCert = (X509Certificate) rootkeystore.getCertificate(Consts.RootCertificateName);
+            PrivateKey rootPriKey = (PrivateKey) rootkeystore.getKey(CryptoConsts.RootCertificateName, config.getProperty(CryptoConsts.ConfigRootKeyStorePassword).toCharArray());
+            X509Certificate rootCert = (X509Certificate) rootkeystore.getCertificate(CryptoConsts.RootCertificateName);
             
             
             //Generate some dates
@@ -149,7 +151,7 @@ public class CryptoUtils {
             certBuilder.addExtension(Extension.authorityKeyIdentifier, false, CertUtils.createAuthorityKeyIdentifier(rootCert.getPublicKey()));
             
             //Create the signer, sign the certificate and create it
-            JcaContentSignerBuilder signer = new JcaContentSignerBuilder(Consts.SignatureAlgorythm);
+            JcaContentSignerBuilder signer = new JcaContentSignerBuilder(CryptoConsts.SignatureAlgorythm);
             X509CertificateHolder certHolder = certBuilder.build(signer.build(rootPriKey));
             X509Certificate certificate  = new JcaX509CertificateConverter().setProvider(PROVIDER).getCertificate(certHolder);
             
@@ -195,7 +197,7 @@ public class CryptoUtils {
     
     public static byte[] AsymetricalEncrypt(byte [] decryptedData, PublicKey publicKey){
         try {
-            Cipher cipher = Cipher.getInstance((Consts.AsymetricAlgorythm + "/" + Consts.AsymetricCipherMode + "/" + Consts.AsymetricPaddingMode), Consts.SecurityProvider);
+            Cipher cipher = Cipher.getInstance((CryptoConsts.AsymetricAlgorythm + "/" + CryptoConsts.AsymetricCipherMode + "/" + CryptoConsts.AsymetricPaddingMode), CryptoConsts.SecurityProvider);
             cipher.init(Cipher.ENCRYPT_MODE, publicKey);
             return cipher.doFinal(decryptedData);
         } catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchProviderException | BadPaddingException | IllegalBlockSizeException | NoSuchPaddingException ex) {
@@ -222,7 +224,7 @@ public class CryptoUtils {
      */
     public static byte[] AsymetricalDecrypt(byte[] encryptedData, PrivateKey privateKey){
         try {
-            Cipher cipher = Cipher.getInstance((Consts.AsymetricAlgorythm + "/" + Consts.AsymetricCipherMode + "/" + Consts.AsymetricPaddingMode), Consts.SecurityProvider);
+            Cipher cipher = Cipher.getInstance((CryptoConsts.AsymetricAlgorythm + "/" + CryptoConsts.AsymetricCipherMode + "/" + CryptoConsts.AsymetricPaddingMode), CryptoConsts.SecurityProvider);
             cipher.init(Cipher.DECRYPT_MODE, privateKey);
             return cipher.doFinal(encryptedData);
         } catch (IllegalBlockSizeException | BadPaddingException | NoSuchAlgorithmException | NoSuchProviderException | NoSuchPaddingException | InvalidKeyException  ex) {
@@ -239,7 +241,7 @@ public class CryptoUtils {
      */
     public static SecretKey CreateSecretKey(){
         try {
-            KeyGenerator sessionKeyGen = KeyGenerator.getInstance(Consts.SymetricAlgorythm, Consts.SecurityProvider);
+            KeyGenerator sessionKeyGen = KeyGenerator.getInstance(CryptoConsts.SymetricAlgorythm, CryptoConsts.SecurityProvider);
             sessionKeyGen.init(256, new SecureRandom());
             
             return sessionKeyGen.generateKey();
@@ -268,7 +270,7 @@ public class CryptoUtils {
      */
     public static byte[] SymetricalEncrypt(Object decryptedData, SecretKey secretKey, IvParameterSpec params){
         try {
-            Cipher cipher = Cipher.getInstance((Consts.SymetricAlgorythm + "/" + Consts.SymetricCipherMode + "/" + Consts.SymetricPaddingMode), Consts.SecurityProvider);
+            Cipher cipher = Cipher.getInstance((CryptoConsts.SymetricAlgorythm + "/" + CryptoConsts.SymetricCipherMode + "/" + CryptoConsts.SymetricPaddingMode), CryptoConsts.SecurityProvider);
             cipher.init(Cipher.ENCRYPT_MODE, secretKey, params);
             return cipher.doFinal(EncodeObject(decryptedData));
             
@@ -287,7 +289,7 @@ public class CryptoUtils {
     public static Object SymetricalDecrypt(byte[] encryptedData, SecretKey secretKey, IvParameterSpec params){
         try {
             
-            Cipher cipher = Cipher.getInstance((Consts.SymetricAlgorythm + "/" + Consts.SymetricCipherMode + "/" + Consts.SymetricPaddingMode), Consts.SecurityProvider);
+            Cipher cipher = Cipher.getInstance((CryptoConsts.SymetricAlgorythm + "/" + CryptoConsts.SymetricCipherMode + "/" + CryptoConsts.SymetricPaddingMode), CryptoConsts.SecurityProvider);
             cipher.init(Cipher.DECRYPT_MODE, secretKey, params);
             return DecodeObject(cipher.doFinal(encryptedData));
             
@@ -305,7 +307,7 @@ public class CryptoUtils {
      * @return SecretKey instance
      */
     public static SecretKey DecodeSecretKey(byte[] encodedSecretKey){
-        return new SecretKeySpec(encodedSecretKey, 0, encodedSecretKey.length, Consts.SymetricAlgorythm);
+        return new SecretKeySpec(encodedSecretKey, 0, encodedSecretKey.length, CryptoConsts.SymetricAlgorythm);
     }
     
     /**
@@ -374,7 +376,7 @@ public class CryptoUtils {
             final ByteArrayOutputStream bos = new ByteArrayOutputStream();
             final ObjectOutputStream oos = new ObjectOutputStream(bos);
             
-            Signature sigBuilder = Signature.getInstance(Consts.SignatureAlgorythm, Consts.SecurityProvider);
+            Signature sigBuilder = Signature.getInstance(CryptoConsts.SignatureAlgorythm, CryptoConsts.SecurityProvider);
             sigBuilder.initSign(clientPrivateKey);
             
             oos.writeObject(toSign);
@@ -402,7 +404,7 @@ public class CryptoUtils {
             final ByteArrayOutputStream bos = new ByteArrayOutputStream();
             final ObjectOutputStream oos = new ObjectOutputStream(bos);
             
-            Signature sigBuilder = Signature.getInstance(Consts.SignatureAlgorythm, Consts.SecurityProvider);
+            Signature sigBuilder = Signature.getInstance(CryptoConsts.SignatureAlgorythm, CryptoConsts.SecurityProvider);
             sigBuilder.initVerify(clientPublicKey);
             
             oos.writeObject(toVerify);
@@ -428,7 +430,7 @@ public class CryptoUtils {
             final ByteArrayOutputStream bos = new ByteArrayOutputStream();
             final ObjectOutputStream oos = new ObjectOutputStream(bos);
             
-            Signature sigBuilder = Signature.getInstance(Consts.SignatureAlgorythm, Consts.SecurityProvider);
+            Signature sigBuilder = Signature.getInstance(CryptoConsts.SignatureAlgorythm, CryptoConsts.SecurityProvider);
             sigBuilder.initVerify(clientCertificate);
             
             oos.writeObject(toVerify);
@@ -449,7 +451,7 @@ public class CryptoUtils {
             final ByteArrayOutputStream bos = new ByteArrayOutputStream();
             final ObjectOutputStream oos = new ObjectOutputStream(bos);
             
-            Mac hm = Mac.getInstance(Consts.HMACAlgorythm,Consts.SecurityProvider);
+            Mac hm = Mac.getInstance(CryptoConsts.HMACAlgorythm,CryptoConsts.SecurityProvider);
             hm.init(secretKey);
             
             oos.writeObject(toHash);

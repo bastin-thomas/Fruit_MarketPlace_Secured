@@ -25,12 +25,14 @@ public class PayementPage extends javax.swing.JDialog {
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Constructors">
-    public PayementPage(Gestion_Protocol_Client GPC, Facture bill, Frame owner, String title, boolean modal) {
+    public PayementPage(Gestion_Protocol_Client GPC, Facture bill, Frame owner, String title, boolean modal, String securedStatus) {
         super(owner, title, modal);
         initComponents();
         
         this.GPC = GPC;
         this.bill = bill;
+        
+        this.setTitle("Payement Bill["+bill.getId()+"] - " + bill.getDate() + "     ["+securedStatus+"]");
     }
     // </editor-fold>
     

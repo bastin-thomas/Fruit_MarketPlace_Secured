@@ -21,13 +21,17 @@ public class StockManagement_HttpServer{
     
     // <editor-fold defaultstate="collapsed" desc="Properties">
     protected HttpServer http;
-    protected Properties properties;
     protected DBStock db;
     protected Logger log;
     // </editor-fold>
     
+    public StockManagement_HttpServer(Logger log, DBStock db){
+        this.db = db;
+        this.log = log;
+        this.http = null;
+    }
+    
     public StockManagement_HttpServer(String ip, int port, int nthread, int maxPending, Logger log, DBStock db) throws IOException {
-        this.properties = properties;
         this.log = log;
         this.db = db;
         
@@ -47,6 +51,6 @@ public class StockManagement_HttpServer{
     }
     
     public void close() {
-        http.stop(50);
+        http.stop(0);
     }
 }

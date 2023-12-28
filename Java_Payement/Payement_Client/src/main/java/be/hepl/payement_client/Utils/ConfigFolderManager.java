@@ -4,6 +4,7 @@
  */
 package be.hepl.payement_client.Utils;
 
+import be.hepl.cryptolibrary.CryptoConsts;
 import be.hepl.payement_protocol.Utils.Consts;
 import java.io.File;
 import java.io.FileInputStream;
@@ -49,12 +50,12 @@ public class ConfigFolderManager {
             config.setProperty(Consts.ConfigPortSecured, Consts.ConfigDefaultPortSecured);
         }
 
-        if (!config.containsKey(Consts.ConfigPortTLS)) {
-            config.setProperty(Consts.ConfigPortTLS, Consts.ConfigDefaultPortTLS);
+        if (!config.containsKey(CryptoConsts.ConfigPortTLS)) {
+            config.setProperty(CryptoConsts.ConfigPortTLS, CryptoConsts.ConfigDefaultPortTLS);
         }
         
-        if (!config.containsKey(Consts.ConfigRootKeyStorePassword)) {
-            config.setProperty(Consts.ConfigRootKeyStorePassword, Consts.ConfigDefaultRootKeyStorePassword);
+        if (!config.containsKey(CryptoConsts.ConfigRootKeyStorePassword)) {
+            config.setProperty(CryptoConsts.ConfigRootKeyStorePassword, CryptoConsts.ConfigDefaultRootKeyStorePassword);
         }
 
         if (!config.containsKey(Consts.ConfigKeyStorePath)) {
@@ -65,12 +66,12 @@ public class ConfigFolderManager {
             config.setProperty(Consts.ConfigKeyStorePassword, Consts.ConfigDefaultClientKeyStorePassword);
         }
         
-        if (!config.containsKey(Consts.ConfigRootKeyStorePath)) {
-            config.setProperty(Consts.ConfigRootKeyStorePath, Consts.ConfigDefaultRootKeyStorePath);
+        if (!config.containsKey(CryptoConsts.ConfigRootKeyStorePath)) {
+            config.setProperty(CryptoConsts.ConfigRootKeyStorePath, CryptoConsts.ConfigDefaultRootKeyStorePath);
         }
         
-        if (!config.containsKey(Consts.ConfigRootKeyStorePassword)) {
-            config.setProperty(Consts.ConfigRootKeyStorePassword, Consts.ConfigDefaultRootKeyStorePassword);
+        if (!config.containsKey(CryptoConsts.ConfigRootKeyStorePassword)) {
+            config.setProperty(CryptoConsts.ConfigRootKeyStorePassword, CryptoConsts.ConfigDefaultRootKeyStorePassword);
         }
         
         SaveProperties(config);

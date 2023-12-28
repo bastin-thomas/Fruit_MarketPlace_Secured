@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.net.SocketException;
+import javax.net.ssl.SSLHandshakeException;
 
 /**
  *
@@ -81,17 +83,21 @@ public abstract class ServiceThread extends Thread {
                 if (oos != null && ex.getResponse() != null)
                 oos.writeObject(ex.getResponse());
             }
-        } catch (IOException ex) { 
-            logger.Trace("Erreur I/O"); 
+        }catch(SSLHandshakeException ex){
+            logger.Trace("SSLHandshakeException: " + ex.getMessage());
+        } catch(SocketException ex){
+            logger.Trace("SocketException: " + ex.getMessage());
         } catch (ClassNotFoundException ex) { 
-            logger.Trace("Erreur requete invalide");
+            logger.Trace("Erreur requete invalide: " + ex.getMessage());
+        } catch (IOException ex) {
+            logger.Trace("Erreur I/O: " + ex.getMessage());
         }
         
         finally {
             try { 
                 serviceSocket.close(); 
             } catch (IOException ex) { 
-                logger.Trace("Erreur fermeture socket"); 
+                logger.Trace("Erreur fermeture socket: " + ex.getMessage()); 
             }
         }
     }

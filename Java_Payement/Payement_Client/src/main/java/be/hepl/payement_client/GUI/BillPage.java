@@ -22,6 +22,8 @@ public class BillPage extends javax.swing.JDialog {
     private final Facture bill;
     private final Gestion_Protocol_Client GPC;
     private final Frame owner;
+    private final String securedStatus;
+    
     private boolean payed;
     // </editor-fold>
     
@@ -33,7 +35,7 @@ public class BillPage extends javax.swing.JDialog {
      * @param title
      * @param modal
      */
-    public BillPage(Gestion_Protocol_Client GPC, Facture bill, Frame owner, String title, boolean modal) {
+    public BillPage(Gestion_Protocol_Client GPC, Facture bill, Frame owner, String title, boolean modal, String securedStatus) {
         super(owner, title, modal);
         initComponents();
         
@@ -42,6 +44,7 @@ public class BillPage extends javax.swing.JDialog {
         this.bill = bill;
         this.GPC = GPC;
         this.owner = owner;
+        this.securedStatus = securedStatus;
         
         this.IdFacture_Textfield.setText("" + bill.getId());
         this.Date_Textfield.setText("" + bill.getDate());
@@ -235,7 +238,7 @@ public class BillPage extends javax.swing.JDialog {
     }//GEN-LAST:event_Annuler_ButtonActionPerformed
 
     private void Payer_ButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Payer_ButtonActionPerformed
-        PayementPage window = new PayementPage(GPC, bill, this.owner, ("Payement Bill["+bill.getId()+"] - " + bill.getDate()), true);
+        PayementPage window = new PayementPage(GPC, bill, this.owner, "DefaultTitle", true, securedStatus);
         window.setVisible(true);
         
         this.Payer_Button.setEnabled(!window.payed);

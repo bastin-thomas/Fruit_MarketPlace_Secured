@@ -6,7 +6,7 @@ package be.hepl.payement_protocol.protocol.response.Secured;
 
 import be.hepl.payement_protocol.protocol.response.*;
 import be.hepl.generic_server_tcp.Response;
-import be.hepl.payement_protocol.Utils.CryptoUtils;
+import be.hepl.cryptolibrary.CryptoUtils;
 import java.security.KeyStoreException;
 import java.util.ArrayList;
 import javax.crypto.SecretKey;

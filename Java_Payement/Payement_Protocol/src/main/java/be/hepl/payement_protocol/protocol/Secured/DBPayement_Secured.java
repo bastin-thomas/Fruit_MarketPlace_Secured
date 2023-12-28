@@ -7,7 +7,7 @@ package be.hepl.payement_protocol.protocol.Secured;
 import be.hepl.payement_protocol.protocol.DBPayement;
 import be.hepl.generic_server_tcp.Logger;
 import be.hepl.payement_protocol.Utils.Consts;
-import be.hepl.payement_protocol.Utils.CryptoUtils;
+import be.hepl.cryptolibrary.CryptoUtils;
 import be.hepl.payement_protocol.protocol.request.Secured.LoginRequest_Secured;
 import java.security.MessageDigest;
 import java.sql.ResultSet;

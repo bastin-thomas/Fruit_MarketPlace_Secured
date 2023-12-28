@@ -28,9 +28,7 @@ public class Maraicher extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="My Properties">
     private final Protocol csocket;
     private final LoginPage login;
-    
     private final String loginId;
-    
     private int currentArticle;
     
     private ArrayList<CaddieRows> caddie;
@@ -41,13 +39,13 @@ public class Maraicher extends javax.swing.JFrame {
     /**
      * Creates new form Maraicher
      *
-     * @param socket
+     * @param csocket
      */
-    public Maraicher(LoginPage parent, Protocol socket, String LoginId) {
+    public Maraicher(LoginPage parent, Protocol csocket, String LoginId) {
         initComponents();
-        csocket = socket;
-        login = parent;
-        loginId = LoginId;
+        this.csocket = csocket;
+        this.login = parent;
+        this.loginId = LoginId;
 
         currentArticle = 0;
         this.GoRight_ButtonActionPerformed(null);

@@ -27,7 +27,11 @@ public class Consts {
     public final static String ConfigDefaultIP = "0.0.0.0";
     
     public final static String ConfigPort = "Server_PORT";
-    public final static String ConfigDefaultPort = "8080";
+    public final static String ConfigDefaultPort = "80";
+    
+    public final static String ConfigPortSecured = "Server_PORT_SECURED";
+    public final static String ConfigDefaultPortSecured = "8080";
+    
     
     public final static String ConfigDBString = "DB_URL_CONNEXION";
     public final static String ConfigDefaultDBString = "jdbc:mariadb://192.168.1.19:3306/PourStudent?user=Student&password=PassStudent1_";
@@ -35,31 +39,19 @@ public class Consts {
     public final static String ConfigPoolSize = "POOL_SIZE";
     public final static String ConfigDefaultPoolSize = "10";
     
+    public final static String ConfigPoolSecuredSize = "POOL_SECURED_SIZE";
+    public final static String ConfigDefaultPoolSecuredSize = "10";
+    
     public final static String ConfigMaxPendingConnexion = "MAX_PENDING_CONNEXIONS";
     public final static String ConfigDefaultMaxPendingConnexion = "150";
     
     public final static String ConfigKeyStorePath = "KEYSTORE_PATH";
-    public final static String ConfigDefaultClientKeyStorePath = "../../JAVA_CRYPTO/ClientKeyStore.p12";
-    public final static String ConfigDefaultServerKeyStorePath = "../../JAVA_CRYPTO/ServerKeyStore.p12";
+    public final static String ConfigDefaultServerKeyStorePath = "../JAVA_CRYPTO/WebServerKeyStore.p12";
     
     public final static String ConfigKeyStorePassword = "KEYSTORE_PASSWORD";
     public final static String ConfigDefaultClientKeyStorePassword = "1234";
     public final static String ConfigDefaultServerKeyStorePassword = "1234";
     
-    public final static String ConfigRootKeyStorePath = "ROOT_KEYSTORE_PATH";
-    public final static String ConfigDefaultRootKeyStorePath = "../../JAVA_CRYPTO/RootKeyStore.p12";
-    
-    public final static String ConfigRootKeyStorePassword = "ROOT_KEYSTORE_PASSWORD";
-    public final static String ConfigDefaultRootKeyStorePassword = "1234";
-    
-    
-    public final static char EndOfRequest1 = '&';
-    public final static char EndOfRequest2 = ')';
-    
-    public final static char SplitCommand = '@';
-    public final static char SplitParameters = '#';
-    public final static char SplitList = '~';
- 
     
     public final static String CharsetName = "UTF-8";
     

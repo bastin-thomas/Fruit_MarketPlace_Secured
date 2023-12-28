@@ -9,11 +9,9 @@ import be.hepl.stockmanagement.Utils.DBStock;
 import be.hepl.stockmanagement.model.Article;
 import com.sun.net.httpserver.HttpExchange;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.logging.Level;
 import org.json.JSONObject;
 
 /**
@@ -32,6 +30,12 @@ public class ApiHandler extends MyHttpHandler {
     public void handle(HttpExchange exchange) throws IOException {
         String requestPath = exchange.getRequestURI().getPath();
         String requestMethod = exchange.getRequestMethod();
+        
+        // CORS (Cross-Origin Resource Sharing)
+        exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
+        exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+        exchange.getResponseHeaders().add("Access-Control-Allow-Headers", "ContentType");
+
 
         log.Trace("IndexHandler (method:" + requestMethod + ") = " + requestPath);
 

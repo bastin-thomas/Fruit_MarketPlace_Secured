@@ -70,13 +70,14 @@ public class ConfigFolderManager {
             config.setProperty(Consts.ConfigKeyStorePassword, Consts.ConfigDefaultServerKeyStorePassword);
         }
         
-        if (!config.containsKey(Consts.ConfigRootKeyStorePath)) {
-            config.setProperty(Consts.ConfigRootKeyStorePath, Consts.ConfigDefaultRootKeyStorePath);
+        if (!config.containsKey(Consts.ConfigPortSecured)) {
+            config.setProperty(Consts.ConfigPortSecured, Consts.ConfigDefaultPortSecured);
         }
         
-        if (!config.containsKey(Consts.ConfigRootKeyStorePassword)) {
-            config.setProperty(Consts.ConfigRootKeyStorePassword, Consts.ConfigDefaultRootKeyStorePassword);
+        if (!config.containsKey(Consts.ConfigPoolSecuredSize)) {
+            config.setProperty(Consts.ConfigPoolSecuredSize, Consts.ConfigDefaultPoolSecuredSize);
         }
+        
             
         
         SaveProperties(config);

@@ -17,6 +17,7 @@ import android.widget.TextView;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.mymaraichermobile.client.Achats;
 import com.mymaraichermobile.client.Articles;
 import com.mymaraichermobile.client.CaddieRows;
 import com.mymaraichermobile.client.ProtocoleClient;
@@ -26,11 +27,9 @@ import com.mymaraichermobile.settings.SettingsActivity;
 
 import java.util.ArrayList;
 import java.util.Objects;
-import java.util.UUID;
 import java.util.Vector;
 
 public class MaraicherActivity extends AppCompatActivity {
-    // TODO Faire add and delete(/ALl) Buttons
 
     //region Private variables
 
@@ -60,6 +59,7 @@ public class MaraicherActivity extends AppCompatActivity {
     private float totalPrice;
     private int currentArticle;
     private ArrayList<CaddieRows> caddie;
+    ArrayAdapter<Achats> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
 
     //endregion
 
@@ -77,17 +77,15 @@ public class MaraicherActivity extends AppCompatActivity {
         if (extras != null) {
             socket = extras.getParcelable("socket_key");
             client = extras.getParcelable("protocol_key");
+            loginId = extras.getParcelable("loginId_key");
 
-            Log.d("SOCKET", "Socket : " + socket);
-            Log.d("CLIENT", "Client : " + client);
+            Log.d("ETAT SOCKET", "Socket : " + socket);
+            Log.d("ETAT CLIENT", "Client : " + client);
         }
 
         //endregion
 
         //region Variables initialisation
-
-        UUID uuid = UUID.randomUUID();
-        loginId = uuid.toString();
 
         // variables IDS
         imageFruitView = findViewById(R.id.imageView);
@@ -113,11 +111,30 @@ public class MaraicherActivity extends AppCompatActivity {
         totalPrice = (float) 0.0;
         caddie = new ArrayList<>();
         caddieListView = findViewById(R.id.caddieListView);
+        caddieListView.setAdapter(adapter);
+        caddieListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         totalText = findViewById(R.id.totalText);
 
         //endregion
 
         //region Button Listener
+
+        caddieListView.setOnItemClickListener((parent, view, index, id) -> {
+
+            /*if (caddieListView.isItemChecked(index)) {
+
+                deleteButton.setEnabled(true);
+
+            } else {
+
+                // Aucun élément sélectionné
+                deleteButton.setEnabled(false);
+
+            }*/
+
+            deleteButton.setEnabled(caddieListView.isItemChecked(index));
+        });
+
         previousButton.setOnClickListener(v ->
                 showPreviousElement());
 
@@ -146,7 +163,7 @@ public class MaraicherActivity extends AppCompatActivity {
 
     // S'exécute avant que l'application s'arrête
     @Override
-    protected void onDestroy() { // FINI
+    protected void onDestroy() {
         super.onDestroy();
 
         try {
@@ -171,7 +188,7 @@ public class MaraicherActivity extends AppCompatActivity {
     }
 
     // Pour revenir à la page de connexion
-    public void disconnect(View view) { // FINI
+    public void disconnect(View view) {
         try {
 
             client.sendCancelAll();
@@ -180,7 +197,8 @@ public class MaraicherActivity extends AppCompatActivity {
 
         } catch (Exception ex) {
             this.runOnUiThread(() ->
-                    configActivity.afficherPopupErreur("ERROR LOGOUT DISCONNECT : ", String.valueOf(ex.getMessage()), this));
+                    configActivity.afficherPopupErreur("ERROR LOGOUT DISCONNECT : ",
+                            String.valueOf(ex.getMessage()), this));
             return;
         }
 
@@ -192,7 +210,7 @@ public class MaraicherActivity extends AppCompatActivity {
     }
 
     // Caddie
-    private void showPreviousElement() { // FINI
+    private void showPreviousElement() {
 
         if(!this.previousButton.isEnabled())
         {
@@ -210,7 +228,8 @@ public class MaraicherActivity extends AppCompatActivity {
 
                 case "ENDCONNEXION" ->
                     this.runOnUiThread(() ->
-                            configActivity.afficherPopupErreur("ERROR PREVIOUS BUTTON", ("Erreur transmission des données : " + ex.getMessage()), this));
+                            configActivity.afficherPopupErreur("ERROR PREVIOUS BUTTON", ("Erreur transmission des données : "
+                                    + ex.getMessage()), this));
 
                 case "NO_ARTICLE_FOUND" -> // On désactive le bouton car plus d'article précédent
                         this.previousButton.setEnabled(false);
@@ -218,18 +237,20 @@ public class MaraicherActivity extends AppCompatActivity {
                 case "PARAMS_FORMAT_ERROR" ->
 
                     this.runOnUiThread(() ->
-                            configActivity.afficherPopupErreur("ERROR FORMAT PREVIOUS BUTTON", ("MAUVAIS FORMAT : " + ex.getMessage()), this));
+                            configActivity.afficherPopupErreur("ERROR FORMAT PREVIOUS BUTTON", ("MAUVAIS FORMAT : "
+                                    + ex.getMessage()), this));
 
                 default ->
                         this.runOnUiThread(() ->
-                                configActivity.afficherPopupErreur("UNKNOW ERROR PREVIOUS BUTTON", ("ERREUR INCONNUE : " + ex.getMessage()), this));
+                                configActivity.afficherPopupErreur("UNKNOW ERROR PREVIOUS BUTTON", ("ERREUR INCONNUE : "
+                                        + ex.getMessage()), this));
             }
 
         }
 
     }
 
-    private void showNextElement() { // FINI
+    private void showNextElement() {
 
         if (!this.nextButton.isEnabled()) {
             this.previousButton.setEnabled(true);
@@ -245,16 +266,19 @@ public class MaraicherActivity extends AppCompatActivity {
             switch (Objects.requireNonNull(ex.getMessage())) {
 
                 case "ENDCONNEXION" -> this.runOnUiThread(() ->
-                        configActivity.afficherPopupErreur("ERROR PREVIOUS BUTTON", ("Erreur transmission des données : " + ex.getMessage()), this));
+                        configActivity.afficherPopupErreur("ERROR PREVIOUS BUTTON", ("Erreur transmission des données : "
+                                + ex.getMessage()), this));
 
                 case "NO_ARTICLE_FOUND" -> // On désactive le bouton car plus d'article suivant
                         this.nextButton.setEnabled(false);
 
                 case "PARAMS_FORMAT_ERROR" -> this.runOnUiThread(() ->
-                        configActivity.afficherPopupErreur("ERROR FORMAT PREVIOUS BUTTON", ("MAUVAIS FORMAT : " + ex.getMessage()), this));
+                        configActivity.afficherPopupErreur("ERROR FORMAT PREVIOUS BUTTON", ("MAUVAIS FORMAT : "
+                                + ex.getMessage()), this));
 
                 default -> this.runOnUiThread(() ->
-                        configActivity.afficherPopupErreur("UNKNOW ERROR PREVIOUS BUTTON", ("ERREUR INCONNUE : " + ex.getMessage()), this));
+                        configActivity.afficherPopupErreur("UNKNOW ERROR PREVIOUS BUTTON", ("ERREUR INCONNUE : "
+                                + ex.getMessage()), this));
             }
 
         }
@@ -263,9 +287,20 @@ public class MaraicherActivity extends AppCompatActivity {
 
     // Met à jour les détails du produit affiché en fonction de l'élément sélectionné
     @SuppressLint("SetTextI18n")
-    private void refreshArticle(int index) throws Exception { // FINI
+    private void refreshArticle(int index) {
 
-        Articles art = client.sendConsult(index);
+        Articles art = null;
+
+        try {
+
+            art = client.sendConsult(index);
+
+        } catch (Exception ex) {
+            this.runOnUiThread(() ->
+                    configActivity.afficherPopupErreur("CONSULT ERROR REFRESH ARTICLE", ("ERREUR : "
+                            + ex.getMessage()), this));
+            return;
+        }
 
         try {
 
@@ -278,7 +313,8 @@ public class MaraicherActivity extends AppCompatActivity {
         } catch (Exception ex) {
 
             this.runOnUiThread(() ->
-                    configActivity.afficherPopupErreur("LOAD FILE", "CANNOT LOAD FILE : " + ex.getMessage(), this));
+                    configActivity.afficherPopupErreur("LOAD FILE", "CANNOT LOAD FILE : "
+                            + ex.getMessage(), this));
             return;
         }
 
@@ -288,15 +324,24 @@ public class MaraicherActivity extends AppCompatActivity {
 
     }
 
-    // Met à jour l'affichage du panier avec la liste des articles
+    // Mettre à jour la vue du caddie
+    private void setAdapter() {
+
+        caddieListView.setAdapter(adapter);
+
+        adapter.notifyDataSetChanged();
+
+    }
+
+    // Met à jour le panier avec la liste des articles
     @SuppressLint("SetTextI18n")
-    private void refreshCaddie() { // FINI
+    private void refreshCaddie() {
 
         caddie.clear();
 
-        ArrayAdapter<Vector<String>> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
+        ArrayAdapter<Vector<String>> tmpAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
 
-        adapter.clear();
+        tmpAdapter.clear();
 
         try{
 
@@ -330,54 +375,187 @@ public class MaraicherActivity extends AppCompatActivity {
 
             this.totalPrice += tmp.getPrix() * ((float)tmp.getQuantitee());
 
-            adapter.add(row);
+            tmpAdapter.add(row);
 
         }
 
-        this.caddieListView.setAdapter(adapter);
+        this.caddieListView.setAdapter(tmpAdapter);
 
-        adapter.notifyDataSetChanged();
+        tmpAdapter.notifyDataSetChanged();
 
         this.totalText.setText("" + totalPrice);
 
     }
 
     // Ajoute le produit choisit à la liste des produits
-    private void addToCaddie () { // PAS FINI
+    private void addToCaddie () {
 
-        // quantityEditText
-        // articleList.add(article);
+        Achats achats = null;
 
-        refreshCaddie(); // Met à jour l'affichage du panier
+        int quantitee = Integer.parseInt(this.quantityEditText.getText().toString());
+
+        try{
+
+            achats = client.sendAchat(this.currentArticle, quantitee);
+
+        } catch(Exception ex){
+            switch (Objects.requireNonNull(ex.getMessage())) {
+                case "ENDCONNEXION" -> {
+                    this.runOnUiThread(() ->
+                            configActivity.afficherPopupErreur("CONNECTION ERROR SENDACHAT BUY", "ERREUR : "
+                                    + ex.getMessage(), this));
+                    return;
+                }
+
+                case "PARAMS_FORMAT_ERROR" -> this.runOnUiThread(() ->
+                        configActivity.afficherPopupErreur("FORMAT ERROR SENDACHAT BUY", "ERREUR : "
+                                + ex.getMessage(), this));
+
+                case "NO_MORE_STOCK" -> this.runOnUiThread(() ->
+                        configActivity.afficherPopupErreur("STOCK ERROR SENDACHAT BUY", "NO MORE STOCK OF THIS ARTICLE ", this));
+
+                default -> this.runOnUiThread(() ->
+                        configActivity.afficherPopupErreur("UNKNOW ERROR SENDACHAT BUY", "ERREUR INCONNUE : "
+                                + ex.getMessage(), this));
+            }
+        }
+
+        try{
+
+            refreshArticle(currentArticle);
+
+            adapter.add(achats);
+
+            setAdapter();
+
+        } catch (Exception ex) {
+            switch (Objects.requireNonNull(ex.getMessage())) {
+                case "ENDCONNEXION":
+                    this.runOnUiThread(() ->
+                            configActivity.afficherPopupErreur("CONNECTION ERROR BUY", "ERREUR : "
+                                    + ex.getMessage(), this));
+                    return;
+
+                case "PARAMS_FORMAT_ERROR":
+                    this.runOnUiThread(() ->
+                            configActivity.afficherPopupErreur("FORMAT ERROR BUY", "ERREUR : "
+                                    + ex.getMessage(), this));
+                    return;
+
+                case "NO_ARTICLE_FOUND":
+                default:
+                    this.runOnUiThread(() ->
+                            configActivity.afficherPopupErreur("UNKNOW ERROR BUY", "ERREUR INCONNUE : "
+                                    + ex.getMessage(), this));
+                    return;
+            }
+        }
+
+        refreshCaddie();
 
     }
 
     // Supprime l'article sélectionné
-    private void deleteArticle() { // PAS FINI
+    private void deleteArticle() {
 
+        try{
 
+            int index = this.caddieListView.getSelectedItemPosition();
+            int idArticle = caddie.get(index).getIdArticle();
+            client.sendCancel(idArticle);
 
-        // Met à jour le panier
-        refreshCaddie();
+        } catch (Exception ex) {
+            switch(Objects.requireNonNull(ex.getMessage())) {
+                case "ENDCONNEXION" -> {
+                    this.runOnUiThread(() ->
+                            configActivity.afficherPopupErreur("CONNECTION ERROR DELETE", "ERREUR : "
+                                    + ex.getMessage(), this));
+                    return;
+                }
+
+                case "PARAMS_FORMAT_ERROR" -> this.runOnUiThread(() ->
+                        configActivity.afficherPopupErreur("FORMAT ERROR DELETE", "ERREUR FORMAT : "
+                                + ex.getMessage(), this));
+
+                default -> this.runOnUiThread(() ->
+                        configActivity.afficherPopupErreur("UNKNOW ERROR DELETE", "ERREUR INCONNUE : "
+                                + ex.getMessage(), this));
+            }
+
+        }
+
+        try {
+
+            adapter.remove((Achats) this.caddieListView.getSelectedItem());
+
+            setAdapter();
+
+            refreshCaddie();
+
+            refreshArticle(currentArticle);
+
+        } catch (Exception ex) {
+            this.runOnUiThread(() ->
+                    configActivity.afficherPopupErreur("ERROR DELETE", "ERREUR : "
+                            + ex.getMessage(), this));
+        }
 
     }
 
     // Supprime tous les articles du panier
-    private void deleteCaddie() { // PAS FINI
+    private void deleteCaddie() {
+        try {
 
+            client.sendCancelAll();
 
+        } catch (Exception ex) {
+            switch(Objects.requireNonNull(ex.getMessage())) {
+                case "ENDCONNEXION" -> {
+                    this.runOnUiThread(() ->
+                            configActivity.afficherPopupErreur("CONNECTION ERROR DELETEALL CADDIE", "ERREUR : "
+                                    + ex.getMessage(), this));
 
-        // Met à jour le panier
-        refreshCaddie();
+                    return;
+                }
+
+                case "PARAMS_FORMAT_ERROR" -> this.runOnUiThread(() ->
+                        configActivity.afficherPopupErreur("FORMAT ERROR DELETEALL CADDIE", "ERREUR : "
+                                + ex.getMessage(), this));
+
+                default -> this.runOnUiThread(() ->
+                        configActivity.afficherPopupErreur("UNKNOW ERROR DELETEALL CADDIE", "ERREUR INCONNUE : "
+                                + ex.getMessage(), this));
+            }
+        }
+
+        try {
+
+            adapter.clear();
+
+            setAdapter();
+
+            refreshCaddie();
+
+            refreshArticle(currentArticle);
+
+        } catch (Exception ex) {
+            this.runOnUiThread(() ->
+                    configActivity.afficherPopupErreur("ERROR DELETEALL CADDIE", "ERREUR : "
+                            + ex.getMessage(), this));
+        }
 
     }
 
     // On confirme le panier et on crée la facture
-    private void sendConfirm() { // PAS FINI
+    private void sendConfirm() {
 
         try {
 
             client.sendConfirmer(loginId);
+
+            adapter.clear();
+
+            setAdapter();
 
         } catch(Exception ex){
             switch(Objects.requireNonNull(ex.getMessage())) {

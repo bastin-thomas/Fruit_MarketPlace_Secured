@@ -39,16 +39,18 @@ public class ProtocoleClient {
 
         //Send and wait for response
         try{
-            socket.send("LOGIN" + (R.string.SplitCommand) + nom + (R.string.SplitParameters) + mdp);
+            socket.send("LOGIN" + ("@") + nom + ("#") + mdp);
             Log.d("TRACE LOGIN", "Nom : " + nom + " mdp : " + mdp);
+
             message = socket.receive();
+
         }catch(IOException ex){
             throw new Exception(String.valueOf(R.string.endconnexion));
         }
 
         //Split Commands name and parameters
-        String[] commandsToken = message.split("" + (R.string.SplitCommand));
-        if(message.equals(String.valueOf(R.string.critical) + (R.string.SplitCommand)) || commandsToken.length == 1){
+        String[] commandsToken = message.split("" + ("#"));
+        if(message.equals((R.string.critical) + ("@")) || commandsToken.length == 1){
             throw new Exception(String.valueOf(R.string.endconnexion));
         }
 
@@ -58,7 +60,7 @@ public class ProtocoleClient {
         }
 
         //If not Ok check params
-        String[] paramsToken = commandsToken[1].split("" + (R.string.SplitParameters));
+        String[] paramsToken = commandsToken[1].split("" + ("#"));
 
         //If KO Throw an exceptions based on type of params
         if(paramsToken[0].equals("KO")){
@@ -71,15 +73,15 @@ public class ProtocoleClient {
 
         //Send and wait for response
         try{
-            socket.send("CREATELOGIN" + R.string.SplitCommand + nom + R.string.SplitParameters  + mdp);
+            socket.send("CREATELOGIN" + "@" + nom + "#"  + mdp);
             message = socket.receive();
         }catch(IOException ex){
             throw new Exception(String.valueOf(R.string.endconnexion));
         }
 
         //Split Commands name and parameters
-        String[] commandsToken = message.split("" + R.string.SplitCommand);
-        if(message.equals(String.valueOf(R.string.critical) + R.string.SplitCommand) || commandsToken.length == 1){
+        String[] commandsToken = message.split("@" + "");
+        if(message.equals((R.string.critical) + "@") || commandsToken.length == 1){
             throw new Exception(String.valueOf(R.string.endconnexion));
         }
 
@@ -96,15 +98,15 @@ public class ProtocoleClient {
 
         //Send and wait for response
         try{
-            socket.send("CONSULT" + (R.string.SplitCommand) + idArticle + (R.string.SplitParameters));
+            socket.send("CONSULT" + ("@") + idArticle + ("#"));
             message = socket.receive();
         }catch(IOException ex){
             throw new Exception(String.valueOf(R.string.endconnexion));
         }
 
         //Split Commands name and parameters
-        String[] commandsToken = message.split("" + (R.string.SplitCommand));
-        if(message.equals(String.valueOf(R.string.critical) + (R.string.SplitCommand)) || commandsToken.length == 1){
+        String[] commandsToken = message.split("@" + (""));
+        if(message.equals((R.string.critical) + ("@")) || commandsToken.length == 1){
             throw new Exception(String.valueOf(R.string.endconnexion));
         }
 
@@ -133,15 +135,15 @@ public class ProtocoleClient {
 
         //Send and wait for response
         try{
-            socket.send("ACHAT" + (R.string.SplitCommand) + idArticle + (R.string.SplitParameters) + quantitee);
+            socket.send("ACHAT" + ("@") + idArticle + ("#") + quantitee);
             message = socket.receive();
         }catch(IOException ex){
             throw new Exception(String.valueOf(R.string.endconnexion));
         }
 
         //Split Commands name and parameters
-        String[] commandsToken = message.split("" + (R.string.SplitCommand));
-        if(message.equals(String.valueOf(R.string.critical) + (R.string.SplitCommand)) || commandsToken.length == 1){
+        String[] commandsToken = message.split("@" + (""));
+        if(message.equals((R.string.critical) + ("@")) || commandsToken.length == 1){
             throw new Exception(String.valueOf(R.string.endconnexion));
         }
 
@@ -170,7 +172,7 @@ public class ProtocoleClient {
 
         //Send and wait for response
         try{
-            socket.send("CADDIE" + (R.string.SplitCommand));
+            socket.send("CADDIE" + ("@"));
             message = socket.receive();
             Log.d("SENDCADDIE","Message Received: " + message);
         }catch(IOException ex){
@@ -178,12 +180,12 @@ public class ProtocoleClient {
         }
 
         //Split Commands name and parameters
-        String[] commandsToken = message.split("" + (R.string.SplitCommand));
-        if(message.equals(String.valueOf(R.string.critical) + (R.string.SplitCommand))){
+        String[] commandsToken = message.split("@" + (""));
+        if(message.equals((R.string.critical) + ("@"))){
             throw new Exception(String.valueOf(R.string.endconnexion));
         }
 
-        if(message.equals("CADDIE" + (R.string.SplitCommand))){
+        if(message.equals("CADDIE" + ("@"))){
             return caddie;
         }
 
@@ -193,7 +195,7 @@ public class ProtocoleClient {
 
         try
         {
-            String[] rowList = commandsToken[1].split("" + (R.string.SplitList));
+            String[] rowList = commandsToken[1].split("~" + (""));
 
             for(String tmp : rowList){
                 caddie.add(new CaddieRows(tmp));
@@ -217,15 +219,15 @@ public class ProtocoleClient {
 
         //Send and wait for response
         try{
-            socket.send("CANCEL" + (R.string.SplitCommand) + idArticle + (R.string.SplitParameters));
+            socket.send("CANCEL" + ("@") + idArticle + ("#"));
             message = socket.receive();
         }catch(IOException ex){
             throw new Exception(String.valueOf(R.string.endconnexion));
         }
 
         //Split Commands name and parameters
-        String[] commandsToken = message.split("" + (R.string.SplitCommand));
-        if(message.equals(String.valueOf(R.string.critical) + (R.string.SplitCommand))){
+        String[] commandsToken = message.split("@" + (""));
+        if(message.equals((R.string.critical) + ("@"))){
             throw new Exception(String.valueOf(R.string.endconnexion));
         }
 
@@ -239,14 +241,14 @@ public class ProtocoleClient {
         String message = "";
 
         try{
-            socket.send("CANCELALL" + (R.string.SplitCommand));
+            socket.send("CANCELALL" + ("@"));
             message = socket.receive();
         }catch(IOException ex){
             throw new Exception(String.valueOf(R.string.endconnexion));
         }
 
-        String[] commandsToken = message.split("" + (R.string.SplitCommand));
-        if(message.equals(String.valueOf(R.string.critical) + (R.string.SplitCommand))){
+        String[] commandsToken = message.split("@" + (""));
+        if(message.equals((R.string.critical) + ("@"))){
             throw new Exception(String.valueOf(R.string.endconnexion));
         }
 
@@ -259,14 +261,14 @@ public class ProtocoleClient {
         String message = "";
 
         try{
-            socket.send("CONFIRMER" + (R.string.SplitCommand) + nom + (R.string.SplitParameters));
+            socket.send("CONFIRMER" + ("@") + nom + ("#"));
             message = socket.receive();
         }catch(IOException ex){
             throw new Exception(String.valueOf(R.string.endconnexion));
         }
 
-        String[] commandsToken = message.split("" + (R.string.SplitCommand));
-        if(message.equals(String.valueOf(R.string.critical) + (R.string.SplitCommand)) || commandsToken.length == 1){
+        String[] commandsToken = message.split("@" + (""));
+        if(message.equals((R.string.critical) + ("@")) || commandsToken.length == 1){
             throw new Exception(String.valueOf(R.string.endconnexion));
         }
 
@@ -276,7 +278,7 @@ public class ProtocoleClient {
     }
 
     public void sendLogout() throws IOException{
-        socket.send("LOGOUT" + (R.string.SplitCommand));
+        socket.send("LOGOUT" + ("@"));
     }
 
     public void close()

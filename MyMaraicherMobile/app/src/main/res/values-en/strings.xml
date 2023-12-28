@@ -4,20 +4,6 @@
     <string name="app_name">MyMaraicherMobile</string>
     <string name="titleActivityConfig">ConfigActivity</string>
 
-    <!-- Strings related to socket -->
-    <string name="params_format_error">PARAMS_FORMAT_ERROR</string>
-    <string name="EndOfRequest1">"&amp;"</string>
-    <string name="EndOfRequest2">")"</string>
-    <string name="SplitCommand">"@"</string>
-    <string name="SplitParameters">"#"</string>
-    <string name="SplitList">~</string>
-    <string name="endconnexion">ENDCONNEXION</string>
-    <string name="critical">CRITICAL</string>
-    <string name="no_article_found">NO_ARTICLE_FOUND</string>
-    <string name="cancel_error">CANCEL_ERROR</string>
-
-<!--    jdbc\:mariadb\://10.59.22.29\:3306/PourStudent?user\=Student&amp;password\=PassStudent1_-->
-
     <!-- Strings related to login -->
     <string name="titleHome">Please connect</string>
     <string name="login_failed">Connexion Failed</string>
@@ -30,6 +16,7 @@
     <string name="titleSettings">Settings</string>
     <string name="TextChoiceLanguage">Choose your language : </string>
     <string name="content_ArrowBack">A arrow</string>
+    <string name="SaveButton">Save</string>
 
 
     <!-- Strings related to Maraicher -->

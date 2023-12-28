@@ -116,13 +116,6 @@ public class MaraicherActivity extends AppCompatActivity {
         caddieListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         totalText = findViewById(R.id.totalText);
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                refreshArticle(currentArticle);
-            }
-        }).start();
-
         //endregion
 
         //region Button Listener

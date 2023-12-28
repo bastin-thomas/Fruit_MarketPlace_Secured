@@ -63,7 +63,7 @@ public class MaraicherActivity extends AppCompatActivity {
 
     //endregion
 
-    @RequiresApi(api = Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

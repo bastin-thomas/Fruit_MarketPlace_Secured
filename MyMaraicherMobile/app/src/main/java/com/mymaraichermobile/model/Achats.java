@@ -1,7 +1,5 @@
 package com.mymaraichermobile.model;
 
-import com.mymaraichermobile.R;
-
 public class Achats {
 
     // <editor-fold defaultstate="collapsed" desc="Private Variables">
@@ -18,7 +16,7 @@ public class Achats {
     }
 
     Achats(String params) throws Exception {
-        String[] paramTokens = params.split("" + (R.string.SplitParameters));
+        String[] paramTokens = params.split("" + "#");
 
         this.idArticle = Integer.parseInt(paramTokens[0]);
         this.quantitee = Integer.parseInt(paramTokens[1]);

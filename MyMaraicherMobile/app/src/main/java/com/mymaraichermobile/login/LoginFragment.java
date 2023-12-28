@@ -40,6 +40,7 @@ public class LoginFragment extends Fragment {
 
     // Création d'un thread unique pour la connexion socket/serveur
     private class SocketClientThread extends Thread {
+
         private boolean isChecked;
         public SocketClientThread(boolean isChecked) {
             this.isChecked = isChecked;

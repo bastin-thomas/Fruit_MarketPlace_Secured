@@ -107,7 +107,7 @@ public class MaraicherActivity extends AppCompatActivity {
 
         // variables panier
 
-        currentArticle = 0;
+        currentArticle = 1;
         totalPrice = (float) 0.0;
         caddie = new ArrayList<>();
         caddieListView = findViewById(R.id.caddieListView);
@@ -379,7 +379,6 @@ public class MaraicherActivity extends AppCompatActivity {
         ArrayAdapter<ArrayList<String>> tmpAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
 
         try{
-
             this.caddie = client.sendCaddie();
 
         }catch(Exception ex){
@@ -661,5 +660,4 @@ public class MaraicherActivity extends AppCompatActivity {
     }
 
     //endregion
-
 }

@@ -2,8 +2,6 @@ package com.mymaraichermobile.model;
 
 import androidx.annotation.NonNull;
 
-import com.mymaraichermobile.R;
-
 public class Articles {
 
     // <editor-fold defaultstate="collapsed" desc="Properties">
@@ -27,7 +25,7 @@ public class Articles {
 
     public Articles(String params) throws NumberFormatException
     {
-        String[] paramTokens = params.split("" + (R.string.SplitParameters));
+        String[] paramTokens = params.split("" + "#");
 
         this.idArticle = Integer.parseInt(paramTokens[0]);
         this.intitule = paramTokens[1];

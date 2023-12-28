@@ -2,8 +2,6 @@ package com.mymaraichermobile.model;
 
 import androidx.annotation.NonNull;
 
-import com.mymaraichermobile.R;
-
 public class CaddieRows {
     // <editor-fold defaultstate="collapsed" desc="Properties">
     private int idArticle;
@@ -21,7 +19,7 @@ public class CaddieRows {
     }
 
     CaddieRows(String params) {
-        String[] paramTokens = params.split("" + (R.string.SplitParameters));
+        String[] paramTokens = params.split("" + "#");
 
         this.idArticle = Integer.parseInt(paramTokens[0]);
         this.intitule = paramTokens[1];

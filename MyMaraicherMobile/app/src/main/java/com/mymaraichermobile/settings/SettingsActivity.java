@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 
@@ -16,10 +17,17 @@ import com.mymaraichermobile.R;
 import com.mymaraichermobile.configuration.ConfigManager;
 
 public class SettingsActivity extends AppCompatActivity {
+
+    //region Variables
     String selectedLanguage = "";
     Context context = this;
     String nameClass;
     Class<?> targetClass;
+    EditText choiceIp;
+    EditText choicePort;
+    Button saveButton;
+
+    //endregion
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,8 +40,9 @@ public class SettingsActivity extends AppCompatActivity {
         String propIp = ConfigManager.getIp(this);
         String propPort = ConfigManager.getPort(this);
         Spinner languages = findViewById(R.id.languageSpinner);
-        EditText choiceIp = findViewById(R.id.ChoiceIp);
-        EditText choicePort = findViewById(R.id.ChoicePort);
+        saveButton = findViewById(R.id.saveButton);
+        choiceIp = findViewById(R.id.ChoiceIp);
+        choicePort = findViewById(R.id.ChoicePort);
 
         // On récupère la classe appellante
         Bundle extras = getIntent().getExtras();
@@ -112,11 +121,16 @@ public class SettingsActivity extends AppCompatActivity {
             context.startActivity(intent);
         });
 
+        saveButton.setOnClickListener(v ->
+                ConfigManager.saveConfig(context, choiceIp.getText().toString(),
+                        Integer.parseInt(choicePort.getText().toString())));
+
         //endregion
 
     }
 
     //region Methods
+
     private int getPositionForLanguage(String language) {
         String[] languageOptions = getResources().getStringArray(R.array.language_options);
         for (int i = 0; i < languageOptions.length; i++) {
@@ -125,6 +139,10 @@ public class SettingsActivity extends AppCompatActivity {
             }
         }
         return 0; // Par défaut, retournez la première position si la langue n'est pas trouvée
+    }
+
+    private void saveConfig() {
+
     }
     //endregion
 }

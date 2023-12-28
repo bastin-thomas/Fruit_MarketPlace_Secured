@@ -1,4 +1,5 @@
 <resources>
+
     <!-- Strings related to home -->
     <string name="app_name">MyMaraicherMobile</string>
     <string name="titleActivityConfig">ConfigActivity</string>
@@ -14,9 +15,6 @@
     <string name="critical">CRITICAL</string>
     <string name="no_article_found">NO_ARTICLE_FOUND</string>
     <string name="cancel_error">CANCEL_ERROR</string>
-    <string name="port_serveur">50001</string>
-    <string name="ip_serveur">91.177.209.51</string>
-<!--    jdbc\:mariadb\://10.59.22.29\:3306/PourStudent?user\=Student&amp;password\=PassStudent1_-->
 
     <!-- Strings related to login -->
     <string name="titleHome">Veuillez vous connecter</string>
@@ -37,9 +35,6 @@
     <string name="add">Ajouter</string>
     <string name="previous">précédent</string>
     <string name="next">suivant</string>
-    <string name="fruitsName" />
-    <string name="fruitsPrice" />
-    <string name="fruitsStock" />
     <string name="unitPriceText">Prix unitaire :</string>
     <string name="product">Produit :</string>
     <string name="stockProduct">Quantité stock :</string>
@@ -49,4 +44,8 @@
     <string name="deleteButton">Supprimer</string>
     <string name="confirmButton">Confirmer</string>
     <string name="disconnectButton">Se déconnecter</string>
+    <string name="NOSTOCK">Pas d\'articles dans le panier</string>
+    <string name="Confirm_Success">La commande a bien été enregistrée.</string>
+    <string name="ChoiceQuantity">Choississez une quantité</string>
+
 </resources>

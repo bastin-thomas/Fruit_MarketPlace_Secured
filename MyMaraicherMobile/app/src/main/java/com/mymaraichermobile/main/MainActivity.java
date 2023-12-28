@@ -1,4 +1,4 @@
-package com.mymaraichermobile;
+package com.mymaraichermobile.main;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,8 +8,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.mymaraichermobile.R;
 import com.mymaraichermobile.login.LoginFragment;
-import com.mymaraichermobile.settings.LanguageManager;
+import com.mymaraichermobile.configuration.ConfigManager;
 import com.mymaraichermobile.settings.SettingsActivity;
 
 
@@ -20,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        LanguageManager.handleLanguageAndConfiguration(this);
+        ConfigManager.handleLanguageAndConfiguration(this);
 
         openLoginFragment();
     }

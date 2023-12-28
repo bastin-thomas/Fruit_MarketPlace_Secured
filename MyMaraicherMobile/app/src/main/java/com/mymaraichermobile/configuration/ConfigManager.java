@@ -1,4 +1,4 @@
-package com.mymaraichermobile.settings;
+package com.mymaraichermobile.configuration;
 
 import android.app.Activity;
 import android.content.Context;
@@ -11,11 +11,15 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.Locale;
 
-public class LanguageManager extends AppCompatActivity {
+public class ConfigManager extends AppCompatActivity {
 
     //region Private variables
-    private static final String LANGUAGE_PREF_KEY = "language_pref";
+    private static final String LANG_KEY = "lang_pref";
+    private static final String IP_KEY = "ip_pref";
+    private static final String PORT_KEY = "port_pref";
     private static final String DEFAULT_LANGUAGE = "fr";
+    private static final String DEFAULT_IP = "91.177.209.51";
+    private static final int DEFAULT_PORT = 50001;
 
     //endregion
 
@@ -24,14 +28,36 @@ public class LanguageManager extends AppCompatActivity {
     public static String getLanguage(Context context) {
         SharedPreferences preferences = context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
 
-        return preferences.getString(LANGUAGE_PREF_KEY, DEFAULT_LANGUAGE);
+        return preferences.getString(LANG_KEY, DEFAULT_LANGUAGE);
     }
 
-    public static void saveLanguage(Context context, String language) {
+    public static void saveLang(Context context, String language) {
+
         SharedPreferences preferences = context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
-        editor.putString(LANGUAGE_PREF_KEY, language);
+        editor.putString(LANG_KEY, language);
         editor.apply();
+    }
+
+    public static void saveConfig(Context context, String ip, int port) {
+
+        SharedPreferences preferences = context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(IP_KEY, ip);
+        editor.putString(PORT_KEY, String.valueOf(port));
+        editor.apply();
+    }
+
+    public static String getIp(Context context) {
+        SharedPreferences preferences = context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+
+        return preferences.getString(IP_KEY, DEFAULT_IP);
+    }
+
+    public static String getPort(Context context) {
+        SharedPreferences preferences = context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+
+        return preferences.getString(PORT_KEY, String.valueOf(DEFAULT_PORT));
     }
 
     public static boolean isLanguageChanged(Context context, String newLanguage) {
@@ -56,14 +82,14 @@ public class LanguageManager extends AppCompatActivity {
         resources.updateConfiguration(config, resources.getDisplayMetrics());
 
         // On sauvegarde la nouvelle langue
-        saveLanguage(context, lang.toLowerCase());
+        saveLang(context, lang.toLowerCase());
 
     }
 
     public static void handleLanguageAndConfiguration(Context context) {
-        String selectedLanguage = LanguageManager.getLanguage(context);
+        String selectedLanguage = ConfigManager.getLanguage(context);
 
-        LanguageManager.changeLanguage(context, selectedLanguage.toLowerCase());
+        ConfigManager.changeLanguage(context, selectedLanguage.toLowerCase());
 
     }
 

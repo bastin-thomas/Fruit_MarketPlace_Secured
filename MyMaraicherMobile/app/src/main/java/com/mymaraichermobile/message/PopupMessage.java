@@ -1,33 +1,15 @@
-package com.mymaraichermobile.configuration;
-
+package com.mymaraichermobile.message;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.os.Bundle;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.mymaraichermobile.MainActivity;
-import com.mymaraichermobile.settings.LanguageManager;
-
-public class ConfigActivity extends AppCompatActivity {
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        LanguageManager.handleLanguageAndConfiguration(this);
-
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
-
-
-        finish(); // Ferme l'activité en cours
-    }
+public class PopupMessage extends AppCompatActivity {
 
     public void afficherPopupErreur(String titre, String message, Context context) {
+
         // Créer une boîte de dialogue
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
 

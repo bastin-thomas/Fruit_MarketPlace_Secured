@@ -1,8 +1,8 @@
-package com.mymaraichermobile.client;
+package com.mymaraichermobile.model;
 
 import android.content.Context;
 
-import com.mymaraichermobile.R;
+import com.mymaraichermobile.configuration.ConfigManager;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -22,12 +22,10 @@ public class SocketClient {
 
     //region Constructeurs
     public SocketClient(Context context) throws NumberFormatException, IOException {
-        String ip = context.getResources().getString(R.string.ip_serveur);
-        int port = Integer.parseInt(context.getResources().getString(R.string.port_serveur));
-
-        socket = new Socket(ip, port);
+        socket = new Socket(ConfigManager.getIp(context), Integer.parseInt(ConfigManager.getPort(context)));
 
         dos = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
+
         dis = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
 
     }

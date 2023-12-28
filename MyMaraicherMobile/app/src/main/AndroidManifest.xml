@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
     <!-- Ajout de la permission pour accéder au réseau -->
-    <uses-permission android:name="android.permission.INTERNET" /> <!-- Ajout de la permission pour envoyer des notifications -->
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -17,7 +17,7 @@
         tools:targetApi="tiramisu">
 
         <activity
-            android:name=".configuration.ConfigActivity"
+            android:name=".main.ConfigActivity"
             android:exported="true"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
             <intent-filter>
@@ -27,7 +27,7 @@
         </activity>
 
         <activity
-            android:name=".MainActivity"
+            android:name=".main.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
             <intent-filter>
@@ -45,7 +45,7 @@
         </activity>
 
         <activity
-            android:name=".settings.LanguageManager"
+            android:name=".configuration.ConfigManager"
             android:exported="true"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
             <intent-filter>
@@ -54,7 +54,7 @@
         </activity>
 
         <activity
-            android:name=".MaraicherActivity"
+            android:name=".maraicher.MaraicherActivity"
             android:exported="true"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
             <intent-filter>

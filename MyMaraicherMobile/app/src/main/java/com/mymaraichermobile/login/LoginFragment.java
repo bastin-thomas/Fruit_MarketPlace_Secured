@@ -14,11 +14,12 @@ import android.widget.EditText;
 
 import androidx.fragment.app.Fragment;
 
-import com.mymaraichermobile.MaraicherActivity;
+import com.mymaraichermobile.maraicher.MaraicherActivity;
 import com.mymaraichermobile.R;
-import com.mymaraichermobile.client.ProtocoleClient;
-import com.mymaraichermobile.client.SocketClient;
-import com.mymaraichermobile.configuration.ConfigActivity;
+import com.mymaraichermobile.message.PopupMessage;
+import com.mymaraichermobile.model.ProtocoleClient;
+import com.mymaraichermobile.model.SocketClient;
+import com.mymaraichermobile.model.SocketHandler;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -27,11 +28,10 @@ public class LoginFragment extends Fragment {
 
     //region Private variables
 
-    ConfigActivity configActivity = new ConfigActivity();
+    PopupMessage popupMessage = new PopupMessage();
     SocketClient socket;
     ProtocoleClient client;
     private EditText usernameInput;
-
     private EditText passwordInput;
     private Button loginButton;
     private CheckBox newAccountChecked;
@@ -61,7 +61,7 @@ public class LoginFragment extends Fragment {
             } catch (NumberFormatException | IOException e) {
 
                 requireActivity().runOnUiThread(() ->
-                        configActivity.afficherPopupErreur("ERROR LOGIN",
+                        popupMessage.afficherPopupErreur("ERROR LOGIN",
                                 "Erreur connexion au Serveur + " + e, requireContext()));
 
                 return;
@@ -73,22 +73,34 @@ public class LoginFragment extends Fragment {
 
             if(!isChecked) {
                 try {
-                    Log.d("SENDLOGIN", "TEST");
+
                     client.sendLogin(usernameInput.getText().toString(), passwordInput.getText().toString());
 
-                } catch (Exception e) {
-                    switch (Objects.requireNonNull(e.getMessage())) {
+                } catch (Exception ex) {
+                    switch (Objects.requireNonNull(ex.getMessage())) {
                         case "ENDCONNEXION":
-                            Log.d("END LOGIN SERVER", "Erreur connexion au Serveur");
-                            break;
+                            requireActivity().runOnUiThread(() ->
+                                    popupMessage.afficherPopupErreur("ERROR LOGIN SERVER",
+                                            "ERREUR CONNEXION SERVEUR" + ex.getMessage(), requireContext()));
+                            return;
+
                         case "NO_LOGIN":
-                            Log.d("NO LOGIN SERVER", "Utilisateur inexistant");
-                            break;
+                            requireActivity().runOnUiThread(() ->
+                                    popupMessage.afficherPopupErreur("ERROR LOGIN ACCOUNT",
+                                            "UTILISATEUR EXISTANT : " + ex.getMessage(), requireContext()));
+                            return;
+
                         case "BAD_LOGIN":
-                            Log.d("BAD LOGIN SERVER", "Mauvais mot de passe");
-                            break;
+                            requireActivity().runOnUiThread(() ->
+                                    popupMessage.afficherPopupErreur("ERROR BAD LOGIN",
+                                            "MAUVAIS LOGIN : " + ex.getMessage(), requireContext()));
+                            return;
+
                         default:
-                            Log.d("UNKNOW LOGIN SERVER", "Erreur");
+                            requireActivity().runOnUiThread(() ->
+                                    popupMessage.afficherPopupErreur("UNKNOW ERROR",
+                                            "ERREUR INCONNUE : " + ex.getMessage(), requireContext()));
+                            return;
                     }
                 }
             } else {
@@ -97,18 +109,18 @@ public class LoginFragment extends Fragment {
 
                     client.sendCreateLogin(usernameInput.getText().toString(), passwordInput.getText().toString());
 
-                }  catch (Exception e) {
-                    if (Objects.equals(e.getMessage(), R.string.endconnexion)) {
+                }  catch (Exception ex) {
+                    if (Objects.equals(ex.getMessage(), "ENDCONNEXION")) {
 
                         requireActivity().runOnUiThread(() ->
-                        configActivity.afficherPopupErreur("ERROR LOGIN", "Erreur connexion au Serveur", requireContext()));
+                        popupMessage.afficherPopupErreur("ERROR LOGIN", "Erreur connexion au Serveur", requireContext()));
 
                         return;
 
                     } else {
 
                         requireActivity().runOnUiThread(() ->
-                        configActivity.afficherPopupErreur("ERROR LOGIN", "L'utilisateur existe déjà", requireContext()));
+                        popupMessage.afficherPopupErreur("ERROR LOGIN", "L'utilisateur existe déjà", requireContext()));
 
                         return;
 
@@ -122,8 +134,7 @@ public class LoginFragment extends Fragment {
             Intent intent = new Intent(requireContext(), MaraicherActivity.class);
 
             // On transfère les infos vers la page Maraicher
-            intent.putExtra("socket_key", String.valueOf(socket));
-            intent.putExtra("protocol_key", String.valueOf(client));
+            SocketHandler.setProtocol(client);
             intent.putExtra("loginId_key", usernameInput.getText().toString());
 
             startActivity(intent);
@@ -207,12 +218,10 @@ public class LoginFragment extends Fragment {
 
         try {
 
-            client.sendCancelAll();
-            client.sendLogout();
             client.close();
 
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        } catch (Exception ignored) {
+
         }
     }
 

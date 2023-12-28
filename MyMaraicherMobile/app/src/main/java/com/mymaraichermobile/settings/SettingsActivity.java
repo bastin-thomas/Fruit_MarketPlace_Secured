@@ -7,11 +7,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.Spinner;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.mymaraichermobile.R;
+import com.mymaraichermobile.configuration.ConfigManager;
 
 public class SettingsActivity extends AppCompatActivity {
     String selectedLanguage = "";
@@ -23,10 +25,15 @@ public class SettingsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
+
         //region Variables
 
-        String currentLanguage = LanguageManager.getLanguage(this);
+        String currentLanguage = ConfigManager.getLanguage(this);
+        String propIp = ConfigManager.getIp(this);
+        String propPort = ConfigManager.getPort(this);
         Spinner languages = findViewById(R.id.languageSpinner);
+        EditText choiceIp = findViewById(R.id.ChoiceIp);
+        EditText choicePort = findViewById(R.id.ChoicePort);
 
         // On récupère la classe appellante
         Bundle extras = getIntent().getExtras();
@@ -34,13 +41,19 @@ public class SettingsActivity extends AppCompatActivity {
             nameClass = extras.getString("class_name");
 
             try {
+
                 targetClass = Class.forName(nameClass);
+
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
 
-            Log.d("CLASSE", "Classe : " + targetClass);
+            Log.d("CLASSE", "Classe : " + targetClass.getName());
         }
+
+        // Chargement du fichier de config
+        choiceIp.setText(propIp);
+        choicePort.setText(propPort);
 
         // Création d'un adaptateur pour les options du Spinner
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
@@ -56,7 +69,7 @@ public class SettingsActivity extends AppCompatActivity {
         languages.setAdapter(adapter);
 
         // On récupére l'indice de la dernière valeur sélectionnée
-        String lastSelectedLanguage = LanguageManager.getLanguage(this);
+        String lastSelectedLanguage = ConfigManager.getLanguage(this);
         int position = getPositionForLanguage(lastSelectedLanguage);
         languages.setSelection(position);
 
@@ -73,11 +86,11 @@ public class SettingsActivity extends AppCompatActivity {
                 if (!currentLanguage.equals(selectedLanguage.toLowerCase())) {
 
                     // Pour changer la langue en fonction de la sélection
-                    LanguageManager.changeLanguage(context, selectedLanguage.toLowerCase());
+                    ConfigManager.changeLanguage(context, selectedLanguage.toLowerCase());
 
-                    LanguageManager.refreshUi(context);
+                    ConfigManager.refreshUi(context);
 
-                    String cur = LanguageManager.getLanguage(context);
+                    String cur = ConfigManager.getLanguage(context);
                     Log.d("SettingsActivity", "NomCurrent: " + cur);
                     Log.d("SettingsActivity", "NomSelected: " + selectedLanguage);
                 }

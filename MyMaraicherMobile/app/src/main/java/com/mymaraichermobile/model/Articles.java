@@ -1,4 +1,4 @@
-package com.mymaraichermobile.client;
+package com.mymaraichermobile.model;
 
 import androidx.annotation.NonNull;
 

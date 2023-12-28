@@ -1,37 +1,36 @@
-package com.mymaraichermobile.client;
+package com.mymaraichermobile.model;
+
+import androidx.annotation.NonNull;
 
 import com.mymaraichermobile.R;
 
-public class Achats {
-
-    // <editor-fold defaultstate="collapsed" desc="Private Variables">
+public class CaddieRows {
+    // <editor-fold defaultstate="collapsed" desc="Properties">
     private int idArticle;
+    private String intitule;
     private int quantitee;
     private float prix;
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Constructeurs">
-    public Achats(int idArticle, int quantitee, float prix) {
+    // <editor-fold defaultstate="collapsed" desc="Constructor">
+    public CaddieRows(int idArticle, String intitule, int quantitee, float prix) {
         this.idArticle = idArticle;
+        this.intitule = intitule;
         this.quantitee = quantitee;
         this.prix = prix;
     }
 
-    Achats(String params) throws Exception {
+    CaddieRows(String params) {
         String[] paramTokens = params.split("" + (R.string.SplitParameters));
 
         this.idArticle = Integer.parseInt(paramTokens[0]);
-        this.quantitee = Integer.parseInt(paramTokens[1]);
-        this.prix = Float.parseFloat(paramTokens[2]);
-
-        if(this.quantitee <= 0){
-            throw new Exception("NO_MORE_STOCK");
-        }
+        this.intitule = paramTokens[1];
+        this.quantitee = Integer.parseInt(paramTokens[2]);
+        this.prix = Float.parseFloat(paramTokens[3]);
     }
-
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Getters/Setters">
+    // <editor-fold defaultstate="collapsed" desc="Getters and Setters">
     /**
      * Get the value of prix
      *
@@ -71,6 +70,25 @@ public class Achats {
 
 
     /**
+     * Get the value of intitule
+     *
+     * @return the value of intitule
+     */
+    public String getIntitule() {
+        return intitule;
+    }
+
+    /**
+     * Set the value of intitule
+     *
+     * @param intitule new value of intitule
+     */
+    public void setIntitule(String intitule) {
+        this.intitule = intitule;
+    }
+
+
+    /**
      * Get the value of idArticle
      *
      * @return the value of idArticle
@@ -90,12 +108,11 @@ public class Achats {
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Methods">
+    @NonNull
     @Override
     public String toString() {
-        return "Achats{" + "idArticle=" + idArticle + ", quantitee=" + quantitee + ", prix=" + prix + '}';
+        return "CaddieRows{" + "idArticle=" + idArticle + ", intitule=" + intitule + ", quantitee=" + quantitee + ", prix=" + prix + '}';
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Events">
-    // </editor-fold>
 }

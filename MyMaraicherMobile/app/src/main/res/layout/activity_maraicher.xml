@@ -225,7 +225,7 @@
 
         <ListView
             android:id="@+id/caddieListView"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="225dp"
             android:background="@color/Fond_Caddie"
             android:contextClickable="true" />
@@ -308,20 +308,5 @@
                 android:textSize="12sp" />
 
         </LinearLayout>
-
-        <Button
-            android:id="@+id/disconnectButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/finished"
-            android:layout_alignParentEnd="true"
-            android:layout_gravity="right"
-            android:gravity="center_vertical"
-            android:layout_marginTop="10dp"
-            android:minHeight="48dp"
-            android:onClick="disconnect"
-            android:text="@string/disconnectButton"
-            android:textColor="@color/white"
-            android:textSize="10sp" />
     </LinearLayout>
 </RelativeLayout>

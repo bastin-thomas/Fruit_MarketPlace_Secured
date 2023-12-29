@@ -222,9 +222,8 @@
             android:layout_width="wrap_content"
             android:layout_height="200dp"
             android:layout_marginBottom="20dp"
-            android:contextClickable="true"
             android:background="@color/Fond_Caddie"
-            />
+            android:contextClickable="true" />
 
         <LinearLayout
             android:layout_width="wrap_content"

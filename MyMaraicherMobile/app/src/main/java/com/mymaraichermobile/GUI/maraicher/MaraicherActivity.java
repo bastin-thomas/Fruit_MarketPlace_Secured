@@ -336,8 +336,6 @@ public class MaraicherActivity extends AppCompatActivity {
             int resID = getResources().getIdentifier(nomImage, "drawable", getPackageName());
             Picasso.get().load(resID).into(imageFruitView);
 
-            this.imageFruitView.setImageDrawable(Drawable.createFromPath("/images/" + art.getImage()));
-
         } catch (Exception ex) {
 
             this.runOnUiThread(() ->
@@ -353,7 +351,6 @@ public class MaraicherActivity extends AppCompatActivity {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
     }
 
     // Mettre à jour la vue du caddie
@@ -371,7 +368,7 @@ public class MaraicherActivity extends AppCompatActivity {
 
         this.caddie.clear();
 
-        ArrayAdapter<ArrayList<String>> tmpAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
+        ArrayAdapter<String> tmpAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
 
         try{
             this.caddie = client.sendCaddie();
@@ -402,19 +399,13 @@ public class MaraicherActivity extends AppCompatActivity {
             }
         }
 
-        this.totalPrice = 0;
+        this.totalPrice = 0.0F;
 
         // Récuperation des données de la bdd
         for(CaddieRows tmp : this.caddie){
-            ArrayList<String> row = new ArrayList<>();
-            row.add("" + tmp.getIntitule());
-            row.add("" + tmp.getQuantitee());
-            row.add("" + tmp.getPrix());
+            this.totalPrice += tmp.getPrix() * ((float)tmp.getQuantitee());
 
-            this.totalPrice += tmp.getPrix() * (tmp.getQuantitee());
-
-            tmpAdapter.add(row);
-
+            tmpAdapter.add(tmp.getIntitule() + "  |  " + tmp.getQuantitee() + "  |  " + tmp.getPrix());
         }
 
         this.caddieListView.setAdapter(tmpAdapter);

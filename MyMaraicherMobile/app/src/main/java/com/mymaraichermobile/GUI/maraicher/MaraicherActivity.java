@@ -197,7 +197,7 @@ public class MaraicherActivity extends AppCompatActivity {
     }
 
     // Paramètres
-    public void openSettings(View view) { // FINI
+    public void openSettings(View view) {
         Intent intent = new Intent(this, SettingsActivity.class);
 
         intent.putExtra("class_name", MaraicherActivity.class.getName());
@@ -246,8 +246,9 @@ public class MaraicherActivity extends AppCompatActivity {
     // Caddie
     private void showPreviousElement() {
 
-        if(!this.nextButton.isEnabled())
-        this.nextButton.setEnabled(true);
+        if(!this.nextButton.isEnabled()) {
+            this.nextButton.setEnabled(true);
+        }
 
         try{
 

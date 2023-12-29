@@ -3,6 +3,7 @@ package com.mymaraichermobile.GUI.maraicher;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.icu.text.DecimalFormat;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -368,7 +369,7 @@ public class MaraicherActivity extends AppCompatActivity {
 
         this.caddie.clear();
 
-        ArrayAdapter<String> tmpAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
+        ArrayAdapter<String> tmpAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_single_choice);
 
         try{
             this.caddie = client.sendCaddie();
@@ -405,14 +406,16 @@ public class MaraicherActivity extends AppCompatActivity {
         for(CaddieRows tmp : this.caddie){
             this.totalPrice += tmp.getPrix() * ((float)tmp.getQuantitee());
 
-            tmpAdapter.add(tmp.getIntitule() + "  |  " + tmp.getQuantitee() + "  |  " + tmp.getPrix());
+            tmpAdapter.add(tmp.getIntitule() + "   |   " + tmp.getQuantitee() + "   |   " + tmp.getPrix());
         }
 
         this.caddieListView.setAdapter(tmpAdapter);
-
         tmpAdapter.notifyDataSetChanged();
+        
 
-        this.totalText.setText("" + this.totalPrice);
+        DecimalFormat df = new DecimalFormat();
+        df.setMaximumFractionDigits(2);
+        this.totalText.setText("" + df.format(this.totalPrice));
 
     }
 
@@ -503,8 +506,7 @@ public class MaraicherActivity extends AppCompatActivity {
     private void deleteArticle() {
 
         try{
-
-            int index = this.caddieListView.getSelectedItemPosition();
+            int index = this.caddieListView.getCheckedItemPosition();
             int idArticle = this.caddie.get(index).getIdArticle();
             client.sendCancel(idArticle);
 

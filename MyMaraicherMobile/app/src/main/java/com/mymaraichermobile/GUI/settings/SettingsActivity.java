@@ -3,11 +3,12 @@ package com.mymaraichermobile.GUI.settings;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 
@@ -25,7 +26,6 @@ public class SettingsActivity extends AppCompatActivity {
     Class<?> targetClass;
     EditText choiceIp;
     EditText choicePort;
-    Button saveButton;
 
     //endregion
 
@@ -40,7 +40,6 @@ public class SettingsActivity extends AppCompatActivity {
         String propIp = ConfigHandler.getIp(this);
         String propPort = ConfigHandler.getPort(this);
         Spinner languages = findViewById(R.id.languageSpinner);
-        saveButton = findViewById(R.id.saveButton);
         choiceIp = findViewById(R.id.ChoiceIp);
         choicePort = findViewById(R.id.ChoicePort);
 
@@ -121,9 +120,35 @@ public class SettingsActivity extends AppCompatActivity {
             context.startActivity(intent);
         });
 
-        saveButton.setOnClickListener(v ->
-                ConfigHandler.saveConfig(context, choiceIp.getText().toString(),
-                        Integer.parseInt(choicePort.getText().toString())));
+        choiceIp.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int start, int before, int count) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                saveConfig();
+            }
+        });
+
+        choicePort.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int start, int before, int count) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                saveConfig();
+            }
+        });
 
         //endregion
 
@@ -141,7 +166,7 @@ public class SettingsActivity extends AppCompatActivity {
         return 0; // Par défaut, retournez la première position si la langue n'est pas trouvée
     }
 
-    private void saveConfig(View view) {
+    private void saveConfig() {
         ConfigHandler.saveConfig(this.context, choiceIp.getText().toString(), Integer.parseInt(choicePort.getText().toString()));
     }
     //endregion

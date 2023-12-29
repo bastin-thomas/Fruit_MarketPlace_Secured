@@ -2,7 +2,6 @@ package com.mymaraichermobile.GUI.maraicher;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -324,7 +323,6 @@ public class MaraicherActivity extends AppCompatActivity {
 
         art = client.sendConsult(index);
 
-
         try {
 
             this.articleListView.setText("");
@@ -369,7 +367,7 @@ public class MaraicherActivity extends AppCompatActivity {
 
         this.caddie.clear();
 
-        ArrayAdapter<String> tmpAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
+        ArrayAdapter<String> tmpAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_single_choice);
 
         try{
             this.caddie = client.sendCaddie();
@@ -505,7 +503,7 @@ public class MaraicherActivity extends AppCompatActivity {
 
         try{
 
-            int index = this.caddieListView.getSelectedItemPosition();
+            int index = this.caddieListView.getCheckedItemPosition();
             int idArticle = this.caddie.get(index).getIdArticle();
             client.sendCancel(idArticle);
 

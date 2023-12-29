@@ -30,7 +30,7 @@
     <string name="stockProduct">Quantity stock :</string>
     <string name="titleCaddie">Basket :</string>
     <string name="total">Total :</string>
-    <string name="deleteAllButton">Delete Basket</string>
+    <string name="deleteAllButton">Abandon</string>
     <string name="deleteButton">Delete</string>
     <string name="confirmButton">Confirm</string>
     <string name="disconnectButton">Disconnect</string>

@@ -422,7 +422,7 @@ public class MaraicherActivity extends AppCompatActivity {
     // Ajoute le produit choisit à la liste des produits
     private void addToCaddie () {
 
-        Achats achats;
+        Achats achats = null;
 
         int quantitee = Integer.parseInt(this.quantityEditText.getText().toString());
 
@@ -448,8 +448,6 @@ public class MaraicherActivity extends AppCompatActivity {
                     }
 
                     case "NO_MORE_STOCK" -> {
-                        this.runOnUiThread(() ->
-                                popupMessage.afficherPopupErreur("STOCK ERROR SENDACHAT BUY", "NO MORE STOCK OF THIS ARTICLE ", this));
                         return;
                     }
 
@@ -461,10 +459,6 @@ public class MaraicherActivity extends AppCompatActivity {
                     }
                 }
             }
-        } else {
-            this.runOnUiThread(() ->
-                    popupMessage.afficherPopupErreur("ERROR QUANTITY", getString(R.string.ChoiceQuantity), this));
-            return;
         }
 
         try{
@@ -590,11 +584,6 @@ public class MaraicherActivity extends AppCompatActivity {
                         popupMessage.afficherPopupErreur("ERROR DELETEALL CADDIE", "ERREUR : "
                                 + ex.getMessage(), this));
             }
-        } else {
-            this.runOnUiThread(() ->
-                    popupMessage.afficherPopupErreur("Erreur suppression",
-                            getString(R.string.NOSTOCK), this));
-
         }
     }
 

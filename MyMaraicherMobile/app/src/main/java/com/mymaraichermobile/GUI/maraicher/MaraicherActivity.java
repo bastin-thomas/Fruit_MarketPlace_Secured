@@ -3,7 +3,6 @@ package com.mymaraichermobile.GUI.maraicher;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -14,18 +13,17 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.mymaraichermobile.GUI.main.MainActivity;
-import com.mymaraichermobile.R;
 import com.mymaraichermobile.GUI.message.PopupMessage;
+import com.mymaraichermobile.GUI.settings.SettingsActivity;
+import com.mymaraichermobile.R;
 import com.mymaraichermobile.model.Achats;
 import com.mymaraichermobile.model.Articles;
 import com.mymaraichermobile.model.CaddieRows;
 import com.mymaraichermobile.model.ProtocoleMarket.ProtocoleThreaded.ProtocoleClientThreaded;
 import com.mymaraichermobile.model.SocketHandler;
-import com.mymaraichermobile.GUI.settings.SettingsActivity;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -102,8 +100,6 @@ public class MaraicherActivity extends AppCompatActivity {
         confirmButton = findViewById(R.id.confirmButton);
 
         // Buttons Initialisation
-        previousButton.setEnabled(false);
-        nextButton.setEnabled(true);
         deleteButton.setEnabled(false);
 
         // variables panier
@@ -118,7 +114,11 @@ public class MaraicherActivity extends AppCompatActivity {
         totalText = findViewById(R.id.totalText);
         //endregion
 
-        refreshArticle(currentArticle);
+        try {
+            refreshArticle(currentArticle);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
         //region Button Listener
 
@@ -246,10 +246,8 @@ public class MaraicherActivity extends AppCompatActivity {
     // Caddie
     private void showPreviousElement() {
 
-        if(!this.previousButton.isEnabled())
-        {
-            this.nextButton.setEnabled(true);
-        }
+        if(!this.nextButton.isEnabled())
+        this.nextButton.setEnabled(true);
 
         try{
 
@@ -285,7 +283,7 @@ public class MaraicherActivity extends AppCompatActivity {
 
     private void showNextElement() {
 
-        if (!this.nextButton.isEnabled()) {
+        if (!this.previousButton.isEnabled()) {
             this.previousButton.setEnabled(true);
         }
 
@@ -320,19 +318,11 @@ public class MaraicherActivity extends AppCompatActivity {
 
     // Met à jour les détails du produit affiché en fonction de l'élément sélectionné
     @SuppressLint("SetTextI18n")
-    private void refreshArticle(int index) {
+    private void refreshArticle(int index) throws Exception {
         Articles art;
 
-        try {
+        art = client.sendConsult(index);
 
-            art = client.sendConsult(index);
-
-        } catch (Exception ex) {
-            this.runOnUiThread(() ->
-                    popupMessage.afficherPopupErreur("CONSULT ERROR REFRESH ARTICLE", ("ERREUR : "
-                            + ex.getMessage()), this));
-            return;
-        }
 
         try {
 

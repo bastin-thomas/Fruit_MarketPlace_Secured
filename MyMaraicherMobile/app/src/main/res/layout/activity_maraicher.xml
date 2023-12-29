@@ -60,7 +60,7 @@
             <Button
                 android:id="@+id/previousButton"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:text="@string/previous"
                 android:textColor="@color/white"
@@ -69,9 +69,9 @@
             <Button
                 android:id="@+id/nextButton"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:layout_marginLeft="5dp"
+                android:layout_marginStart="5dp"
                 android:text="@string/next"
                 android:textColor="@color/white"
                 android:textSize="8sp" />
@@ -81,7 +81,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:layout_marginLeft="80dp"
+                android:layout_marginLeft="20dp"
                 android:background="@color/Fond_Caddie"
                 android:gravity="center"
                 android:importantForAutofill="no"
@@ -92,14 +92,13 @@
                 android:padding="10dp"
                 android:text="0"
                 android:textColor="#000000"
-                tools:ignore="LabelFor,DuplicateSpeakableTextCheck" />
+                tools:ignore="LabelFor,DuplicateSpeakableTextCheck,TouchTargetSizeCheck" />
 
             <Button
                 android:id="@+id/addCaddieButton"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:layout_marginLeft="5dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
                 android:text="@string/add"
                 android:textColor="@color/white"
                 android:textSize="10sp"
@@ -216,7 +215,7 @@
 
         <TextView
             android:id="@+id/titleCaddie"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/titleCaddie"
             android:textSize="16sp"
@@ -226,7 +225,7 @@
 
         <ListView
             android:id="@+id/caddieListView"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="225dp"
             android:background="@color/Fond_Caddie"
             android:contextClickable="true" />
@@ -264,7 +263,7 @@
                 android:id="@+id/totalTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="175dp"
+                android:layout_marginStart="150dp"
                 android:text="@string/total"
                 android:textColor="@color/white"
                 android:textSize="16sp" />
@@ -273,10 +272,10 @@
                 android:id="@+id/totalText"
                 android:layout_width="wrap_content"
                 android:gravity="center_vertical"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="5dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="1dp"
                 android:importantForAutofill="no"
-                android:text="0.000000"
+                android:text="0.0"
                 android:textColor="@color/white"
                 android:textSize="16sp" />
         </LinearLayout>
@@ -287,7 +286,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="5dp"
             android:gravity="center">
 
             <Button
@@ -318,7 +317,7 @@
             android:layout_alignParentEnd="true"
             android:layout_gravity="right"
             android:gravity="center_vertical"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="10dp"
             android:minHeight="48dp"
             android:onClick="disconnect"
             android:text="@string/disconnectButton"

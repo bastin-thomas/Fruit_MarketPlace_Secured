@@ -2,7 +2,6 @@ package com.mymaraichermobile.GUI.maraicher;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.icu.text.DecimalFormat;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,7 +16,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.mymaraichermobile.GUI.main.MainActivity;
-import com.mymaraichermobile.GUI.message.PopupMessage;
+import com.mymaraichermobile.GUI.PopupMessage;
 import com.mymaraichermobile.GUI.settings.SettingsActivity;
 import com.mymaraichermobile.R;
 import com.mymaraichermobile.model.Achats;

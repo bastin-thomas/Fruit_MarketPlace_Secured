@@ -1,4 +1,4 @@
-package com.mymaraichermobile.GUI.message;
+package com.mymaraichermobile.GUI;
 
 import android.content.Context;
 import android.content.DialogInterface;

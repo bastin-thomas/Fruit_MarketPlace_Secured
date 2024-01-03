@@ -16,7 +16,7 @@ import androidx.fragment.app.Fragment;
 
 import com.mymaraichermobile.GUI.maraicher.MaraicherActivity;
 import com.mymaraichermobile.R;
-import com.mymaraichermobile.GUI.message.PopupMessage;
+import com.mymaraichermobile.GUI.PopupMessage;
 import com.mymaraichermobile.model.ProtocoleMarket.ProtocoleClient;
 import com.mymaraichermobile.model.ProtocoleMarket.ProtocoleThreaded.ProtocoleClientThreaded;
 import com.mymaraichermobile.model.ProtocoleMarket.SocketClient;

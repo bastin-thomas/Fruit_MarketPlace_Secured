@@ -80,6 +80,14 @@ public class ConfigFolderManager {
         }
             
         
+        if (!config.containsKey(CryptoConsts.ConfigTLSVersion)) {
+            config.setProperty(CryptoConsts.ConfigTLSVersion, CryptoConsts.ConfigDefaultTLSVersion);
+        }
+        
+        if (!config.containsKey(CryptoConsts.ConfigTLSCipherSuites)) {
+            config.setProperty(CryptoConsts.ConfigTLSCipherSuites, CryptoConsts.ConfigDefaultTLSCipherSuites);
+        }
+        
         SaveProperties(config);
         
         return config;

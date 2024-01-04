@@ -4,6 +4,7 @@
  */
 package be.hepl.stockmanagement.Utils;
 
+import be.hepl.cryptolibrary.CryptoConsts;
 import be.hepl.stockmanagement.Utils.Consts;
 import java.io.File;
 import java.io.FileInputStream;
@@ -78,7 +79,14 @@ public class ConfigFolderManager {
             config.setProperty(Consts.ConfigPoolSecuredSize, Consts.ConfigDefaultPoolSecuredSize);
         }
         
-            
+        
+        if (!config.containsKey(CryptoConsts.ConfigTLSVersion)) {
+            config.setProperty(CryptoConsts.ConfigTLSVersion, CryptoConsts.ConfigDefaultTLSVersion);
+        }
+        
+        if (!config.containsKey(CryptoConsts.ConfigTLSCipherSuites)) {
+            config.setProperty(CryptoConsts.ConfigTLSCipherSuites, CryptoConsts.ConfigDefaultTLSCipherSuites);
+        }
         
         SaveProperties(config);
         

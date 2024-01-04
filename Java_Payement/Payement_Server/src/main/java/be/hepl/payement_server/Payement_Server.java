@@ -456,10 +456,13 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
                 //Start TLS Server
                 String storePath = config.getProperty(Consts.ConfigKeyStorePath);
                 String keyStorePassword = config.getProperty(Consts.ConfigKeyStorePassword);
+                String TLSVersion = config.getProperty(CryptoConsts.ConfigTLSVersion);
+                String CypherSuit = config.getProperty(CryptoConsts.ConfigTLSCipherSuites);
+                    
                 store = KeyStore.getInstance(new File(storePath), keyStorePassword.toCharArray());
                 
-                socket_TLS = new ListenThreadOnDemand_TLS(port_tls, new Gestion_Protocol_Server(this, db), this, CryptoConsts.TLSCypherSuit,
-                        CryptoConsts.TLSVersion, CryptoConsts.SecurityTLSProvider, store, keyStorePassword);
+                socket_TLS = new ListenThreadOnDemand_TLS(port_tls, new Gestion_Protocol_Server(this, db), this, CypherSuit,
+                        TLSVersion, CryptoConsts.SecurityTLSProvider, store, keyStorePassword);
                 socket_TLS.start();
                 
                 isLaunched = true;

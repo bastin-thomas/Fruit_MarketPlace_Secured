@@ -198,9 +198,10 @@ public class LoginPage extends javax.swing.JFrame {
                     
                     String ip = Config.getProperty(Consts.ConfigIP);
                     String port = Config.getProperty(CryptoConsts.ConfigPortTLS);
-                    String TLSVersion = CryptoConsts.TLSVersion;
                     String TLSProvider = CryptoConsts.SecurityTLSProvider;
-                    String CypherSuit = CryptoConsts.TLSCypherSuit;
+                    
+                    String TLSVersion = Config.getProperty(CryptoConsts.ConfigTLSVersion);
+                    String CypherSuit = Config.getProperty(CryptoConsts.ConfigTLSCipherSuites);
                     
                     String storePath = Config.getProperty(Consts.ConfigKeyStorePath);
                     String keyStorePassword = Config.getProperty(Consts.ConfigKeyStorePassword);

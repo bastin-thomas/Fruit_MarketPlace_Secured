@@ -449,11 +449,14 @@ public class StockManagement_Server extends javax.swing.JFrame implements Logger
             try {
                 String storePath = config.getProperty(Consts.ConfigKeyStorePath);
                 String keyStorePassword = config.getProperty(Consts.ConfigKeyStorePassword);
+                String TLSVersion = config.getProperty(CryptoConsts.ConfigTLSVersion);
+                String TLSCypherSuit = config.getProperty(CryptoConsts.ConfigTLSCipherSuites);
+                
                 
                 KeyStore store = KeyStore.getInstance(new File(storePath), keyStorePassword.toCharArray());
                 
                 SecuredServer = new StockManagement_HttpsServer(ip, portSecured, poolSizeSecured,maxPendingConnexion, this, db, 
-                        CryptoConsts.TLSCypherSuit, CryptoConsts.TLSVersion, CryptoConsts.SecurityTLSProvider, store, keyStorePassword);
+                        TLSCypherSuit, TLSVersion, CryptoConsts.SecurityTLSProvider, store, keyStorePassword);
             } catch (Exception ex) {
                 this.Trace("Error creating HttpsServer: " + ex.getMessage());
                 i++;

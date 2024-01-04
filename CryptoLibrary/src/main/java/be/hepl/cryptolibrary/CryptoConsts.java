@@ -41,16 +41,16 @@ public class CryptoConsts {
     public final static String SignatureAlgorythm = "SHA512WithRSA";
     
     public final static String HMACAlgorythm = "HmacSHA512";
-
- 
+    
+    
     
     /*SSL - Ecom*/
     public final static String ConfigPortTLS = "Server_PORT_TLS";
     public final static String ConfigDefaultPortTLS = "50062";
     
     public final static String ConfigTLSVersion = "TLS_VERSION";
-    public final static String ConfigDefaultTLSVersion = "TLSv1.2";
+    public final static String ConfigDefaultTLSVersion = "TLSv1.3";
     
     public final static String ConfigTLSCipherSuites = "TLS_CIPHER_SUITES";
-    public final static String ConfigDefaultTLSCipherSuites = "TLS_AES_128_GCM_SHA"; //TLSv1.3: TLS_AES_256_GCM_SHA384
+    public final static String ConfigDefaultTLSCipherSuites = "TLS_AES_256_GCM_SHA384"; //TLSv1.2: TLS_AES_128_GCM_SHA
 }

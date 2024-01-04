@@ -6,11 +6,7 @@ package be.hepl.generic_server_tcp;
 
 import be.hepl.cryptolibrary.TLSUtils;
 import java.io.IOException;
-import java.net.ServerSocket;
-import javax.net.ssl.SSLServerSocket;
 import java.security.KeyStore;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLServerSocketFactory;
 
 /**
  *

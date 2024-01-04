@@ -20,7 +20,7 @@ import java.util.HashMap;
  *
  * @author Arkios
  */
-public class Payement implements Protocol {
+public class Gestion_Protocol_Server implements Protocol {
 
     // <editor-fold defaultstate="collapsed" desc="Properties">
     public final DBPayement db;
@@ -29,7 +29,7 @@ public class Payement implements Protocol {
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Constructor">
-    public Payement(Logger log, be.hepl.payement_protocol.protocol.DBPayement db) {
+    public Gestion_Protocol_Server(Logger log, be.hepl.payement_protocol.protocol.DBPayement db) {
         logger = log;
         connectedClients = new HashMap<>();
         this.db = db;

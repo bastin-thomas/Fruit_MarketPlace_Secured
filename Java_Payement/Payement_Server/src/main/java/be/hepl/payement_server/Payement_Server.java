@@ -15,27 +15,20 @@ import be.hepl.generic_server_tcp.PooledServer.ListenThreadPooled;
 
 import be.hepl.payement_protocol.Utils.Consts;
 import be.hepl.payement_protocol.protocol.DBPayement;
-import be.hepl.payement_protocol.protocol.Payement;
+import be.hepl.payement_protocol.protocol.Gestion_Protocol_Server;
 import be.hepl.payement_protocol.protocol.Secured.DBPayement_Secured;
 import be.hepl.payement_protocol.protocol.Secured.Payement_Secured;
 
 import com.formdev.flatlaf.FlatLightLaf;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
 import java.security.Security;
-import java.security.cert.CertificateException;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
 import java.util.Vector;
-import java.util.logging.Level;
 import javax.swing.table.DefaultTableModel;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
@@ -451,7 +444,7 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
             try {
                 FreezeUI();
                 //Start Unsecured Server
-                socket_unsecured = new ListenThreadPooled(port_unsecured, new Payement(this, db), this, poolSize);
+                socket_unsecured = new ListenThreadPooled(port_unsecured, new Gestion_Protocol_Server(this, db), this, poolSize);
                 socket_unsecured.start();
                 
                 //Start Secured Server
@@ -465,7 +458,7 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
                 String keyStorePassword = config.getProperty(Consts.ConfigKeyStorePassword);
                 store = KeyStore.getInstance(new File(storePath), keyStorePassword.toCharArray());
                 
-                socket_TLS = new ListenThreadOnDemand_TLS(port_tls, new Payement(this, db), this, CryptoConsts.TLSCypherSuit,
+                socket_TLS = new ListenThreadOnDemand_TLS(port_tls, new Gestion_Protocol_Server(this, db), this, CryptoConsts.TLSCypherSuit,
                         CryptoConsts.TLSVersion, CryptoConsts.SecurityTLSProvider, store, keyStorePassword);
                 socket_TLS.start();
                 

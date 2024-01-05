@@ -8,11 +8,9 @@ import be.hepl.generic_server_tcp.Logger;
 import be.hepl.my_jdbc_bean.JDBC_Bean;
 import be.hepl.payement_protocol.model.Facture;
 import be.hepl.payement_protocol.model.Sale;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.logging.Level;
 
 /**
  *

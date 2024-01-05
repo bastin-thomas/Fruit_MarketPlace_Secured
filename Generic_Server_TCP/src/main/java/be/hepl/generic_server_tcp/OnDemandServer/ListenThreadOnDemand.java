@@ -4,12 +4,14 @@
  */
 package be.hepl.generic_server_tcp.OnDemandServer;
 
+import be.hepl.cryptolibrary.TLSUtils;
 import be.hepl.generic_server_tcp.ListenThread;
 import be.hepl.generic_server_tcp.Logger;
 import be.hepl.generic_server_tcp.Protocol;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
+import java.security.KeyStore;
 
 /**
  *
@@ -24,6 +26,13 @@ public class ListenThreadOnDemand extends ListenThread {
     // <editor-fold defaultstate="collapsed" desc="Constructor">
     public ListenThreadOnDemand(int port, Protocol protocole, Logger logger) throws IOException {
         super(port, protocole, logger);
+    }
+    
+    
+    //Secure Constructor
+    public ListenThreadOnDemand(int port, Protocol protocole, Logger logger, String cypherSuit, String sslVersion, String provider, KeyStore store, String keystorePassword)
+    {
+        super(port, protocole, logger, cypherSuit, sslVersion, provider, store, keystorePassword);
     }
     // </editor-fold>
     

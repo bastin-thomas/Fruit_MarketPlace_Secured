@@ -6,7 +6,6 @@ package be.hepl.payement_server;
 
 import be.hepl.cryptolibrary.CryptoConsts;
 import be.hepl.generic_server_tcp.OnDemandServer.ListenThreadOnDemand;
-import be.hepl.generic_server_tcp.OnDemandServer.ListenThreadOnDemand_TLS;
 import be.hepl.generic_server_tcp.ListenThread;
 import be.hepl.payement_server.Utils.ConfigFolderManager;
 
@@ -461,7 +460,7 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
                     
                 store = KeyStore.getInstance(new File(storePath), keyStorePassword.toCharArray());
                 
-                socket_TLS = new ListenThreadOnDemand_TLS(port_tls, new Gestion_Protocol_Server(this, db), this, CypherSuit,
+                socket_TLS = new ListenThreadOnDemand(port_tls, new Gestion_Protocol_Server(this, db), this, CypherSuit,
                         TLSVersion, CryptoConsts.SecurityTLSProvider, store, keyStorePassword);
                 socket_TLS.start();
                 

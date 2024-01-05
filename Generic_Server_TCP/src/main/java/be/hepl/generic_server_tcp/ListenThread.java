@@ -4,8 +4,10 @@
  */
 package be.hepl.generic_server_tcp;
 
+import be.hepl.cryptolibrary.TLSUtils;
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.security.KeyStore;
 
 /**
  *
@@ -37,6 +39,25 @@ public abstract class ListenThread extends Thread {
             listenSocket = new ServerSocket(port);
         }
         catch(IOException ex)
+        {
+            logger.Trace("Error Creation Socket: " + ex.getMessage());
+        }
+    }
+    
+    
+    //Secure Constructor
+    public ListenThread(int port, Protocol protocole, Logger logger, String cypherSuit, String sslVersion, String provider, KeyStore store, String keystorePassword)
+    {
+        super("TH_Secured Serveur (port=" + port + ",protocole=" + protocole.getNom() + ")");
+        
+        this.port = port;
+        this.protocole = protocole;
+        this.logger = logger;
+        
+        try{            
+            listenSocket = TLSUtils.createServerSocket(port, cypherSuit, sslVersion, provider, store, keystorePassword);
+        }
+        catch(Exception ex)
         {
             logger.Trace("Error Creation Socket: " + ex.getMessage());
         }

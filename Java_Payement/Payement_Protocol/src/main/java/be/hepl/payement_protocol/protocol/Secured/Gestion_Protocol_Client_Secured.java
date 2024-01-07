@@ -75,6 +75,7 @@ public class Gestion_Protocol_Client_Secured extends Gestion_Protocol_Client {
     public boolean SendLogin(String Login, String Password) throws Exception {
         String ClientKeypairEntryName = CryptoConsts.ClientCertificateName + "-" + Login;
         String SessionSecretKeyEntryName = CryptoConsts.SessionKeyName + "-" + Login;
+        
         Certificate RootCert = keystore.getCertificate(CryptoConsts.RootCertificateName);
         Object response = null;
         
@@ -110,8 +111,9 @@ public class Gestion_Protocol_Client_Secured extends Gestion_Protocol_Client {
             //KeyPair Generation
             KeyPair clientKeyPair = CryptoUtils.CreateKeyPair();
             
+            String CertName = ClientKeypairEntryName;
             //Certificate Generation
-            Certificate[] chain = CryptoUtils.CreateCertificate(ClientKeypairEntryName, clientKeyPair, 
+            Certificate[] chain = CryptoUtils.CreateCertificate(CertName, clientKeyPair, 
                                                              keystorePassword.toString(), config);
             clientCertificate = chain[0];
 

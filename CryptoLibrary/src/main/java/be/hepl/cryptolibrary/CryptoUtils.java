@@ -78,8 +78,7 @@ public class CryptoUtils {
     public static final String DIGEST_ALG = CryptoConsts.DigestAlgorythm;
     public static final String KEY_ALG = CryptoConsts.AsymetricAlgorythm;
     public static final String PROVIDER = CryptoConsts.SecurityProvider;
-    
-       
+           
     // <editor-fold defaultstate="collapsed" desc="Asymetrical Utils">
     /**
      *
@@ -129,7 +128,6 @@ public class CryptoUtils {
             
             //Generate some dates
             Calendar calendar = Calendar.getInstance();
-            calendar.add(Calendar.DATE, -1);
             Date startDate = calendar.getTime();
             
             calendar.add(Calendar.MONTH, 1);
@@ -143,16 +141,20 @@ public class CryptoUtils {
                     BigInteger.probablePrime(10, new Random()),startDate, endDate,
                     certName, key.getPublic());
             
-            //Add usefull extension:
-            JcaX509ExtensionUtils CertUtils = new JcaX509ExtensionUtils();
+            //Add usefull extension:            
             // Use BasicConstraints to say that this Cert is not a CA
             certBuilder.addExtension(Extension.basicConstraints, true, new BasicConstraints(false));
+            
             // Add Issuer cert identifier as Extension
+            JcaX509ExtensionUtils CertUtils = new JcaX509ExtensionUtils();
             certBuilder.addExtension(Extension.authorityKeyIdentifier, false, CertUtils.createAuthorityKeyIdentifier(rootCert.getPublicKey()));
+            
+            
             
             //Create the signer, sign the certificate and create it
             JcaContentSignerBuilder signer = new JcaContentSignerBuilder(CryptoConsts.SignatureAlgorythm);
             X509CertificateHolder certHolder = certBuilder.build(signer.build(rootPriKey));
+            
             X509Certificate certificate  = new JcaX509CertificateConverter().setProvider(PROVIDER).getCertificate(certHolder);
             
             
@@ -265,7 +267,8 @@ public class CryptoUtils {
     /**
      *
      * @param decryptedData
-     * @param publicKey
+     * @param secretKey
+     * @param params
      * @return encryptedData
      */
     public static byte[] SymetricalEncrypt(Object decryptedData, SecretKey secretKey, IvParameterSpec params){
@@ -283,7 +286,8 @@ public class CryptoUtils {
     /**
      *
      * @param encryptedData
-     * @param privateKey
+     * @param secretKey
+     * @param params
      * @return decryptedData
      */
     public static Object SymetricalDecrypt(byte[] encryptedData, SecretKey secretKey, IvParameterSpec params){
@@ -373,18 +377,12 @@ public class CryptoUtils {
     public static byte[] CreateSignature(Serializable toSign, PrivateKey clientPrivateKey) {
         byte[] sig = null;
         try {
-            final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            final ObjectOutputStream oos = new ObjectOutputStream(bos);
-            
             Signature sigBuilder = Signature.getInstance(CryptoConsts.SignatureAlgorythm, CryptoConsts.SecurityProvider);
             sigBuilder.initSign(clientPrivateKey);
-            
-            oos.writeObject(toSign);
-            oos.flush();
-            sigBuilder.update(bos.toByteArray());
+            sigBuilder.update(EncodeObject(toSign));
             sig = sigBuilder.sign();
         
-        } catch (IOException | NoSuchAlgorithmException | NoSuchProviderException | SignatureException | InvalidKeyException ex) {
+        } catch (Exception ex) {
             Logger.getLogger(CryptoUtils.class.getName()).log(Level.SEVERE, null, ex);
             sig = null;
         }
@@ -401,18 +399,13 @@ public class CryptoUtils {
      */
     public static boolean VerifySignature(Serializable toVerify, byte[] signature, PublicKey clientPublicKey){
         try {
-            final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            final ObjectOutputStream oos = new ObjectOutputStream(bos);
-            
             Signature sigBuilder = Signature.getInstance(CryptoConsts.SignatureAlgorythm, CryptoConsts.SecurityProvider);
             sigBuilder.initVerify(clientPublicKey);
             
-            oos.writeObject(toVerify);
-            oos.flush();
-            sigBuilder.update(bos.toByteArray());            
+            sigBuilder.update(EncodeObject(toVerify));            
             return sigBuilder.verify(signature);
             
-        } catch (IOException | InvalidKeyException | NoSuchAlgorithmException | NoSuchProviderException | SignatureException ex) {
+        } catch (Exception ex) {
             Logger.getLogger(CryptoUtils.class.getName()).log(Level.SEVERE, null, ex);
             return false;
         }
@@ -427,18 +420,13 @@ public class CryptoUtils {
      */
     public static boolean VerifySignature(ArrayList<Object> toVerify, byte[] signature, Certificate clientCertificate){
         try {
-            final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            final ObjectOutputStream oos = new ObjectOutputStream(bos);
-            
             Signature sigBuilder = Signature.getInstance(CryptoConsts.SignatureAlgorythm, CryptoConsts.SecurityProvider);
             sigBuilder.initVerify(clientCertificate);
             
-            oos.writeObject(toVerify);
-            oos.flush();
-            sigBuilder.update(bos.toByteArray());            
+            sigBuilder.update(EncodeObject(toVerify));            
             return sigBuilder.verify(signature);
             
-        } catch (IOException | InvalidKeyException | NoSuchAlgorithmException | NoSuchProviderException | SignatureException ex) {
+        } catch (Exception ex) {
             Logger.getLogger(CryptoUtils.class.getName()).log(Level.SEVERE, null, ex);
             return false;
         }
@@ -448,18 +436,14 @@ public class CryptoUtils {
     // <editor-fold defaultstate="collapsed" desc="HMAC Utils">
     public static byte[] CreateHMAC(Serializable toHash, SecretKey secretKey){
         try {
-            final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            final ObjectOutputStream oos = new ObjectOutputStream(bos);
-            
+           
             Mac hm = Mac.getInstance(CryptoConsts.HMACAlgorythm,CryptoConsts.SecurityProvider);
             hm.init(secretKey);
             
-            oos.writeObject(toHash);
-            oos.flush();
-            hm.update(bos.toByteArray());
+            hm.update(EncodeObject(toHash));
             return hm.doFinal();
              
-        } catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchProviderException | IOException ex) {
+        } catch (Exception ex) {
             Logger.getLogger(CryptoUtils.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }
@@ -469,9 +453,8 @@ public class CryptoUtils {
     // <editor-fold defaultstate="collapsed" desc="Digest Utils">
     /**
      *
-     * @param Objects
+     * @param toHash
      * @return a Digest
-     * @throws IOException
      */
     public static byte[] CreateDigest(Serializable toHash)
     {

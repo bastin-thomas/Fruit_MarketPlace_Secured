@@ -30,6 +30,12 @@ We use a small SQL database with that will provide to type of loggable user. Emp
 
 ### Payements Protocol (Java)
 
+### Unsecured
+
+### Secured 
+![LoginRequest Secured](./.readme_img/LoginPayement_Secure.png "Login Request Secured")
+![KeyPairGeneration](./.readme_img/CreateKeyPair+Certificate.png "KeyPair Generation")
+
 ### Payements Server (Java)
 
 ### Payements Client (Java)

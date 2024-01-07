@@ -16,7 +16,7 @@ import be.hepl.payement_protocol.Utils.Consts;
 import be.hepl.payement_protocol.protocol.DBPayement;
 import be.hepl.payement_protocol.protocol.Gestion_Protocol_Server;
 import be.hepl.payement_protocol.protocol.Secured.DBPayement_Secured;
-import be.hepl.payement_protocol.protocol.Secured.Payement_Secured;
+import be.hepl.payement_protocol.protocol.Secured.Gestion_Protocol_Server_Secured;
 
 import com.formdev.flatlaf.FlatLightLaf;
 import java.io.File;
@@ -447,7 +447,7 @@ public class Payement_Server extends javax.swing.JFrame implements Logger {
                 socket_unsecured.start();
                 
                 //Start Secured Server
-                socket_secured = new ListenThreadOnDemand(port_secured, new Payement_Secured(this, (DBPayement_Secured) db, config), this);
+                socket_secured = new ListenThreadOnDemand(port_secured, new Gestion_Protocol_Server_Secured(this, (DBPayement_Secured) db, config), this);
                 socket_secured.start();
                 
                 

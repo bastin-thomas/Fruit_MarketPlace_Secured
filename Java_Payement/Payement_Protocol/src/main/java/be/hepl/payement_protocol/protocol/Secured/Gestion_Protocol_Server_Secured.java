@@ -47,7 +47,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
  *
  * @author Arkios
  */
-public class Payement_Secured implements Protocol {
+public class Gestion_Protocol_Server_Secured implements Protocol {
 
     // <editor-fold defaultstate="collapsed" desc="Properties">
     public final DBPayement_Secured db;
@@ -60,7 +60,7 @@ public class Payement_Secured implements Protocol {
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Constructor">
-    public Payement_Secured(Logger log, DBPayement_Secured db, Properties config) throws Exception {
+    public Gestion_Protocol_Server_Secured(Logger log, DBPayement_Secured db, Properties config) throws Exception {
         logger = log;
         connectedClients = new HashMap<>();
         this.db = db;
@@ -271,7 +271,7 @@ public class Payement_Secured implements Protocol {
             isValid = CryptoUtils.VerifySignature(toVerify, request.getClientSignature(), clientCertificate);
 
         } catch (KeyStoreException ex) {
-            java.util.logging.Logger.getLogger(Payement_Secured.class.getName()).log(Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Gestion_Protocol_Server_Secured.class.getName()).log(Level.SEVERE, null, ex);
             isValid = false;
         }
 
@@ -329,7 +329,7 @@ public class Payement_Secured implements Protocol {
             isValid = CryptoUtils.VerifySignature(toVerify, request.getIdClientSignature(), clientCertificate);
 
         } catch (KeyStoreException ex) {
-            java.util.logging.Logger.getLogger(Payement_Secured.class.getName()).log(Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Gestion_Protocol_Server_Secured.class.getName()).log(Level.SEVERE, null, ex);
             isValid = false;
         }
 
@@ -394,7 +394,7 @@ public class Payement_Secured implements Protocol {
             isValid = CryptoUtils.VerifySignature(toVerify, request.getIdBillsSignature(), clientCertificate);
 
         } catch (KeyStoreException ex) {
-            java.util.logging.Logger.getLogger(Payement_Secured.class.getName()).log(Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Gestion_Protocol_Server_Secured.class.getName()).log(Level.SEVERE, null, ex);
             isValid = false;
         }
 
@@ -476,7 +476,7 @@ public class Payement_Secured implements Protocol {
             isCertificateValid = CryptoUtils.VerifySignature(toVerify, request.getPayFactureSignature(), clientCertificate);
 
         } catch (KeyStoreException ex) {
-            java.util.logging.Logger.getLogger(Payement_Secured.class.getName()).log(Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Gestion_Protocol_Server_Secured.class.getName()).log(Level.SEVERE, null, ex);
             isCertificateValid = false;
         }
         

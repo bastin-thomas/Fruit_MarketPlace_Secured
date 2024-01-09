@@ -39,12 +39,14 @@ public class StockManagement_HttpServer{
         http = HttpServer.create(addr, maxPending);
         
         Executor executor = Executors.newFixedThreadPool(nthread);
+        
         http.setExecutor(executor);
         
         this.log.Trace("Lancement du serveur HTTP sur les ports: " + ip + ":" + port);
         
         http.createContext("/", new IndexHandler(log, db));
         http.createContext("/api/v1/", new ApiHandler(log, db));
+        
         http.start();
         
         this.log.Trace("Serveur HTTP lancé sur les ports: " + ip + ":" + port);

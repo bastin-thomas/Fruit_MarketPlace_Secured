@@ -15,7 +15,6 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.mymaraichermobile.GUI.main.MainActivity;
 import com.mymaraichermobile.GUI.PopupMessage;
 import com.mymaraichermobile.GUI.settings.SettingsActivity;
 import com.mymaraichermobile.R;
@@ -201,43 +200,6 @@ public class MaraicherActivity extends AppCompatActivity {
         Intent intent = new Intent(this, SettingsActivity.class);
 
         intent.putExtra("class_name", MaraicherActivity.class.getName());
-        startActivity(intent);
-
-        finish();
-    }
-
-    // Pour revenir à la page de connexion
-    public void disconnect(View view) {
-
-        try {
-
-            client.sendCancelAll();
-
-        } catch (Exception ignored) {
-
-        }
-
-        try {
-            Log.d("TRACE LOGOUT", "client : " + client);
-
-            client.sendLogout();
-
-        } catch (Exception ignored) {
-
-        }
-
-        try {
-
-            client.close();
-
-            SocketHandler.setProtocol(null);
-
-        } catch (Exception ignored) {
-
-        }
-
-        Intent intent = new Intent(this, MainActivity.class);
-
         startActivity(intent);
 
         finish();

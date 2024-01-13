@@ -27,6 +27,7 @@ CREATE TABLE IF NOT EXISTS `accounts` (
 -- Listage des données de la table PourStudent.accounts : ~2 rows (environ)
 /*!40000 ALTER TABLE `accounts` DISABLE KEYS */;
 INSERT INTO `accounts` (`login`, `password`) VALUES
+	('laure', '123'),
 	('Lucas', '123'),
 	('Thomas', '123');
 /*!40000 ALTER TABLE `accounts` ENABLE KEYS */;
@@ -44,27 +45,27 @@ CREATE TABLE IF NOT EXISTS `articles` (
 -- Listage des données de la table PourStudent.articles : ~21 rows (environ)
 /*!40000 ALTER TABLE `articles` DISABLE KEYS */;
 INSERT INTO `articles` (`id`, `intitule`, `prix`, `stock`, `image`) VALUES
-	(1, 'carottes', 2.26, 1222, 'carottes.jpg'),
-	(2, 'cerises', 9.76, 135, 'cerises.jpg'),
-	(3, 'artichaut', 1.62, 155, 'artichaut.jpg'),
-	(4, 'bananes', 2.6, 200, 'bananes.jpg'),
-	(5, 'champignons', 10.25, 100, 'champignons.jpg'),
-	(6, 'concombre', 1.17, 100, 'concombre.jpg'),
-	(7, 'courgette', 1.17, 100, 'courgette.jpg'),
-	(8, 'haricots', 10.82, 100, 'haricots.jpg'),
-	(9, 'laitue', 1.62, 100, 'laitue.jpg'),
-	(10, 'oranges', 3.78, 200, 'oranges.jpg'),
-	(11, 'oignons', 2.12, 100, 'oignons.jpg'),
-	(12, 'nectarines', 10.38, 100, 'nectarines.jpg'),
-	(13, 'peches', 8.48, 100, 'peches.jpg'),
-	(14, 'poivron', 1.29, 165, 'poivron.jpg'),
+	(1, 'carottes', 2.28, 125, 'carottes.jpg'),
+	(2, 'cerises', 9.76, 100, 'cerises.jpg'),
+	(3, 'artichaut', 1.62, 150, 'artichaut.jpg'),
+	(4, 'bananes', 2.6, 1155, 'bananes.jpg'),
+	(5, 'champignons', 10.25, 48, 'champignons.jpg'),
+	(6, 'concombre', 1.17, 156, 'concombre.jpg'),
+	(7, 'courgette', 1.18, 55, 'courgette.jpg'),
+	(8, 'haricots', 0.12, 50, 'haricots.jpg'),
+	(9, 'laitue', 1.62, 75, 'laitue.jpg'),
+	(10, 'oranges', 3.78, 104, 'oranges.jpg'),
+	(11, 'oignons', 2.12, 105, 'oignons.jpg'),
+	(12, 'nectarines', 10.38, 91, 'nectarines.jpg'),
+	(13, 'peches', 8.48, 94, 'peches.jpg'),
+	(14, 'poivron', 1.29, 161, 'poivron.jpg'),
 	(15, 'pommes de terre', 2.17, 100, 'pommesDeTerre.jpg'),
 	(16, 'pommes', 4, 100, 'pommes.jpg'),
-	(17, 'citrons', 4.44, 981, 'citrons.jpg'),
-	(18, 'ail', 1.08, 100, 'ail.jpg'),
-	(19, 'aubergine', 1.62, 100, 'aubergine.jpg'),
-	(20, 'echalotes', 6.48, 100, 'echalotes.jpg'),
-	(21, 'tomates', 7.63, 250, 'tomates.jpg');
+	(17, 'citrons', 4.44, 971, 'citrons.jpg'),
+	(18, 'ail', 1.08, 95, 'ail.jpg'),
+	(19, 'aubergine', 1.62, 95, 'aubergine.jpg'),
+	(20, 'echalotes', 6.48, 95, 'echalotes.jpg'),
+	(21, 'tomates', 7.63, 240, 'tomates.jpg');
 /*!40000 ALTER TABLE `articles` ENABLE KEYS */;
 
 -- Listage de la structure de la table PourStudent. employees
@@ -77,6 +78,7 @@ CREATE TABLE IF NOT EXISTS `employees` (
 -- Listage des données de la table PourStudent.employees : ~0 rows (environ)
 /*!40000 ALTER TABLE `employees` DISABLE KEYS */;
 INSERT INTO `employees` (`login`, `password`) VALUES
+	('Lucas', '123'),
 	('Thomas', '123');
 /*!40000 ALTER TABLE `employees` ENABLE KEYS */;
 
@@ -90,9 +92,9 @@ CREATE TABLE IF NOT EXISTS `factures` (
   PRIMARY KEY (`id`) USING BTREE,
   KEY `FK_factures_accounts` (`idClient`),
   CONSTRAINT `FK_factures_accounts` FOREIGN KEY (`idClient`) REFERENCES `accounts` (`login`)
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8;
 
--- Listage des données de la table PourStudent.factures : ~12 rows (environ)
+-- Listage des données de la table PourStudent.factures : ~17 rows (environ)
 /*!40000 ALTER TABLE `factures` DISABLE KEYS */;
 INSERT INTO `factures` (`id`, `idClient`, `date`, `montant`, `payé`) VALUES
 	(8, 'Thomas', '2023-11-06 22:08:19', 95, 1),
@@ -105,7 +107,14 @@ INSERT INTO `factures` (`id`, `idClient`, `date`, `montant`, `payé`) VALUES
 	(16, 'Lucas', '2023-11-15 03:10:42', 209.07, 1),
 	(17, 'Lucas', '2023-11-16 11:37:16', 109, 1),
 	(18, 'Lucas', '2023-11-16 11:49:44', 17, 1),
-	(19, 'Lucas', '2023-11-16 11:50:41', 12, 0);
+	(19, 'Lucas', '2023-11-16 11:50:41', 12, 0),
+	(20, 'laure', '2023-12-28 21:53:23', 51, 1),
+	(21, 'laure', '2023-12-28 21:55:04', 21, 0),
+	(22, 'Thomas', '2023-12-29 02:31:54', 4401, 0),
+	(23, 'Thomas', '2023-12-29 02:34:53', 71, 0),
+	(24, 'Thomas', '2023-12-29 02:36:55', 400, 0),
+	(25, 'Thomas', '2023-12-29 02:37:24', 76, 0),
+	(26, 'Thomas', '2023-12-29 02:55:15', 344, 0);
 /*!40000 ALTER TABLE `factures` ENABLE KEYS */;
 
 -- Listage de la structure de la table PourStudent. ventes
@@ -119,7 +128,7 @@ CREATE TABLE IF NOT EXISTS `ventes` (
   CONSTRAINT `FK_ventes_factures` FOREIGN KEY (`idFacture`) REFERENCES `factures` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Listage des données de la table PourStudent.ventes : ~28 rows (environ)
+-- Listage des données de la table PourStudent.ventes : ~56 rows (environ)
 /*!40000 ALTER TABLE `ventes` DISABLE KEYS */;
 INSERT INTO `ventes` (`idFacture`, `idArticle`, `quantité`) VALUES
 	(8, 3, 5),
@@ -150,7 +159,39 @@ INSERT INTO `ventes` (`idFacture`, `idArticle`, `quantité`) VALUES
 	(17, 2, 7),
 	(17, 3, 7),
 	(18, 1, 8),
-	(19, 1, 6);
+	(19, 1, 6),
+	(20, 5, 5),
+	(21, 8, 1),
+	(21, 10, 3),
+	(22, 1, 1205),
+	(22, 2, 129),
+	(22, 3, 156),
+	(22, 4, 10),
+	(22, 5, 10),
+	(22, 6, 10),
+	(22, 7, 10),
+	(22, 8, 10),
+	(22, 9, 10),
+	(23, 4, 3),
+	(23, 5, 5),
+	(23, 6, 5),
+	(23, 7, 5),
+	(23, 8, 7),
+	(23, 9, 2),
+	(24, 4, 7),
+	(24, 5, 21),
+	(24, 8, 21),
+	(24, 10, 21),
+	(24, 11, 7),
+	(24, 12, 7),
+	(25, 4, 18),
+	(25, 5, 3),
+	(25, 8, 6),
+	(26, 1, 25),
+	(26, 4, 50),
+	(26, 6, 50),
+	(26, 7, 50),
+	(26, 9, 25);
 /*!40000 ALTER TABLE `ventes` ENABLE KEYS */;
 
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;

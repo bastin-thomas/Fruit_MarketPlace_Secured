@@ -87,6 +87,8 @@ public class ApiHandler extends MyHttpHandler {
                 byte[] requestBody = exchange.getRequestBody().readAllBytes();
                 String formData = new String(requestBody, StandardCharsets.UTF_8);
                 Map<String, String> queryParams = parseQueryParams(formData);
+                log.Trace("FORMDATA : " + formData);
+                log.Trace("QUERYPARAMS : " + queryParams);
 
                 if (!queryParams.containsKey("cleSession") || !queryParams.containsKey("idArticle")
                         || !queryParams.containsKey("prix") || !queryParams.containsKey("stock")) {

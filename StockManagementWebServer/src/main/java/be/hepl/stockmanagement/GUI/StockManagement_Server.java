@@ -168,7 +168,7 @@ public class StockManagement_Server extends javax.swing.JFrame implements Logger
         });
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 48)); // NOI18N
-        jLabel1.setText("Payement Server Manager");
+        jLabel1.setText("Web stock Server Manager");
 
         AbortButton.setBackground(new java.awt.Color(204, 0, 0));
         AbortButton.setForeground(new java.awt.Color(0, 0, 0));

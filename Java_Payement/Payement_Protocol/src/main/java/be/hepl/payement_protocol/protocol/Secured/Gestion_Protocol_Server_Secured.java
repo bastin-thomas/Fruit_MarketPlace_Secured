@@ -69,16 +69,16 @@ public class Gestion_Protocol_Server_Secured implements Protocol {
 
         Security.addProvider(new BouncyCastleProvider());
 
-        keystore = KeyStore.getInstance(CryptoConsts.KeyStoreInstanceType);
+        keystore = KeyStore.getInstance(CryptoConsts.KeyStoreInstanceType); // object
 
-        File filestore = new File(config.getProperty(Consts.ConfigKeyStorePath));
+        File filestore = new File(config.getProperty(Consts.ConfigKeyStorePath)); //load Meta-data
 
         if (!filestore.exists()) {
             throw new KeyStoreException();
         }
-        FileInputStream filestorestream = new FileInputStream(filestore.getPath());
+        FileInputStream filestorestream = new FileInputStream(filestore.getPath()); //init flux
 
-        keystore.load(filestorestream, keystorePassword);
+        keystore.load(filestorestream, keystorePassword); //read Keystore
     }
     // </editor-fold>
 
@@ -162,8 +162,8 @@ public class Gestion_Protocol_Server_Secured implements Protocol {
         logger.Trace("Vérification Certificat du Client");
         Certificate rootCert = null;
         try {
-            rootCert = keystore.getCertificate(CryptoConsts.RootCertificateName);
-            loginRequest.getClientCertificate().verify(rootCert.getPublicKey());
+            rootCert = keystore.getCertificate(CryptoConsts.RootCertificateName); // TrustC CA in Server KeyS
+            loginRequest.getClientCertificate().verify(rootCert.getPublicKey()); // verif certif
         } catch (KeyStoreException | NoSuchAlgorithmException | NoSuchProviderException ex) {
             return new LoginResponse_Secured(false, "Error during KeyStore Reading: " + ex.getMessage());
         } catch (CertificateException | SignatureException | InvalidKeyException ex) {
@@ -178,7 +178,7 @@ public class Gestion_Protocol_Server_Secured implements Protocol {
                 X509Certificate a = (X509Certificate) keystore.getCertificate(KeyPairEntryName);
                 X509Certificate b = (X509Certificate) loginRequest.getClientCertificate();
 
-                if (!CryptoUtils.CompareCertificate(a, b)) {
+                if (!CryptoUtils.CompareCertificate(a, b)) { // verif diff
                     //If there is an entry but outdated
                     refreshCertificate = true;
                 }
@@ -190,7 +190,7 @@ public class Gestion_Protocol_Server_Secured implements Protocol {
             if (refreshCertificate) {
                 //Add the client certificate to the keystore the name will be the client login name
                 keystore.setCertificateEntry(KeyPairEntryName,
-                        loginRequest.getClientCertificate());
+                        loginRequest.getClientCertificate()); // nouveau tiroir
                 SaveKeyStore();
 
                 logger.Trace("Ajout du certificat du client dans le keyStore.");
@@ -295,7 +295,7 @@ public class Gestion_Protocol_Server_Secured implements Protocol {
             SecretKey sessionKey = (SecretKey) keystore.getKey(SessionKeyEntryName, keystorePassword);
             ivparameter = CryptoUtils.CreateIvParameter();
 
-            encryptedClients = CryptoUtils.SymetricalEncrypt(clients, sessionKey, ivparameter);
+            encryptedClients = CryptoUtils.SymetricalEncrypt(clients, sessionKey, ivparameter); // Crypte clients list
         } catch (KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException ex) {
             encryptedClients = null;
         }
@@ -359,9 +359,9 @@ public class Gestion_Protocol_Server_Secured implements Protocol {
         IvParameterSpec ivparameter = null;
 
         try {
-            SecretKey sessionKey = (SecretKey) keystore.getKey(SessionKeyEntryName, keystorePassword);
+            SecretKey sessionKey = (SecretKey) keystore.getKey(SessionKeyEntryName, keystorePassword); // get sess key
             ivparameter = CryptoUtils.CreateIvParameter();
-            encryptedBills = CryptoUtils.SymetricalEncrypt(bills, sessionKey, ivparameter);
+            encryptedBills = CryptoUtils.SymetricalEncrypt(bills, sessionKey, ivparameter); // crypt
             
         } catch (KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException ex) {
             encryptedBills = null;
@@ -425,7 +425,7 @@ public class Gestion_Protocol_Server_Secured implements Protocol {
 
         try {
             SecretKey sessionKey = (SecretKey) keystore.getKey(SessionKeyEntryName, keystorePassword);
-            ivparameter = CryptoUtils.CreateIvParameter();
+            ivparameter = CryptoUtils.CreateIvParameter(); // random crypto
             encryptedSales = CryptoUtils.SymetricalEncrypt(Sales, sessionKey, ivparameter);
             
         } catch (KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException ex) {

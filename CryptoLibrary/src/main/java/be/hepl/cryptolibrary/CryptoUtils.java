@@ -295,7 +295,7 @@ public class CryptoUtils {
             
             Cipher cipher = Cipher.getInstance((CryptoConsts.SymetricAlgorythm + "/" + CryptoConsts.SymetricCipherMode + "/" + CryptoConsts.SymetricPaddingMode), CryptoConsts.SecurityProvider);
             cipher.init(Cipher.DECRYPT_MODE, secretKey, params);
-            return DecodeObject(cipher.doFinal(encryptedData));
+            return DecodeObject(cipher.doFinal(encryptedData)); // crypt
             
         } catch (IllegalBlockSizeException | BadPaddingException | NoSuchAlgorithmException | NoSuchProviderException | NoSuchPaddingException | InvalidKeyException | InvalidAlgorithmParameterException ex) {
             Logger.getLogger(CryptoUtils.class.getName()).log(Level.SEVERE, null, ex);
@@ -311,7 +311,7 @@ public class CryptoUtils {
      * @return SecretKey instance
      */
     public static SecretKey DecodeSecretKey(byte[] encodedSecretKey){
-        return new SecretKeySpec(encodedSecretKey, 0, encodedSecretKey.length, CryptoConsts.SymetricAlgorythm);
+        return new SecretKeySpec(encodedSecretKey, 0, encodedSecretKey.length, CryptoConsts.SymetricAlgorythm); //byte,taille,algo
     }
     
     /**
@@ -319,7 +319,7 @@ public class CryptoUtils {
      * @param secretKey
      * @return byte array
      */
-    public static byte[] EncodeKey(SecretKey secretKey){
+    public static byte[] EncodeSecretKey(SecretKey secretKey){
         return secretKey.getEncoded();
     }
     
@@ -420,11 +420,11 @@ public class CryptoUtils {
      */
     public static boolean VerifySignature(ArrayList<Object> toVerify, byte[] signature, Certificate clientCertificate){
         try {
-            Signature sigBuilder = Signature.getInstance(CryptoConsts.SignatureAlgorythm, CryptoConsts.SecurityProvider);
-            sigBuilder.initVerify(clientCertificate);
+            Signature sigBuilder = Signature.getInstance(CryptoConsts.SignatureAlgorythm, CryptoConsts.SecurityProvider); // object
+            sigBuilder.initVerify(clientCertificate); // init
             
-            sigBuilder.update(EncodeObject(toVerify));            
-            return sigBuilder.verify(signature);
+            sigBuilder.update(EncodeObject(toVerify)); // add       
+            return sigBuilder.verify(signature); // verif
             
         } catch (Exception ex) {
             Logger.getLogger(CryptoUtils.class.getName()).log(Level.SEVERE, null, ex);

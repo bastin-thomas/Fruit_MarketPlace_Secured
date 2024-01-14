@@ -1,6 +1,7 @@
 package com.mymaraichermobile.model.ProtocoleMarket;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.mymaraichermobile.configuration.ConfigHandler;
 
@@ -22,6 +23,7 @@ public class SocketClient {
 
     //region Constructeurs
     public SocketClient(Context context) throws NumberFormatException, IOException {
+        Log.d("PORTIP", ConfigHandler.getIp(context) + " : " + ConfigHandler.getPort(context));
         socket = new Socket(ConfigHandler.getIp(context), Integer.parseInt(ConfigHandler.getPort(context)));
 
         dos = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));

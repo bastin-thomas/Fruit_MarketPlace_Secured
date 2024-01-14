@@ -106,6 +106,8 @@ public class StockManagement_Server extends javax.swing.JFrame implements Logger
         this.Port_Spinner.setEnabled(false);
         this.AbortButton.setEnabled(true);
         this.Pool_Spinner.setEnabled(false);
+        this.PortSecured_Spinner.setEnabled(false);
+        this.PoolSecured_Spinner1.setEnabled(false);
         this.RemoveLogs();
     }
     
@@ -119,6 +121,8 @@ public class StockManagement_Server extends javax.swing.JFrame implements Logger
         this.Port_Spinner.setEnabled(true);
         this.AbortButton.setEnabled(false);
         this.Pool_Spinner.setEnabled(true);
+        this.PortSecured_Spinner.setEnabled(true);
+        this.PoolSecured_Spinner1.setEnabled(true);
         this.RemoveLogs();
     }
     // </editor-fold>

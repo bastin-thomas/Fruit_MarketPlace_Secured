@@ -35,8 +35,9 @@ public class ApiHandler extends MyHttpHandler {
         exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
         exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
         exchange.getResponseHeaders().add("Access-Control-Allow-Headers", "ContentType");
-
-
+        exchange.getResponseHeaders().add("Content-Type", "application/json");
+        
+        
         log.Trace("IndexHandler (method:" + requestMethod + ") = " + requestPath);
 
         if (requestMethod.equalsIgnoreCase("GET")) {

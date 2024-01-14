@@ -138,7 +138,7 @@ public class Gestion_Protocol_Client_Secured extends Gestion_Protocol_Client {
         if (response instanceof LoginResponse_Secured Lresponse) {
             
             //If login is valid, retrieve the session key to put it in store and set current user;
-            if (Lresponse.isValid()) {
+            if (Lresponse.isValid()) { // GOOD DIGEST + LOGIN
                 PrivateKey clientPrivateKey = (PrivateKey) keystore.getKey(ClientKeypairEntryName, keystorePassword);
             
                 // Decrypt SessionKey
@@ -186,19 +186,19 @@ public class Gestion_Protocol_Client_Secured extends Gestion_Protocol_Client {
 
     @Override
     public ArrayList<String> SendGetClientsRequest() throws Exception {
-        String KeyPairEntryName = CryptoConsts.ClientCertificateName + "-" + currentUser;
-        String SessionKeyEntryName = CryptoConsts.SessionKeyName + "-" + currentUser;
+        String KeyPairEntryName = CryptoConsts.ClientCertificateName + "-" + currentUser; // nom certif
+        String SessionKeyEntryName = CryptoConsts.SessionKeyName + "-" + currentUser; // nom session
         Object object = null;
 
         
         
         //Create a signature:
-        PrivateKey clientPrivateKey = (PrivateKey) keystore.getKey(KeyPairEntryName, keystorePassword);
+        PrivateKey clientPrivateKey = (PrivateKey) keystore.getKey(KeyPairEntryName, keystorePassword); // tjrs privé
         
         ArrayList<Object> toSign = new ArrayList<>();
         toSign.add(currentUser);
         
-        byte[] clientSignature = CryptoUtils.CreateSignature(toSign, clientPrivateKey);
+        byte[] clientSignature = CryptoUtils.CreateSignature(toSign, clientPrivateKey); // liste sign
         
         //No need to encrypt data
         
@@ -216,10 +216,10 @@ public class Gestion_Protocol_Client_Secured extends Gestion_Protocol_Client {
             
             //DecryptClientSecured with session
             try{
-                SecretKey key = (SecretKey) keystore.getKey(SessionKeyEntryName, keystorePassword);
+                SecretKey key = (SecretKey) keystore.getKey(SessionKeyEntryName, keystorePassword); // retrieve key session
                 
                 decodedClients = (ArrayList<String>) CryptoUtils.SymetricalDecrypt(response.getEncryptedClients(), key, new IvParameterSpec(response.getIvparameter()));
-            }
+            }   // decrypt clients list
             catch(Exception ex){
                 throw new Exception("Impossible to decrypt the ClientList: " + ex.getMessage());
             }
@@ -237,18 +237,18 @@ public class Gestion_Protocol_Client_Secured extends Gestion_Protocol_Client {
         Object object = null;
 
         //Create a signature:
-        PrivateKey clientPrivateKey = (PrivateKey) keystore.getKey(KeyPairEntryName, keystorePassword);
+        PrivateKey clientPrivateKey = (PrivateKey) keystore.getKey(KeyPairEntryName, keystorePassword); // priv key
         
         ArrayList<Object> toSign = new ArrayList<>();
         toSign.add(idClient);
         
-        byte[] idClientSignature = CryptoUtils.CreateSignature(toSign, clientPrivateKey);
+        byte[] idClientSignature = CryptoUtils.CreateSignature(toSign, clientPrivateKey); // sign priv key
         //No need to encrypt data
         
         
         try {
-            oos.writeObject(new GetFacturesRequest_Secured(idClient, idClientSignature));
-            object = ois.readObject();
+            oos.writeObject(new GetFacturesRequest_Secured(idClient, idClientSignature)); // send id,sign
+            object = ois.readObject(); // recv
         } catch (Exception ex) {
             throw new Exception("ENDCONNEXION", ex);
         }
@@ -263,7 +263,7 @@ public class Gestion_Protocol_Client_Secured extends Gestion_Protocol_Client {
                 SecretKey key = (SecretKey) keystore.getKey(SessionKeyEntryName, keystorePassword);
                 
                 decodedBills = (ArrayList<Facture>) CryptoUtils.SymetricalDecrypt(response.getEncryptedBills(), key, new IvParameterSpec(response.getIvparameter()));
-            }
+            }   // decrypt bills list
             catch(Exception ex){
                 throw new Exception("Impossible to decrypt the ClientList: " + ex.getMessage());
             }
@@ -388,13 +388,13 @@ public class Gestion_Protocol_Client_Secured extends Gestion_Protocol_Client {
     // <editor-fold defaultstate="collapsed" desc="Utils Methods">
     public void SaveStore() {
         try {
-            File filestore = new File(config.getProperty(Consts.ConfigKeyStorePath));
+            File filestore = new File(config.getProperty(Consts.ConfigKeyStorePath)); // object
 
             if (!filestore.exists()) {
                 throw new KeyStoreException();
             }
 
-            FileOutputStream filestorestream = new FileOutputStream(filestore.getPath());
+            FileOutputStream filestorestream = new FileOutputStream(filestore.getPath()); // flux meta-data
             this.keystore.store(filestorestream, config.getProperty(Consts.ConfigKeyStorePassword).toCharArray());
             System.out.println("Client Saved the KEYSTORE");
 

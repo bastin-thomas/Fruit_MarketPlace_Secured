@@ -152,11 +152,12 @@ public class CryptoUtils {
             
             
             //Create the signer, sign the certificate and create it
-            JcaContentSignerBuilder signer = new JcaContentSignerBuilder(CryptoConsts.SignatureAlgorythm);
-            X509CertificateHolder certHolder = certBuilder.build(signer.build(rootPriKey));
+            JcaContentSignerBuilder signer = new JcaContentSignerBuilder(CryptoConsts.SignatureAlgorythm); // objet qui signe
+            X509CertificateHolder certHolder = certBuilder.build(signer.build(rootPriKey)); // signe
+            // contenir tous certifs(bytes)
             
             X509Certificate certificate  = new JcaX509CertificateConverter().setProvider(PROVIDER).getCertificate(certHolder);
-            
+            // conversion byte en objet
             
             
             try {

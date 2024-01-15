@@ -26,7 +26,7 @@ public class IndexHandler extends MyHttpHandler {
     
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-        String requestPath = exchange.getRequestURI().getPath();
+        String requestPath = exchange.getRequestURI().getPath(); // all string
         String requestMethod = exchange.getRequestMethod();
         
         log.Trace("IndexHandler (method:" + requestMethod + ") = " + requestPath);
@@ -34,7 +34,7 @@ public class IndexHandler extends MyHttpHandler {
         
         //HtmlPage Handling
         if(requestPath.endsWith("/")){
-            File htmlpage = new File(Consts.WebSitePath + "index.html");
+            File htmlpage = new File(Consts.WebSitePath + "index.html"); // load Meta-data
             if (htmlpage.exists()){
                 exchange.sendResponseHeaders(200, htmlpage.length());
                 exchange.getResponseHeaders().set("Content-Type", "text/html");
@@ -110,7 +110,7 @@ public class IndexHandler extends MyHttpHandler {
                 Files.copy(imageFile.toPath(), os);
                 os.close();
                 log.Trace("Renvoie de l'image: " + imageFile.getName());
-            }
+            } // send auto closed
             else Erreur404(exchange);
         } else
         

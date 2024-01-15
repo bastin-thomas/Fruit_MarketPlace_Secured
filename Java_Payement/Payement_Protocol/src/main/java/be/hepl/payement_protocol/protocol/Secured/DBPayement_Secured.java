@@ -75,7 +75,7 @@ public class DBPayement_Secured extends DBPayement {
         
         byte[] ServerDigest = CryptoUtils.CreateDigest(objects);
         
-        //If the two digest are not equel
+        //If the two digest are not equal
         if(!MessageDigest.isEqual(login.getDigest(), ServerDigest))
         {
             throw new Exception("BAD_LOGIN");

@@ -76,7 +76,7 @@ public class Gestion_Protocol_Client_Secured extends Gestion_Protocol_Client {
         String ClientKeypairEntryName = CryptoConsts.ClientCertificateName + "-" + Login;
         String SessionSecretKeyEntryName = CryptoConsts.SessionKeyName + "-" + Login;
         
-        Certificate RootCert = keystore.getCertificate(CryptoConsts.RootCertificateName);
+        Certificate RootCert = keystore.getCertificate(CryptoConsts.RootCertificateName); // certif root clientkeystore
         Object response = null;
         
         //Digest Creation         
@@ -115,7 +115,7 @@ public class Gestion_Protocol_Client_Secured extends Gestion_Protocol_Client {
             //Certificate Generation
             Certificate[] chain = CryptoUtils.CreateCertificate(CertName, clientKeyPair, 
                                                              keystorePassword.toString(), config);
-            clientCertificate = chain[0];
+            clientCertificate = chain[0]; //[0] cert client + [1] = CA qui signe
 
             //Storing in the keystore
             keystore.setKeyEntry(ClientKeypairEntryName, clientKeyPair.getPrivate(),

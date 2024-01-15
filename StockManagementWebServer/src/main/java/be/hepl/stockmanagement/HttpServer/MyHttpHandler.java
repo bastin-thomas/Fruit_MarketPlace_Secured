@@ -47,7 +47,7 @@ public abstract class MyHttpHandler implements HttpHandler {
     
     protected void SendResponse(HttpExchange exchange, JSONObject response) throws IOException{       
         exchange.sendResponseHeaders(200, response.toString().getBytes().length);
-        exchange.getResponseHeaders().set("Content-Type", "text/json");
+        exchange.getResponseHeaders().set("Content-Type", "application/json");
         exchange.getResponseBody().write(response.toString().getBytes());
         exchange.getResponseBody().close();
     }

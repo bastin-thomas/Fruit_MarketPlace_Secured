@@ -306,8 +306,9 @@ public class MaraicherActivity extends AppCompatActivity {
         }
         try {
 
+            String prixArtTmp = String.format("%.2f", art.getPrix());
             this.articleListView.setText(art.getIntitule());
-            this.priceListView.setText("" + art.getPrix());
+            this.priceListView.setText(prixArtTmp);
             this.stockListView.setText("" + art.getStock());
 
         } catch (Exception e) {
@@ -362,12 +363,17 @@ public class MaraicherActivity extends AppCompatActivity {
         }
 
         this.totalPrice = 0.0F;
-
         // Récuperation des données de la bdd
         for(CaddieRows tmp : this.caddie){
+            float totalTmp = tmp.getPrix() * ((float)tmp.getQuantitee());
+            String totalArtTmp = String.format("%.2f",totalTmp);
+            String prixArt = String.format("%.2f",tmp.getPrix());
+
             this.totalPrice += tmp.getPrix() * ((float)tmp.getQuantitee());
 
-            tmpAdapter.add(tmp.getIntitule() + "   |   " + tmp.getQuantitee() + "   |   " + tmp.getPrix());
+            tmpAdapter.add(getString(R.string.product) + " " + tmp.getIntitule() + "   |  " + getString(R.string.quantity) + " "
+                    + tmp.getQuantitee() + "   | " + getString(R.string.unitPriceText)
+                    + " " + prixArt + "   | " + getString(R.string.total) + " " + totalArtTmp);
         }
 
         this.caddieListView.setAdapter(tmpAdapter);

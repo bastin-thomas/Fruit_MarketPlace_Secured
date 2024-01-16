@@ -3,7 +3,7 @@
  */
 function GetArticles(){
     const xhr = new XMLHttpRequest();
-    xhr.open("GET", "http://127.0.0.1/api/v1/Articles?cleSession=-1", false);
+    xhr.open("GET", "http://10.59.22.11/api/v1/Articles?cleSession=-1", false);
     xhr.send();
     
     if (xhr.readyState == 4 && xhr.status == 200) {
@@ -38,7 +38,7 @@ function GetArticles(){
 function UpdateArticles(id, prix, stock){
     const xhr = new XMLHttpRequest();
 
-    xhr.open("POST", "http://127.0.0.1/api/v1/Articles", false);
+    xhr.open("POST", "http://10.59.22.11/api/v1/Articles", false);
     xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded");
 
     xhr.send(new URLSearchParams({

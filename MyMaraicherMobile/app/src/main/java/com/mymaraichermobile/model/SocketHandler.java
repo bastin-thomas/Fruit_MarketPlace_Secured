@@ -1,17 +1,16 @@
 package com.mymaraichermobile.model;
 
 import android.app.Application;
-
-import com.mymaraichermobile.model.ProtocoleMarket.ProtocoleThreaded.ProtocoleClientThreaded;
+import com.mymaraichermobile.model.ProtocoleMarket.ProtocoleClient;
 
 public class SocketHandler extends Application {
-    private static ProtocoleClientThreaded client;
+    private static ProtocoleClient client;
 
-    public static synchronized ProtocoleClientThreaded getProtocol(){
+    public static synchronized ProtocoleClient getProtocol(){
         return client;
     }
 
-    public static synchronized void setProtocol(ProtocoleClientThreaded client) {
+    public static synchronized void setProtocol(ProtocoleClient client) {
         SocketHandler.client =  client;
     }
 }

@@ -1,9 +1,12 @@
 /**
  * 
  */
+
+var ip = "localhost";
+
 function GetArticles(){
     const xhr = new XMLHttpRequest();
-    xhr.open("GET", "https://localhost:443/api/v1/Articles?cleSession=-1", false);
+    xhr.open("GET", "https://" + ip + ":443/api/v1/Articles?cleSession=-1", false);
     xhr.send();
     
     if (xhr.readyState == 4 && xhr.status == 200) {
@@ -38,7 +41,7 @@ function GetArticles(){
 function UpdateArticles(id, prix, stock){
     const xhr = new XMLHttpRequest();
 
-    xhr.open("POST", "https://localhost:443/api/v1/Articles", false);
+    xhr.open("POST", "https://" + ip + ":443/api/v1/Articles", false);
     xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded");
 
     xhr.send(new URLSearchParams({

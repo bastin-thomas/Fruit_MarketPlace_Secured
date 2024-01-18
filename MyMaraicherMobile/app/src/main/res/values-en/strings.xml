@@ -36,6 +36,7 @@
     <string name="disconnectButton">Disconnect</string>
     <string name="NOSTOCK">No article left on the basket</string>
     <string name="Confirm_Success">The command has been send</string>
-    <string name="ChoiceQuantity">Choose a quantity</string>
+    <string name="choiceQuantity">Choose a quantity</string>
+    <string name="quantity">Quantity :</string>
 
 </resources>

@@ -1,8 +1,9 @@
 package com.mymaraichermobile.GUI.maraicher;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
-import android.icu.text.DecimalFormat;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -21,31 +22,29 @@ import com.mymaraichermobile.R;
 import com.mymaraichermobile.model.Achats;
 import com.mymaraichermobile.model.Articles;
 import com.mymaraichermobile.model.CaddieRows;
-import com.mymaraichermobile.model.ProtocoleMarket.ProtocoleThreaded.ProtocoleClientThreaded;
+import com.mymaraichermobile.model.ProtocoleMarket.ProtocoleClient;
 import com.mymaraichermobile.model.SocketHandler;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Objects;
 
 public class MaraicherActivity extends AppCompatActivity {
 
-    //region Private variables
-
     PopupMessage popupMessage = new PopupMessage();
 
+    //region Private variables
+    private MaraicherActivity currentActivity;
     // Infos connexions
-    private ProtocoleClientThreaded client;
+    private ProtocoleClient client;
     private String loginId;
 
     // Variables pour stocker les IDs
     private ImageView imageFruitView;
     private Button previousButton;
     private Button nextButton;
-    private Button addCaddieButton;
     private Button deleteButton;
-    private Button deleteAllButton;
-    private Button confirmButton;
     private TextView articleListView;
     private TextView priceListView;
     private TextView stockListView;
@@ -58,9 +57,8 @@ public class MaraicherActivity extends AppCompatActivity {
     private int currentArticle;
     private ArrayList<CaddieRows> caddie;
     ArrayAdapter<Achats> adapter;
-
+    private Context context;
     //endregion
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +67,6 @@ public class MaraicherActivity extends AppCompatActivity {
         setTitle(getString(R.string.titleMaraicher));
 
         //region GetIntent
-
         // On récupère la socket et le protocole lors de la connexion
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
@@ -78,11 +75,11 @@ public class MaraicherActivity extends AppCompatActivity {
             Log.d("ETAT CLIENT", "Client : " + client);
             Log.d("ETAT LOGINID", "Client : " + loginId);
         }
-
         //endregion
 
         //region Variables initialisation
-
+        context = this.getApplicationContext();
+        currentActivity = this;
         // variables IDS
         imageFruitView = findViewById(R.id.imageView);
         quantityEditText = findViewById(R.id.quantityEditText);
@@ -93,16 +90,15 @@ public class MaraicherActivity extends AppCompatActivity {
         // variables Buttons
         previousButton = findViewById(R.id.previousButton);
         nextButton = findViewById(R.id.nextButton);
-        addCaddieButton = findViewById(R.id.addCaddieButton);
+        Button addCaddieButton = findViewById(R.id.addCaddieButton);
         deleteButton = findViewById(R.id.deleteButton);
-        deleteAllButton = findViewById(R.id.deleteAllButton);
-        confirmButton = findViewById(R.id.confirmButton);
+        Button deleteAllButton = findViewById(R.id.deleteAllButton);
+        Button confirmButton = findViewById(R.id.confirmButton);
 
         // Buttons Initialisation
         deleteButton.setEnabled(false);
 
         // variables panier
-
         currentArticle = 1;
         totalPrice = (float) 0.0;
         caddie = new ArrayList<>();
@@ -120,20 +116,13 @@ public class MaraicherActivity extends AppCompatActivity {
         }
 
         //region Button Listener
-
         this.caddieListView.setOnItemClickListener((parent, view, index, id) -> {
-
             if (this.caddieListView.isItemChecked(index)) {
-
                 deleteButton.setEnabled(true);
-
             } else {
-
                 // Aucun élément sélectionné
                 deleteButton.setEnabled(false);
-
             }
-
         });
 
         previousButton.setOnClickListener(v ->
@@ -153,43 +142,34 @@ public class MaraicherActivity extends AppCompatActivity {
 
         confirmButton.setOnClickListener(v ->
                 sendConfirm());
-
         //endregion
-
     }
 
-    //region Methods
-
-    // Application
-
-    // S'exécute avant que l'application s'arrête
+    //region Events
+    /*
+     *  Application
+     *  S'exécute avant que l'application s'arrête
+     */
     @Override
     protected void onDestroy() {
         super.onDestroy();
 
         try {
-
             client.sendCancelAll();
-
-        } catch (Exception e) {
+        } catch (Exception ex) {
 
         }
 
         try {
             Log.d("TRACE LOGOUT", "client : " + client);
-
             client.sendLogout();
-
         } catch (Exception ignored) {
 
         }
 
         try {
-
             client.close();
-
             SocketHandler.setProtocol(null);
-
         } catch (Exception ignored) {
 
         }
@@ -207,111 +187,118 @@ public class MaraicherActivity extends AppCompatActivity {
 
     // Caddie
     private void showPreviousElement() {
+        if (this.currentArticle <= 1) {
+            this.previousButton.setEnabled(false);
+        }
 
-        if(!this.nextButton.isEnabled()) {
+        if (!this.nextButton.isEnabled()) {
             this.nextButton.setEnabled(true);
         }
 
-        try{
-
-            refreshArticle(this.currentArticle - 1); // Met à jour les détails du produit affiché précédent
-            this.currentArticle--;
-
-
-        } catch (Exception ex) {
-            switch (Objects.requireNonNull(ex.getMessage())) {
-
-                case "ENDCONNEXION" ->
-                    this.runOnUiThread(() ->
-                            popupMessage.afficherPopupErreur("ERROR PREVIOUS BUTTON", ("Erreur transmission des données : "
-                                    + ex.getMessage()), this));
-
-                case "NO_ARTICLE_FOUND" -> // On désactive le bouton car plus d'article précédent
-                        this.previousButton.setEnabled(false);
-
-                case "PARAMS_FORMAT_ERROR" ->
-                        this.runOnUiThread(() ->
-                                popupMessage.afficherPopupErreur("ERROR FORMAT PREVIOUS BUTTON", ("MAUVAIS FORMAT : "
-                                    + ex.getMessage()), this));
-
-                default ->
-                        this.runOnUiThread(() ->
-                                popupMessage.afficherPopupErreur("UNKNOW ERROR PREVIOUS BUTTON", ("ERREUR INCONNUE : "
-                                        + ex.getMessage()), this));
-            }
-
-        }
-
+        refreshArticle(currentArticle - 1); // Met à jour les détails du produit affiché précédent
+        this.currentArticle--;
     }
 
     private void showNextElement() {
+        if (this.currentArticle >= 20) {
+            this.nextButton.setEnabled(false);
+        }
 
         if (!this.previousButton.isEnabled()) {
             this.previousButton.setEnabled(true);
         }
 
-        try {
-
-            refreshArticle(this.currentArticle + 1); // Met à jour les détails du produit affiché précédent
-            this.currentArticle++;
-
-
-        } catch (Exception ex) {
-            switch (Objects.requireNonNull(ex.getMessage())) {
-
-                case "ENDCONNEXION" -> this.runOnUiThread(() ->
-                        popupMessage.afficherPopupErreur("ERROR NEXT BUTTON", ("Erreur transmission des données : "
-                                + ex.getMessage()), this));
-
-                case "NO_ARTICLE_FOUND" -> // On désactive le bouton car plus d'article suivant
-                        this.nextButton.setEnabled(false);
-
-                case "PARAMS_FORMAT_ERROR" -> this.runOnUiThread(() ->
-                        popupMessage.afficherPopupErreur("ERROR FORMAT NEXT BUTTON", ("MAUVAIS FORMAT : "
-                                + ex.getMessage()), this));
-
-                default -> this.runOnUiThread(() ->
-                        popupMessage.afficherPopupErreur("UNKNOW ERROR NEXT BUTTON", ("ERREUR INCONNUE : "
-                                + ex.getMessage()),  this.getBaseContext()));
-            }
-
-        }
-
+        refreshArticle(this.currentArticle + 1); // Met à jour les détails du produit affiché précédent
+        this.currentArticle++;
     }
 
     // Met à jour les détails du produit affiché en fonction de l'élément sélectionné
-    @SuppressLint("SetTextI18n")
-    private void refreshArticle(int index) throws Exception {
+    @SuppressLint({"SetTextI18n", "StaticFieldLeak"})
+    private void refreshArticle(int index) {
         Articles art;
 
-        art = client.sendConsult(index);
-
         try {
+            new AsyncTask<Bundle, Void, HashMap<String, Object>>() {
+                @Override
+                protected HashMap<String, Object> doInBackground(Bundle... bundles) {
+                    HashMap<String, Object> props = new HashMap<>();
+                    Articles art;
 
-            this.articleListView.setText("");
-            this.priceListView.setText("");
-            this.stockListView.setText("");
+                    try {
+                        art = client.sendConsult(index);
+                        props.put("articles", art);
+                        props.put("isFailed", false);
+                    } catch (Exception ex) {
+                        props.put("exception", ex);
+                        props.put("isFailed", true);
+                    }
 
-            String nomImage = art.getImage().toLowerCase();
-            nomImage = nomImage.replace(".jpg","");
+                    return props;
+                }
 
-            int resID = getResources().getIdentifier(nomImage, "drawable", getPackageName());
-            Picasso.get().load(resID).into(imageFruitView);
+                @Override
+                protected void onPostExecute(HashMap<String, Object> props) {
+                    super.onPostExecute(props);
+                    if (!((Boolean) props.get("isFailed"))) {
+                        Articles art = (Articles) props.get("articles");
 
-        } catch (Exception ex) {
+                        try {
+                            articleListView.setText("");
+                            priceListView.setText("");
+                            stockListView.setText("");
 
-            this.runOnUiThread(() ->
-                    popupMessage.afficherPopupErreur("LOAD FILE", "CANNOT LOAD FILE : "
-                            + ex.getMessage(), this));
-        }
-        try {
 
-            this.articleListView.setText(art.getIntitule());
-            this.priceListView.setText("" + art.getPrix());
-            this.stockListView.setText("" + art.getStock());
+                            String nomImage = art.getImage().toLowerCase();
+                            nomImage = nomImage.replace(".jpg", "");
 
+                            int resID = getResources().getIdentifier(nomImage, "drawable", getPackageName());
+                            Picasso.get().load(resID).into(imageFruitView);
+                        } catch (Exception ex) {
+                            currentActivity.runOnUiThread(() -> {
+                                popupMessage.afficherPopupErreur("LOAD FILE", "CANNOT LOAD FILE : " + ex.getMessage(), currentActivity);
+                            });
+                        }
+
+                        try {
+                            @SuppressLint("DefaultLocale") String prixArtTmp = String.format("%.2f", art.getPrix());
+                            articleListView.setText(art.getIntitule());
+                            priceListView.setText(prixArtTmp);
+                            stockListView.setText("" + art.getStock());
+                        } catch (Exception ex) {
+                            currentActivity.runOnUiThread(() -> {
+                                popupMessage.afficherPopupErreur("REFRESH_ARTICLE", "Update View : " + ex.getMessage(), currentActivity);
+                            });
+                        }
+                    } else {
+
+                        Exception ex = (Exception) props.get("exception");
+                        switch (Objects.requireNonNull(ex.getMessage())) {
+                            case "ENDCONNEXION" -> {
+                                currentActivity.runOnUiThread(() ->
+                                        popupMessage.afficherPopupErreur("ERROR PREVIOUS BUTTON",
+                                                ("Erreur transmission des données : " + ex.getMessage()), currentActivity));
+                            }
+
+                            case "NO_ARTICLE_FOUND" -> {
+                            } // On désactive le bouton car plus d'article précédent
+
+                            case "PARAMS_FORMAT_ERROR" -> {
+                                currentActivity.runOnUiThread(() ->
+                                        popupMessage.afficherPopupErreur("ERROR FORMAT PREVIOUS BUTTON", ("MAUVAIS FORMAT : "
+                                                + ex.getMessage()), currentActivity));
+                            }
+
+                            default -> {
+                                currentActivity.runOnUiThread(() ->
+                                        popupMessage.afficherPopupErreur("UNKNOW ERROR PREVIOUS BUTTON", ("ERREUR INCONNUE : "
+                                                + ex.getMessage()), currentActivity));
+                            }
+                        }
+                    }
+                }
+            }.execute().get();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            Log.d("ASYNCTACK", e.getMessage());
         }
     }
 
@@ -325,277 +312,307 @@ public class MaraicherActivity extends AppCompatActivity {
     }
 
     // Met à jour le panier avec la liste des articles
-    @SuppressLint("SetTextI18n")
+    @SuppressLint({"SetTextI18n", "StaticFieldLeak"})
     private void refreshCaddie() {
+        new AsyncTask<Bundle, Void, HashMap<String, Object>>() {
+            @Override
+            protected HashMap<String, Object> doInBackground(Bundle... bundles) {
+                HashMap<String, Object> props = new HashMap<String, Object>();
+                ArrayList<CaddieRows> newCaddie;
 
-        this.caddie.clear();
-
-        ArrayAdapter<String> tmpAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_single_choice);
-
-        try{
-            this.caddie = client.sendCaddie();
-
-        }catch(Exception ex){
-            switch (Objects.requireNonNull(ex.getMessage())) {
-                case "ENDCONNEXION" -> {
-                    this.runOnUiThread(() ->
-                            popupMessage.afficherPopupErreur("ERROR CONNECTION REFRESH CADDIE", "ERREUR TRANSMISSION DES DONNEES : "
-                                    + ex.getMessage(), this));
-                    return;
+                try {
+                    newCaddie = client.sendCaddie();
+                    props.put("isFailed", false);
+                    props.put("caddie", newCaddie);
+                } catch (Exception ex) {
+                    props.put("exception", ex);
+                    props.put("isFailed", true);
                 }
+                return props;
+            }
 
-                case "PARAMS_FORMAT_ERROR" -> {
-                    this.runOnUiThread(() ->
+            @Override
+            protected void onPostExecute(HashMap<String, Object> props) {
+                super.onPostExecute(props);
+                if (!((Boolean) props.get("isFailed"))) {
+                    ArrayList<CaddieRows> list = (ArrayList<CaddieRows>) props.get("caddie");
+                    ArrayAdapter<String> tmpAdapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_single_choice);
 
-                            popupMessage.afficherPopupErreur("ERROR FORMAT REFRESH CADDIE", "MAUVAIS FORMAT : "
-                                    + ex.getMessage(), this));
-                    return;
-                }
 
-                default -> {
-                    this.runOnUiThread(() ->
-                            popupMessage.afficherPopupErreur("UNKNOW ERROR REFRESH CADDIE", "ERREUR INCONNUE : "
-                                    + ex.getMessage(), this));
-                    return;
+                    caddie.clear();
+                    caddie = list;
+                    totalPrice = 0.0F;
+                    // Récuperation des données de la bdd
+                    for (CaddieRows tmp : list) {
+                        float totalTmp = tmp.getPrix() * ((float) tmp.getQuantitee());
+                        String totalArtTmp = String.format("%.2f", totalTmp);
+                        String prixArt = String.format("%.2f", tmp.getPrix());
+
+                        totalPrice += tmp.getPrix() * ((float) tmp.getQuantitee());
+
+                        tmpAdapter.add(getString(R.string.product) + " " + tmp.getIntitule() + "   |  " + getString(R.string.quantity) + " "
+                                + tmp.getQuantitee() + "   | " + getString(R.string.unitPriceText)
+                                + " " + prixArt + "   | " + getString(R.string.total) + " " + totalArtTmp);
+                    }
+
+                    totalText.setText(String.format("%.2f", totalPrice));
+
+                    caddieListView.setAdapter(tmpAdapter);
+                    tmpAdapter.notifyDataSetChanged();
+                } else {
+                    Exception ex = (Exception) props.get("exception");
+                    switch (Objects.requireNonNull(ex.getMessage())) {
+                        case "ENDCONNEXION" -> {
+                            currentActivity.runOnUiThread(() -> {
+                                popupMessage.afficherPopupErreur("ERROR CONNECTION REFRESH CADDIE", "ERREUR TRANSMISSION DES DONNEES : "
+                                        + ex.getMessage(), currentActivity);
+                            });
+                        }
+
+                        case "PARAMS_FORMAT_ERROR" -> {
+                            currentActivity.runOnUiThread(() -> {
+                                popupMessage.afficherPopupErreur("ERROR FORMAT REFRESH CADDIE", "MAUVAIS FORMAT : "
+                                        + ex.getMessage(), currentActivity);
+                            });
+                        }
+
+                        default -> {
+                            currentActivity.runOnUiThread(() -> {
+                                popupMessage.afficherPopupErreur("UNKNOW ERROR REFRESH CADDIE", "ERREUR INCONNUE : "
+                                        + ex.getMessage(), currentActivity);
+                            });
+                        }
+                    }
                 }
             }
-        }
-
-        this.totalPrice = 0.0F;
-
-        // Récuperation des données de la bdd
-        for(CaddieRows tmp : this.caddie){
-            this.totalPrice += tmp.getPrix() * ((float)tmp.getQuantitee());
-
-            tmpAdapter.add(tmp.getIntitule() + "   |   " + tmp.getQuantitee() + "   |   " + tmp.getPrix());
-        }
-
-        this.caddieListView.setAdapter(tmpAdapter);
-        tmpAdapter.notifyDataSetChanged();
-        
-
-        DecimalFormat df = new DecimalFormat();
-        df.setMaximumFractionDigits(2);
-        this.totalText.setText("" + df.format(this.totalPrice));
-
+        }.execute();
     }
 
     // Ajoute le produit choisit à la liste des produits
-    private void addToCaddie () {
+    @SuppressLint("StaticFieldLeak")
+    private void addToCaddie() {
+        new AsyncTask<Bundle, Void, HashMap<String, Object>>() {
+            @Override
+            protected HashMap<String, Object> doInBackground(Bundle... bundles) {
+                HashMap<String, Object> props = new HashMap<String, Object>() {
+                };
+                int quantitee = Integer.parseInt(quantityEditText.getText().toString());
 
-        Achats achats = null;
-
-        int quantitee = Integer.parseInt(this.quantityEditText.getText().toString());
-
-        if(quantitee > 0) {
-            try{
-
-                achats = client.sendAchat(this.currentArticle, quantitee);
-
-            } catch(Exception ex) {
-                switch (Objects.requireNonNull(ex.getMessage())) {
-                    case "ENDCONNEXION" -> {
-                        this.runOnUiThread(() ->
-                                popupMessage.afficherPopupErreur("CONNECTION ERROR SENDACHAT BUY", "ERREUR : "
-                                        + ex.getMessage(), this));
-                        return;
+                if (quantitee > 0) {
+                    try {
+                        client.sendAchat(currentArticle, quantitee);
+                        props.put("isFailed", false);
+                    } catch (Exception ex) {
+                        props.put("exception", ex);
+                        props.put("isFailed", true);
                     }
+                }
+                return props;
+            }
 
-                    case "PARAMS_FORMAT_ERROR" -> {
-                        this.runOnUiThread(() ->
-                                popupMessage.afficherPopupErreur("FORMAT ERROR SENDACHAT BUY", "ERREUR : "
-                                        + ex.getMessage(), this));
-                        return;
-                    }
+            @Override
+            protected void onPostExecute(HashMap<String, Object> props) {
+                super.onPostExecute(props);
+                if (!((Boolean) props.get("isFailed"))) {
+                    refreshArticle(currentArticle);
+                    refreshCaddie();
+                } else {
+                    Exception ex = (Exception) props.get("exception");
+                    switch (Objects.requireNonNull(ex.getMessage())) {
+                        case "ENDCONNEXION" -> {
+                            currentActivity.runOnUiThread(() ->
+                                    popupMessage.afficherPopupErreur("CONNECTION ERROR SENDACHAT BUY", "ERREUR : "
+                                            + ex.getMessage(), currentActivity));
+                        }
 
-                    case "NO_MORE_STOCK" -> {
-                        return;
-                    }
+                        case "PARAMS_FORMAT_ERROR" -> {
+                            currentActivity.runOnUiThread(() ->
+                                    popupMessage.afficherPopupErreur("FORMAT ERROR SENDACHAT BUY", "ERREUR : "
+                                            + ex.getMessage(), currentActivity));
+                        }
 
-                    default -> {
-                        this.runOnUiThread(() ->
-                                popupMessage.afficherPopupErreur("UNKNOW ERROR SENDACHAT BUY", "ERREUR INCONNUE : "
-                                        + ex.getMessage(), this));
-                        return;
+                        case "NO_MORE_STOCK" -> {
+                        }
+
+                        default -> {
+                            currentActivity.runOnUiThread(() ->
+                                    popupMessage.afficherPopupErreur("UNKNOW ERROR SENDACHAT BUY", "ERREUR INCONNUE : "
+                                            + ex.getMessage(), currentActivity));
+                        }
                     }
                 }
             }
-        }
-
-        try{
-
-            refreshArticle(this.currentArticle);
-
-            this.adapter.add(achats);
-
-            setAdapter();
-
-        } catch (Exception ex) {
-            switch (Objects.requireNonNull(ex.getMessage())) {
-                case "ENDCONNEXION":
-                    this.runOnUiThread(() ->
-                            popupMessage.afficherPopupErreur("CONNECTION ERROR BUY", "ERREUR : "
-                                    + ex.getMessage(), this));
-                    return;
-
-                case "PARAMS_FORMAT_ERROR":
-                    this.runOnUiThread(() ->
-                            popupMessage.afficherPopupErreur("FORMAT ERROR BUY", "ERREUR : "
-                                    + ex.getMessage(), this));
-                    return;
-
-                case "NO_ARTICLE_FOUND":
-                default:
-                    this.runOnUiThread(() ->
-                            popupMessage.afficherPopupErreur("UNKNOW ERROR BUY", "ERREUR INCONNUE : "
-                                    + ex.getMessage(), this));
-                    return;
-            }
-        }
-
-        refreshCaddie();
-
+        }.execute();
     }
 
     // Supprime l'article sélectionné
+    @SuppressLint("StaticFieldLeak")
     private void deleteArticle() {
+        new AsyncTask<Bundle, Void, HashMap<String, Object>>() {
+            @Override
+            protected HashMap<String, Object> doInBackground(Bundle... bundles) {
+                HashMap<String, Object> props = new HashMap<String, Object>() {
+                };
 
-        try{
-            int index = this.caddieListView.getCheckedItemPosition();
-            int idArticle = this.caddie.get(index).getIdArticle();
-            client.sendCancel(idArticle);
+                try {
+                    int index = caddieListView.getCheckedItemPosition();
+                    int idArticle = caddie.get(index).getIdArticle();
+                    client.sendCancel(idArticle);
+                    props.put("isFailed", false);
 
-        } catch (Exception ex) {
-            switch(Objects.requireNonNull(ex.getMessage())) {
-                case "ENDCONNEXION" -> {
-                    this.runOnUiThread(() ->
-                            popupMessage.afficherPopupErreur("CONNECTION ERROR DELETE", "ERREUR : "
-                                    + ex.getMessage(), this));
-                    return;
+                } catch (Exception ex) {
+                    props.put("exception", ex);
+                    props.put("isFailed", true);
                 }
 
-                case "PARAMS_FORMAT_ERROR" -> this.runOnUiThread(() ->
-                        popupMessage.afficherPopupErreur("FORMAT ERROR DELETE", "ERREUR FORMAT : "
-                                + ex.getMessage(), this));
-
-                default -> this.runOnUiThread(() ->
-                        popupMessage.afficherPopupErreur("UNKNOW ERROR DELETE", "ERREUR INCONNUE : "
-                                + ex.getMessage(), this));
+                return props;
             }
 
-        }
+            @Override
+            protected void onPostExecute(HashMap<String, Object> props) {
+                super.onPostExecute(props);
+                if (!((Boolean) props.get("isFailed"))) {
+                    refreshArticle(currentArticle);
+                    refreshCaddie();
+                } else {
+                    Exception ex = (Exception) props.get("exception");
+                    switch (Objects.requireNonNull(ex.getMessage())) {
+                        case "ENDCONNEXION" -> {
+                            currentActivity.runOnUiThread(() ->
+                                    popupMessage.afficherPopupErreur("CONNECTION ERROR DELETE", "ERREUR : "
+                                            + ex.getMessage(), currentActivity));
+                            props.put("isFailed", true);
+                        }
 
-        try {
+                        case "PARAMS_FORMAT_ERROR" -> {
+                            currentActivity.runOnUiThread(() ->
+                                    popupMessage.afficherPopupErreur("FORMAT ERROR DELETE", "ERREUR FORMAT : "
+                                            + ex.getMessage(), currentActivity));
+                            props.put("isFailed", true);
+                        }
 
-            this.adapter.remove((Achats) this.caddieListView.getSelectedItem());
-
-            setAdapter();
-
-            refreshCaddie();
-
-            refreshArticle(this.currentArticle);
-
-        } catch (Exception ex) {
-            this.runOnUiThread(() ->
-                    popupMessage.afficherPopupErreur("ERROR DELETE", "ERREUR : "
-                            + ex.getMessage(), this));
-        }
-
+                        default -> {
+                            currentActivity.runOnUiThread(() ->
+                                    popupMessage.afficherPopupErreur("UNKNOW ERROR DELETE", "ERREUR INCONNUE : "
+                                            + ex.getMessage(), currentActivity));
+                            props.put("isFailed", true);
+                        }
+                    }
+                }
+            }
+        }.execute();
     }
 
     // Supprime tous les articles du panier
+    @SuppressLint("StaticFieldLeak")
     private void deleteCaddie() {
-        if(!this.caddie.isEmpty()) {
-            try {
+        if (!caddie.isEmpty()) {
+            new AsyncTask<Bundle, Void, HashMap<String, Object>>() {
+                @Override
+                protected HashMap<String, Object> doInBackground(Bundle... bundles) {
+                    HashMap<String, Object> props = new HashMap<String, Object>() {
+                    };
 
-                client.sendCancelAll();
+                    try {
+                        client.sendCancelAll();
+                        props.put("isFailed", false);
 
-            } catch (Exception ex) {
-                switch (Objects.requireNonNull(ex.getMessage())) {
-                    case "ENDCONNEXION" -> {
-                        this.runOnUiThread(() ->
-                                popupMessage.afficherPopupErreur("CONNECTION ERROR DELETEALL CADDIE", "ERREUR : "
-                                        + ex.getMessage(), this));
-
-                        return;
+                    } catch (Exception ex) {
+                        props.put("exception", ex);
+                        props.put("isFailed", true);
                     }
 
-                    case "PARAMS_FORMAT_ERROR" -> this.runOnUiThread(() ->
-                            popupMessage.afficherPopupErreur("FORMAT ERROR DELETEALL CADDIE", "ERREUR : "
-                                    + ex.getMessage(), this));
-
-                    default -> this.runOnUiThread(() ->
-                            popupMessage.afficherPopupErreur("UNKNOW ERROR DELETEALL CADDIE", "ERREUR INCONNUE : "
-                                    + ex.getMessage(), this));
+                    return props;
                 }
-            }
 
-            try {
+                @Override
+                protected void onPostExecute(HashMap<String, Object> props) {
+                    super.onPostExecute(props);
+                    if (!((Boolean) props.get("isFailed"))) {
+                        refreshArticle(currentArticle);
+                        refreshCaddie();
+                    } else {
+                        Exception ex = (Exception) props.get("exception");
+                        switch (Objects.requireNonNull(ex.getMessage())) {
+                            case "ENDCONNEXION" -> {
+                                currentActivity.runOnUiThread(() ->
+                                        popupMessage.afficherPopupErreur("CONNECTION ERROR DELETEALL CADDIE", "ERREUR : "
+                                                + ex.getMessage(), currentActivity));
+                            }
 
-                this.adapter.clear();
+                            case "PARAMS_FORMAT_ERROR" -> {
+                                currentActivity.runOnUiThread(() ->
+                                        popupMessage.afficherPopupErreur("FORMAT ERROR DELETEALL CADDIE", "ERREUR : "
+                                                + ex.getMessage(), currentActivity));
+                            }
 
-                setAdapter();
-
-                refreshCaddie();
-
-                refreshArticle(this.currentArticle);
-
-            } catch (Exception ex) {
-                this.runOnUiThread(() ->
-                        popupMessage.afficherPopupErreur("ERROR DELETEALL CADDIE", "ERREUR : "
-                                + ex.getMessage(), this));
-            }
+                            default -> {
+                                currentActivity.runOnUiThread(() ->
+                                        popupMessage.afficherPopupErreur("UNKNOW ERROR DELETEALL CADDIE", "ERREUR INCONNUE : "
+                                                + ex.getMessage(), currentActivity));
+                            }
+                        }
+                    }
+                }
+            }.execute();
         }
     }
 
     // On confirme le panier et on crée la facture
+    @SuppressLint("StaticFieldLeak")
     private void sendConfirm() {
+        new AsyncTask<Bundle, Void, HashMap<String, Object>>() {
+            @Override
+            protected HashMap<String, Object> doInBackground(Bundle... bundles) {
+                HashMap<String, Object> props = new HashMap<String, Object>() {
+                };
 
-        try {
-
-            client.sendConfirmer(this.loginId);
-
-            this.adapter.clear();
-
-            setAdapter();
-
-        } catch(Exception ex){
-            switch(Objects.requireNonNull(ex.getMessage())) {
-                case "ENDCONNEXION" -> {
-                    this.runOnUiThread(() ->
-                            popupMessage.afficherPopupErreur("ERROR DATA CONFIRM", "ERREUR TRANSMISSION DONNEES : "
-                                    + ex.getMessage(), this));
-                    return;
+                try {
+                    client.sendConfirmer(loginId);
+                    props.put("isFailed", false);
+                } catch (Exception ex) {
+                    props.put("exception", ex);
+                    props.put("isFailed", true);
                 }
+                return props;
+            }
 
-                case "PARAMS_FORMAT_ERROR" -> {
-                    this.runOnUiThread(() -> popupMessage.afficherPopupErreur("ERROR FORMAT CONFIRM", "MAUVAIS FORMAT : "
-                            + ex.getMessage(), this));
-                    return;
-                }
+            @Override
+            protected void onPostExecute(HashMap<String, Object> props) {
+                super.onPostExecute(props);
 
-                case "ERROR_BILL" -> {
-                    this.runOnUiThread(() ->
-                            popupMessage.afficherPopupErreur("ERROR SERVEUR/BILL CONFIRM", "ERREUR CREATION FACTURE : "
-                                    + ex.getMessage(), this));
-                    return;
-                }
+                if (!((Boolean) props.get("isFailed"))) {
+                    refreshArticle(currentArticle);
+                    refreshCaddie();
 
-                default -> {
-                    this.runOnUiThread(() ->
-                            popupMessage.afficherPopupErreur("DEFAULT ERROR CONFIRM", "ERREUR INCONNUE : "
-                                    + ex.getMessage(), this));
-                    return;
+                    currentActivity.popupMessage.afficherPopupErreur("SUCCESS CONFIRM", getString(R.string.Confirm_Success), currentActivity);
+
+                } else {
+                    Exception ex = (Exception) props.get("exception");
+                    switch (Objects.requireNonNull(ex.getMessage())) {
+                        case "ENDCONNEXION" -> {
+                            currentActivity.popupMessage.afficherPopupErreur("ERROR DATA CONFIRM", "ERREUR TRANSMISSION DONNEES : "
+                                    + ex.getMessage(), currentActivity);
+                        }
+
+                        case "PARAMS_FORMAT_ERROR" -> {
+                            currentActivity.popupMessage.afficherPopupErreur("ERROR FORMAT CONFIRM", "MAUVAIS FORMAT : "
+                                    + ex.getMessage(), currentActivity);
+                        }
+
+                        case "ERROR_BILL" -> {
+                            currentActivity.popupMessage.afficherPopupErreur("ERROR SERVEUR/BILL CONFIRM", "ERREUR CREATION FACTURE : "
+                                    + ex.getMessage(), currentActivity);
+                        }
+
+                        default -> {
+                            currentActivity.popupMessage.afficherPopupErreur("DEFAULT ERROR CONFIRM", "ERREUR INCONNUE : "
+                                    + ex.getMessage(), currentActivity);
+                        }
+                    }
                 }
             }
-        }
-
-        this.runOnUiThread(() ->
-                popupMessage.afficherPopupErreur("SUCCESS CONFIRM", getString(R.string.Confirm_Success), this));
-
-        refreshCaddie();
-
+        }.execute();
     }
-
-    //endregion
 }
+//endregion

@@ -41,6 +41,7 @@ function GetArticles(){
 function UpdateArticles(id, prix, stock){
     const xhr = new XMLHttpRequest();
 
+
     xhr.open("POST", "https://" + ip + ":443/api/v1/Articles", false);
     xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded");
 

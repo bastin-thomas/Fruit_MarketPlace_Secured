@@ -462,6 +462,7 @@ public class StockManagement_Server extends javax.swing.JFrame implements Logger
                 SecuredServer = new StockManagement_HttpsServer(ip, portSecured, poolSizeSecured,maxPendingConnexion, this, db, 
                         TLSCypherSuit, TLSVersion, CryptoConsts.SecurityTLSProvider, store, keyStorePassword);
             } catch (Exception ex) {
+                System.out.println("Error creating HttpsServer: " + ex.getMessage());
                 this.Trace("Error creating HttpsServer: " + ex.getMessage());
                 i++;
             }
@@ -493,22 +494,28 @@ public class StockManagement_Server extends javax.swing.JFrame implements Logger
         }
         
         
-        int port = (int) this.Port_Spinner.getModel().getValue();
-        config.setProperty(Consts.ConfigPort, ""+port);
+        try{
+            int port = (int) this.Port_Spinner.getModel().getValue();
+            config.setProperty(Consts.ConfigPort, ""+port);
+
+            int poolSize = (int) this.Pool_Spinner.getModel().getValue();
+            config.setProperty(Consts.ConfigPoolSize, ""+poolSize);
+
+            String url = DBurl_TextField.getText();
+            config.setProperty(Consts.ConfigDBString, ""+url);
+
+            int portSecured = (int) PortSecured_Spinner.getModel().getValue();
+            config.setProperty(Consts.ConfigPortSecured, ""+portSecured);
+
+            int poolSizeSecured = (int) PoolSecured_Spinner1.getModel().getValue();
+            config.setProperty(Consts.ConfigPoolSecuredSize, ""+poolSizeSecured);
+
+            ConfigFolderManager.SaveProperties(config);
+        }catch(Exception ex){
+            System.out.println("Unable to close server unsecured");
+        }
         
-        int poolSize = (int) this.Pool_Spinner.getModel().getValue();
-        config.setProperty(Consts.ConfigPoolSize, ""+poolSize);
-        
-        String url = DBurl_TextField.getText();
-        config.setProperty(Consts.ConfigDBString, ""+url);
-        
-        int portSecured = (int) PortSecured_Spinner.getModel().getValue();
-        config.setProperty(Consts.ConfigPortSecured, ""+portSecured);
-        
-        int poolSizeSecured = (int) PoolSecured_Spinner1.getModel().getValue();
-        config.setProperty(Consts.ConfigPoolSecuredSize, ""+poolSizeSecured);
-                
-        ConfigFolderManager.SaveProperties(config);
+        System.exit(0);
     }//GEN-LAST:event_formWindowClosing
     // </editor-fold>
     

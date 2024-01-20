@@ -10,14 +10,13 @@ import com.mymaraichermobile.model.CaddieRows;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import kotlin.jvm.Synchronized;
+
 public class ProtocoleClient {
 
     //region Private Variables
-
     private SocketClient socket;
-
     //endregion
-
 
     //region Constructeurs
 
@@ -28,7 +27,6 @@ public class ProtocoleClient {
     //endregion
 
     //region Methods
-
     public SocketClient getSocket() {
         return socket;
     }
@@ -37,6 +35,7 @@ public class ProtocoleClient {
         this.socket = socket;
     }
 
+    @Synchronized
     public void sendLogin(String nom, String mdp) throws Exception{
         String message = "";
 
@@ -72,7 +71,7 @@ public class ProtocoleClient {
         }
 
     }
-
+    @Synchronized
     public void sendCreateLogin(String nom, String mdp) throws Exception{
         String message = "";
 
@@ -98,7 +97,7 @@ public class ProtocoleClient {
             throw new Exception("new Account creation Error");
         }
     }
-
+    @Synchronized
     public Articles sendConsult(int idArticle) throws Exception{
 
         String message = "";
@@ -138,6 +137,7 @@ public class ProtocoleClient {
 
 
     //On ajoute un élément au caddie
+    @Synchronized
     public Achats sendAchat(int idArticle, int quantitee) throws Exception{
         String message = "";
         Achats achat = null;
@@ -174,6 +174,7 @@ public class ProtocoleClient {
     }
 
     // On récupère le caddie
+    @Synchronized
     public ArrayList<CaddieRows> sendCaddie() throws Exception{
         String message = "";
         ArrayList<CaddieRows> caddie = new ArrayList<>();
@@ -223,6 +224,7 @@ public class ProtocoleClient {
     }
 
     // Supprime un objet précis du caddie
+    @Synchronized
     public void sendCancel(int idArticle) throws Exception{
         String message = "";
 
@@ -246,6 +248,7 @@ public class ProtocoleClient {
     }
 
     // Supprime tous les objets du caddie
+    @Synchronized
     public void sendCancelAll() throws Exception{
         String message = "";
 
@@ -266,6 +269,7 @@ public class ProtocoleClient {
         }
     }
 
+    @Synchronized
     public void sendConfirmer(String nom) throws Exception{
         String message = "";
 
@@ -286,10 +290,12 @@ public class ProtocoleClient {
         }
     }
 
+    @Synchronized
     public void sendLogout() throws IOException{
         socket.send("LOGOUT" + "@");
     }
 
+    @Synchronized
     public void close()
     {
         try {

@@ -7,11 +7,7 @@ package be.hepl.stockmanagement.HttpServer;
 import be.hepl.cryptolibrary.TLSUtils;
 import be.hepl.generic_server_tcp.Logger;
 import be.hepl.stockmanagement.Utils.DBStock;
-import com.sun.net.httpserver.HttpsConfigurator;
-import com.sun.net.httpserver.HttpsParameters;
-import com.sun.net.httpserver.HttpsServer;
 import java.io.IOException;
-import java.net.InetSocketAddress;
 import java.security.KeyStore;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -20,12 +16,10 @@ import java.util.concurrent.Executors;
  *
  * @author Arkios
  */
-public class StockManagement_HttpsServer extends StockManagement_HttpServer{   
-    
-    
+public class StockManagement_HttpsServer extends StockManagement_HttpServer{
     public StockManagement_HttpsServer(String ip, int port, int nthread, int maxPending, Logger log, DBStock db, String CypherSuit, String TLSVersion, String SecurityTLSProvider, KeyStore store, String keyStorePassword) throws IOException, Exception {
         super(log, db);
-
+        
         http = TLSUtils.createWebServerSocket(port, maxPending, CypherSuit, TLSVersion, SecurityTLSProvider, store, keyStorePassword);
         
         Executor executor = Executors.newFixedThreadPool(nthread);
@@ -41,6 +35,7 @@ public class StockManagement_HttpsServer extends StockManagement_HttpServer{
         this.log.Trace("Serveur HTTPS lancé sur les ports: " + ip + ":" + port);
     }
     
+    @Override
     public void close() {
         http.stop(0);
     }

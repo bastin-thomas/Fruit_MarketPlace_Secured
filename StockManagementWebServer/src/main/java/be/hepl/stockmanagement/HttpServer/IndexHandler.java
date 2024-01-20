@@ -31,6 +31,10 @@ public class IndexHandler extends MyHttpHandler {
         
         log.Trace("IndexHandler (method:" + requestMethod + ") = " + requestPath);
         
+        exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
+        exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
+        exchange.getResponseHeaders().add("Access-Control-Allow-Headers", "ContentType");
+        
         
         //HtmlPage Handling
         if(requestPath.endsWith("/")){

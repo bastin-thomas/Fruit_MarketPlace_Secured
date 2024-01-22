@@ -33,9 +33,22 @@
     <string name="deleteButton">Supprimer</string>
     <string name="confirmButton">Confirmer</string>
     <string name="disconnectButton">Se déconnecter</string>
-    <string name="NOSTOCK">Pas d\'articles dans le panier</string>
     <string name="Confirm_Success">La commande a bien été enregistrée.</string>
     <string name="choiceQuantity">Choississez une quantité</string>
     <string name="quantity">Quantité :</string>
+
+    <!-- Strings related to Errors -->
+    <string name="isfailed">isFailed</string>
+    <string name="exception">exception</string>
+    <string name="error">ERREUR :</string>
+    <string name="unknown_error">ERREUR INCONNUE :</string>
+    <string name="error_format">ERREUR FORMAT :</string>
+    <string name="refresh_article">ACTUALISATION ARTICLE</string>
+    <string name="error_previous_button">BOUTON PRECEDENT</string>
+    <string name="refresh_caddie">ACTUALISATION CADDIE</string>
+    <string name="sendachat_buy">SENDACHAT ACHAT</string>
+    <string name="confirm">BOUTON CONFIRMER</string>
+    <string name="delete_button">BOUTON SUPPRIMER</string>
+    <string name="deleteall_caddie_button">BOUTON VIDER CADDIE</string>
 
 </resources>

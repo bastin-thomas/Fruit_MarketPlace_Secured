@@ -114,10 +114,10 @@ public class LoginFragment extends Fragment {
                         Log.d("SOCKET", "Socket : " + socket);
                         Log.d("CLIENT", "Client : " + client);
 
-                        props.put("isFailed", false);
+                        props.put(getString(R.string.isfailed), false);
                     } catch (NumberFormatException | IOException ex) {
-                        props.put("exception", ex);
-                        props.put("isFailed", true);
+                        props.put(getString(R.string.exception), ex);
+                        props.put(getString(R.string.isfailed), true);
                         return props;
                     }
 
@@ -125,19 +125,19 @@ public class LoginFragment extends Fragment {
                     if (!isChecked) {
                         try {
                             client.sendLogin(usernameInput.getText().toString(), passwordInput.getText().toString());
-                            props.put("isFailed", false);
+                            props.put(getString(R.string.isfailed), false);
                         } catch (Exception ex) {
-                            props.put("exception", ex);
-                            props.put("isFailed", true);
+                            props.put(getString(R.string.exception), ex);
+                            props.put(getString(R.string.isfailed), true);
                             return props;
                         }
                     } else {
                         try {
                             client.sendCreateLogin(usernameInput.getText().toString(), passwordInput.getText().toString());
-                            props.put("isFailed", false);
+                            props.put(getString(R.string.isfailed), false);
                         } catch (Exception ex) {
-                            props.put("exception", ex);
-                            props.put("isFailed", true);
+                            props.put(getString(R.string.exception), ex);
+                            props.put(getString(R.string.isfailed), true);
                             return props;
                         }
                     }
@@ -149,7 +149,7 @@ public class LoginFragment extends Fragment {
                 @Override
                 protected void onPostExecute(HashMap<String, Object> props) {
                     super.onPostExecute(props);
-                    if (!((Boolean) props.get("isFailed"))) {
+                    if (!((Boolean) props.get(getString(R.string.isfailed)))) {
                         // Si login bon, on passe à la page du Maraicher
                         Intent intent = new Intent(requireContext(), MaraicherActivity.class);
 
@@ -159,30 +159,31 @@ public class LoginFragment extends Fragment {
 
                         startActivity(intent);
                     } else {
-                        Exception ex = (Exception) props.get("exception");
+                        Exception ex = (Exception) props.get(getString(R.string.exception));
                         switch (Objects.requireNonNull(ex.getMessage())) {
                             case "ENDCONNEXION" -> {
                                 getActivity().runOnUiThread(()->{
-                                    popupMessage.afficherPopupErreur("ERROR LOGIN SERVER",
-                                            "ERREUR CONNEXION SERVEUR" + ex.getMessage(), requireContext());
+                                    popupMessage.afficherPopupErreur(getString(R.string.login),
+                                            (getString(R.string.error) + ex.getMessage()), requireContext());
                                 });
                             }
                             case "NO_LOGIN" -> {
                                 getActivity().runOnUiThread(()->{
-                                    popupMessage.afficherPopupErreur("ERROR LOGIN ACCOUNT",
+                                    popupMessage.afficherPopupErreur(getString(R.string.login),
                                             "UTILISATEUR EXISTANT : " + ex.getMessage(), requireContext());
                                 });
                             }
                             case "BAD_LOGIN" -> {
                                 getActivity().runOnUiThread(()->{
-                                    popupMessage.afficherPopupErreur("ERROR BAD LOGIN",
+                                    popupMessage.afficherPopupErreur(getString(R.string.login),
                                             "MAUVAIS LOGIN : " + ex.getMessage(), requireContext());
                                 });
                             }
                             default -> {
                                 getActivity().runOnUiThread(()->{
-                                    popupMessage.afficherPopupErreur("UNKNOW ERROR",
-                                            "ERREUR INCONNUE : " + ex.getMessage(), requireContext());
+                                    popupMessage.afficherPopupErreur(getString(R.string.unknown_error),
+                                            (getString(R.string.unknown_error)
+                                                    + ex.getMessage()), requireContext());
                                 });
                             }
                         }
@@ -198,7 +199,7 @@ public class LoginFragment extends Fragment {
     //region Events
 
     @Override
-    public void onDestroy() { // FINI
+    public void onDestroy() {
         super.onDestroy();
 
         try {

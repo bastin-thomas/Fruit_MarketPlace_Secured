@@ -39,17 +39,18 @@
     <string name="quantity">Quantity :</string>
 
     <!-- Strings related to Errors -->
+    <string name="login">LOGIN :</string>
     <string name="isfailed">isFailed</string>
     <string name="exception">exception</string>
     <string name="error">ERROR :</string>
     <string name="unknown_error">UNKNOW ERROR :</string>
     <string name="error_format">FORMAT ERROR :</string>
-    <string name="refresh_article">REFRESH ARTICLE</string>
-    <string name="error_previous_button">PREVIOUS BUTTON</string>
-    <string name="refresh_caddie">REFRESH CADDIE</string>
-    <string name="sendachat_buy">SENDACHAT BUY</string>
-    <string name="confirm">CONFIRM BUTTON</string>
-    <string name="delete_button">DELETE BUTTON</string>
-    <string name="deleteall_caddie_button">DELETEALL CADDIE BUTTON</string>
+    <string name="refresh_article">REFRESH ARTICLE :</string>
+    <string name="error_previous_button">PREVIOUS BUTTON :</string>
+    <string name="refresh_caddie">REFRESH CADDIE :</string>
+    <string name="sendachat_buy">SENDACHAT BUY :</string>
+    <string name="confirm">CONFIRM BUTTON :</string>
+    <string name="delete_button">DELETE BUTTON :</string>
+    <string name="deleteall_caddie_button">DELETEALL CADDIE BUTTON :</string>
 
 </resources>

@@ -23,7 +23,7 @@ public abstract class ListenThread_TLS extends ListenThread {
         this.logger = logger;
         
         try{            
-            listenSocket = TLSUtils.createServerSocket(port, cypherSuit, sslVersion, provider, store, keystorePassword);
+            serverSocket = TLSUtils.createServerSocket(port, cypherSuit, sslVersion, provider, store, keystorePassword);
         }
         catch(Exception ex)
         {
@@ -34,7 +34,7 @@ public abstract class ListenThread_TLS extends ListenThread {
     public void close()
     {
         try {
-            listenSocket.close();
+            serverSocket.close();
         } catch (IOException ex) {
             logger.Trace(ex.getMessage());
         }

@@ -45,9 +45,10 @@ public class TLSUtils {
     public static SSLServerSocket createServerSocket(int port, String CypherSuit, String TLSVersion, String SecurityTLSProvider, KeyStore store, String keyStorePassword) throws Exception{
         SSLServerSocket socket;
         
-        // sslctx utile pour créer la socket
-        SSLContext tlsContext = TLSUtils.getTLSContext(TLSVersion, SecurityTLSProvider, store, keyStorePassword);
-        SSLServerSocketFactory SslSFac= tlsContext.getServerSocketFactory();        
+        // sslctx utile pour créer la socket (contx connexion)
+        SSLContext tlsContext = TLSUtils.getTLSContext(TLSVersion, SecurityTLSProvider, store, keyStorePassword); 
+        //(prov, ssl version, ouvre TCertif ou KeyEntry)
+        SSLServerSocketFactory SslSFac = tlsContext.getServerSocketFactory(); // je prépare un truc      
         socket = (SSLServerSocket) SslSFac.createServerSocket(port);
         
         socket.setEnabledProtocols(new String[]{TLSVersion});

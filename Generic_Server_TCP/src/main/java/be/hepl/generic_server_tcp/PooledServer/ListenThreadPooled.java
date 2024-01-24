@@ -55,8 +55,8 @@ public class ListenThreadPooled extends ListenThread {
         while(!this.isInterrupted()){
             Socket serviceSocket;
             try{
-                listenSocket.setSoTimeout(2000);
-                serviceSocket = listenSocket.accept();
+                serverSocket.setSoTimeout(2000);
+                serviceSocket = serverSocket.accept();
                 logger.Trace("Connexion acceptée, mise en file d'attente.");
                 waitingConnexions.addConnexion(serviceSocket);
             }

@@ -19,7 +19,7 @@ public abstract class ListenThread extends Thread {
     protected int port;
     protected Protocol protocole;
     protected Logger logger;
-    protected ServerSocket listenSocket;
+    protected ServerSocket serverSocket;
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Constructor">
@@ -36,7 +36,7 @@ public abstract class ListenThread extends Thread {
         this.logger = logger;
         
         try{
-            listenSocket = new ServerSocket(port);
+            serverSocket = new ServerSocket(port);
         }
         catch(IOException ex)
         {
@@ -55,7 +55,7 @@ public abstract class ListenThread extends Thread {
         this.logger = logger;
         
         try{            
-            listenSocket = TLSUtils.createServerSocket(port, cypherSuit, sslVersion, provider, store, keystorePassword);
+            serverSocket = TLSUtils.createServerSocket(port, cypherSuit, sslVersion, provider, store, keystorePassword);
         }
         catch(Exception ex)
         {
@@ -66,7 +66,7 @@ public abstract class ListenThread extends Thread {
     public void close()
     {
         try {
-            listenSocket.close();
+            serverSocket.close();
         } catch (IOException ex) {
             logger.Trace(ex.getMessage());
         }

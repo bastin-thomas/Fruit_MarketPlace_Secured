@@ -36,8 +36,8 @@ public class ListenThreadOnDemand_TLS extends ListenThread_TLS {
         while (!this.isInterrupted()) {
             Socket csocket;
             try {
-                listenSocket.setSoTimeout(2000);
-                csocket = listenSocket.accept();
+                serverSocket.setSoTimeout(2000);
+                csocket = serverSocket.accept();
                 logger.Trace("Connexion acceptée, création TH_TLS Client");
                 Thread th = new ServiceThreadOnDemand(protocole, csocket, logger);
                 th.start();
@@ -53,7 +53,7 @@ public class ListenThreadOnDemand_TLS extends ListenThread_TLS {
         }
         logger.Trace("TH_TLS Listen (Demande) interrompu.");
         try {
-            listenSocket.close();
+            serverSocket.close();
         } catch (IOException ex) {
             logger.Trace("Erreur I/O: " +ex.getMessage());
         }

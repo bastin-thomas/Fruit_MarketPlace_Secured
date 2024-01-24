@@ -43,20 +43,20 @@ public class ListenThreadOnDemand extends ListenThread {
         while (!this.isInterrupted()) {
             Socket csocket;
             try {
-                listenSocket.setSoTimeout(2000);
-                csocket = listenSocket.accept();
+                serverSocket.setSoTimeout(2000);
+                csocket = serverSocket.accept();
                 logger.Trace("Connexion acceptée, création TH Client");
                 Thread th = new ServiceThreadOnDemand(protocole, csocket, logger);
                 th.start();
             } catch (SocketTimeoutException ex) {
                 // Pour vérifier si le thread a été interrompu
-            } catch (IOException ex) {
-                logger.Trace("Erreur I/O");
+            } catch (Exception ex) {
+                logger.Trace("Erreur : " + ex.getMessage());
             }
         }
         logger.Trace("TH Listen (Demande) interrompu.");
         try {
-            listenSocket.close();
+            serverSocket.close();
         } catch (IOException ex) {
             logger.Trace("Erreur I/O");
         }

@@ -127,17 +127,17 @@ public class LoginFragment extends Fragment {
                             client.sendLogin(usernameInput.getText().toString(), passwordInput.getText().toString());
                             props.put(getString(R.string.isfailed), false);
                         } catch (Exception ex) {
-                            props.put(getString(R.string.exception), ex);
-                            props.put(getString(R.string.isfailed), true);
+                            props.put((getString(R.string.exception)), ex);
+                            props.put((getString(R.string.isfailed)), true);
                             return props;
                         }
                     } else {
                         try {
                             client.sendCreateLogin(usernameInput.getText().toString(), passwordInput.getText().toString());
-                            props.put(getString(R.string.isfailed), false);
+                            props.put((getString(R.string.isfailed)), false);
                         } catch (Exception ex) {
-                            props.put(getString(R.string.exception), ex);
-                            props.put(getString(R.string.isfailed), true);
+                            props.put((getString(R.string.exception)), ex);
+                            props.put((getString(R.string.isfailed)), true);
                             return props;
                         }
                     }

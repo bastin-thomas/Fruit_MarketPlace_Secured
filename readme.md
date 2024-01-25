@@ -1,7 +1,12 @@
-# RTI Project for 2023
-- This project was created for our Java Lessons. It consist in managing a Vegetables market, client could use a Java Application or C++ Application to do online shopping (all request is send by TCP to a C++ Server). Once a command is created, employees could use a Java Application to manage payement (all request is send by TCP to a Java Server). Employees could also use a webPage to manage inventory and merchandise prices.
+# Fruit Market Place - Secured
+- This project was created for my Java Lessons. It consist in managing a Fruits market, client could use a Java Application, a QT C++ Application, or Android Application to do online shopping (all request is send by TCP to a C++ Server). Once a command is created, employees could use a Java Application to manage payement (all request is send by TCP to a Java Server). Employees could also use a webPage to manage inventory and merchandise prices (AJAX HTTP Request), the webPage and API is hosted in a home Made Java Web Server App.
 
 - It features, TCP Java/C++ connexions (with Java to C++ connexions), HTTP Java REST API (full handmade), a webPage using JS / Ajax, an Android App (Java). The whole project got a secured version with a hand made crypto version, and TLS/HTTPS version.
+
+- TLS v1.2/1.3 is used to secured HTTPs data transfer, as well as some TCP data transfer (between Payement client/server app), using it's own certificate chain.
+
+- HomeMade cryptography can be used instead of TLS to secure communication (between Payement client/server app), it feature, Asymetrical Auth to exchange symetrical session key, Symetrical encryption, HMAC, Signature.
+
 
 
 ## Overall Project Architecture

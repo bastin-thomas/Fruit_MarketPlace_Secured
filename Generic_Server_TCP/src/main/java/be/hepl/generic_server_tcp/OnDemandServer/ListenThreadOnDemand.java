@@ -4,7 +4,6 @@
  */
 package be.hepl.generic_server_tcp.OnDemandServer;
 
-import be.hepl.cryptolibrary.TLSUtils;
 import be.hepl.generic_server_tcp.ListenThread;
 import be.hepl.generic_server_tcp.Logger;
 import be.hepl.generic_server_tcp.Protocol;

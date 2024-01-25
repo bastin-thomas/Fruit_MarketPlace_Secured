@@ -28,7 +28,7 @@ We use a small SQL database with that will provide to type of loggable user. Emp
 ### Achat/Purchase Client (Java)
 
 ### MyMaraicherMobile/Purchase Client (Android)
-
+![Mobile App](./.readme_img/AppMobile.png "Mobile App")
 
 
 ## Payements (Java)

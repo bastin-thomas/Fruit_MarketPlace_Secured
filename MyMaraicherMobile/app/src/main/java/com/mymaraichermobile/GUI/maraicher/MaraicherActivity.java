@@ -381,10 +381,10 @@ public class MaraicherActivity extends AppCompatActivity {
                 };
                 int quantitee = Integer.parseInt(quantityEditText.getText().toString());
 
+                props.put(getString(R.string.isfailed), false);
                 if (quantitee > 0) {
                     try {
                         client.sendAchat(currentArticle, quantitee);
-                        props.put(getString(R.string.isfailed), false);
                     } catch (Exception ex) {
                         props.put(getString(R.string.exception), ex);
                         props.put(getString(R.string.isfailed), true);

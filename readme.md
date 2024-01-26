@@ -19,13 +19,13 @@ We use a small SQL database with that will provide to type of loggable user. Emp
 
 
 
-## Achat/Purchase (Hybrid)
+## Purchase (Hybrid)
 
-### Achat/Purchase Server (C++)
+### Purchase Server (C++)
 
-### Achat/Purchase Client (C++)
+### Purchase Client (C++)
 
-### Achat/Purchase Client (Java)
+### Purchase Client (Java)
 
 ### MyMaraicherMobile/Purchase Client (Android)
 ![Mobile App](./.readme_img/AppMobile.png "Mobile App")
